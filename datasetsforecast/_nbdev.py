@@ -2,9 +2,19 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {}
+index = {"Labour": "hierarchical.ipynb",
+         "Tourism": "hierarchical.ipynb",
+         "TourismLarge": "hierarchical.ipynb",
+         "TourismSmall": "hierarchical.ipynb",
+         "Traffic": "hierarchical.ipynb",
+         "Wiki2": "hierarchical.ipynb",
+         "HierarchicalInfo": "hierarchical.ipynb",
+         "logger": "utils.ipynb",
+         "download_file": "utils.ipynb",
+         "Info": "utils.ipynb"}
 
-modules = []
+modules = ["hierarchical.py",
+           "utils.py"]
 
 doc_url = "https://Nixtla.github.io/datasetsforecast/"
 
