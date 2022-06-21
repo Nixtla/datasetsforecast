@@ -9,6 +9,7 @@ index = {"Labour": "hierarchical.ipynb",
          "Traffic": "hierarchical.ipynb",
          "Wiki2": "hierarchical.ipynb",
          "HierarchicalInfo": "hierarchical.ipynb",
+         "HierarchicalData": "hierarchical.ipynb",
          "logger": "utils.ipynb",
          "download_file": "utils.ipynb",
          "Info": "utils.ipynb"}
