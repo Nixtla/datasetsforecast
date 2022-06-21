@@ -18,6 +18,6 @@ modules = ["hierarchical.py",
 
 doc_url = "https://Nixtla.github.io/datasetsforecast/"
 
-git_url = "https://github.com/Nixtla/statsforecast/tree/main/"
+git_url = "https://github.com/Nixtla/datasetsforecast/tree/main/"
 
 def custom_doc_links(name): return None
