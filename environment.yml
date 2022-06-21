@@ -3,10 +3,9 @@ channels:
   - conda-forge
 dependencies:
   - jupyterlab
-  - matplotlib
-  - numba
   - numpy
   - pandas
   - pip
   - pip:
     - nbdev
+    - tqdm
