@@ -15,32 +15,32 @@ from .utils import download_file, Info
 # Cell
 @dataclass
 class Labour:
-    freq = 'M'
+    freq: str = 'M'
 
 # Cell
 @dataclass
 class Tourism:
-    freq = 'Q'
+    freq: str = 'Q'
 
 # Cell
 @dataclass
 class TourismLarge:
-    freq = 'M'
+    freq: str = 'M'
 
 # Cell
 @dataclass
 class TourismSmall:
-    freq = 'Q'
+    freq: str = 'Q'
 
 # Cell
 @dataclass
 class Traffic:
-    freq = 'D'
+    freq: str = 'D'
 
 # Cell
 @dataclass
 class Wiki2:
-    freq = 'D'
+    freq: str = 'D'
 
 # Cell
 HierarchicalInfo = Info(
