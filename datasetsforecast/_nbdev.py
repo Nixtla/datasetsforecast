@@ -3,7 +3,6 @@
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
 index = {"Labour": "hierarchical.ipynb",
-         "Tourism": "hierarchical.ipynb",
          "TourismLarge": "hierarchical.ipynb",
          "TourismSmall": "hierarchical.ipynb",
          "Traffic": "hierarchical.ipynb",
