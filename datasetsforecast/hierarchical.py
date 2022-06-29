@@ -16,31 +16,43 @@ from .utils import download_file, Info
 @dataclass
 class Labour:
     freq: str = 'M'
+    horizon: int = 8
+    seasonality: int = 12
 
 # Cell
 @dataclass
 class Tourism:
     freq: str = 'Q'
+    horizon: int = 4
+    seasonality: int = 4
 
 # Cell
 @dataclass
 class TourismLarge:
     freq: str = 'M'
+    horizon: int = 12
+    seasonality: int = 12
 
 # Cell
 @dataclass
 class TourismSmall:
     freq: str = 'Q'
+    horizon: int = 4
+    seasonality: int = 4
 
 # Cell
 @dataclass
 class Traffic:
     freq: str = 'D'
+    horizon: int = 14
+    seasonality: int = 7
 
 # Cell
 @dataclass
 class Wiki2:
     freq: str = 'D'
+    horizon: int = 1
+    seasonality: int = 7
 
 # Cell
 HierarchicalInfo = Info(
