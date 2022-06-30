@@ -79,7 +79,7 @@ class Wiki2:
         'Views/Country',
         'Views/Country/Access',
         'Views/Country/Access/Agent',
-        'Views/Country/Access/Topic'
+        'Views/Country/Access/Agent/Topic'
     )
 
 # Cell
