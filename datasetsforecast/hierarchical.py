@@ -62,10 +62,10 @@ class Traffic:
     horizon: int = 14
     seasonality: int = 7
     tags_names: Tuple[str] = (
-        'Level0',
         'Level1',
         'Level2',
-        'Level2',
+        'Level3',
+        'Level4',
     )
 
 # Cell
