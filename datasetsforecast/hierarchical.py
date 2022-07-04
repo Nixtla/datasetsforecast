@@ -18,6 +18,7 @@ class Labour:
     freq: str = 'MS'
     horizon: int = 8
     seasonality: int = 12
+    test_size: int = 128
     tags_names: Tuple[str] = (
         'Country',
         'Country/Region',
@@ -31,6 +32,7 @@ class TourismLarge:
     freq: str = 'MS'
     horizon: int = 12
     seasonality: int = 12
+    test_size: int = 57
     tags_names: Tuple[str] = (
         'Country',
         'Country/State',
@@ -48,6 +50,7 @@ class TourismSmall:
     freq: str = 'Q'
     horizon: int = 8
     seasonality: int = 8
+    test_size: int = 9
     tags_names: Tuple[str] = (
         'Country',
         'Country/Purpose',
@@ -61,6 +64,7 @@ class Traffic:
     freq: str = 'D'
     horizon: int = 14
     seasonality: int = 7
+    test_size: int = 91
     tags_names: Tuple[str] = (
         'Level1',
         'Level2',
@@ -74,6 +78,7 @@ class Wiki2:
     freq: str = 'D'
     horizon: int = 1
     seasonality: int = 7
+    test_size: int = 91
     tags_names: Tuple[str] = (
         'Views',
         'Views/Country',
