@@ -15,7 +15,7 @@ from .utils import download_file, Info
 # Cell
 @dataclass
 class Labour:
-    freq: str = 'M'
+    freq: str = 'MS'
     horizon: int = 8
     seasonality: int = 12
     tags_names: Tuple[str] = (
@@ -28,7 +28,7 @@ class Labour:
 # Cell
 @dataclass
 class TourismLarge:
-    freq: str = 'M'
+    freq: str = 'MS'
     horizon: int = 12
     seasonality: int = 12
     tags_names: Tuple[str] = (
