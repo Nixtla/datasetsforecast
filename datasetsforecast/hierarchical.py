@@ -49,7 +49,7 @@ class TourismLarge:
 class TourismSmall:
     freq: str = 'Q'
     horizon: int = 8
-    seasonality: int = 8
+    seasonality: int = 4
     test_size: int = 9
     tags_names: Tuple[str] = (
         'Country',
