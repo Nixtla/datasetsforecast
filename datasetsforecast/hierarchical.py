@@ -18,7 +18,7 @@ class Labour:
     freq: str = 'MS'
     horizon: int = 8
     seasonality: int = 12
-    test_size: int = 128
+    test_size: int = 125
     tags_names: Tuple[str] = (
         'Country',
         'Country/Region',
@@ -76,7 +76,7 @@ class Traffic:
 @dataclass
 class Wiki2:
     freq: str = 'D'
-    horizon: int = 1
+    horizon: int = 14
     seasonality: int = 7
     test_size: int = 91
     tags_names: Tuple[str] = (
@@ -144,6 +144,9 @@ class HierarchicalData:
         Y_df.name = 'y'
         Y_df.index = Y_df.index.set_names(['unique_id', 'ds'])
         Y_df = Y_df.reset_index()
+        if group == 'Labour':
+            #for labour we avoid covid periods
+            Y_df = Y_df.query('ds < "2020-01-01"').reset_index(drop=True)
 
         if not all(Y_df['unique_id'].unique() == S.index):
             raise Exception('mismatch order between `Y_df` and `S`')
