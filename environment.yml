@@ -9,3 +9,4 @@ dependencies:
   - pip:
     - nbdev
     - tqdm
+    - xlrd>=1.0.0

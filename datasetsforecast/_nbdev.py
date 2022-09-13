@@ -9,11 +9,18 @@ index = {"Labour": "hierarchical.ipynb",
          "Wiki2": "hierarchical.ipynb",
          "HierarchicalInfo": "hierarchical.ipynb",
          "HierarchicalData": "hierarchical.ipynb",
+         "Yearly": "m3.ipynb",
+         "Quarterly": "m3.ipynb",
+         "Monthly": "m3.ipynb",
+         "Other": "m3.ipynb",
+         "M3Info": "m3.ipynb",
+         "M3": "m3.ipynb",
          "logger": "utils.ipynb",
          "download_file": "utils.ipynb",
          "Info": "utils.ipynb"}
 
 modules = ["hierarchical.py",
+           "m3.py",
            "utils.py"]
 
 doc_url = "https://Nixtla.github.io/datasetsforecast/"
