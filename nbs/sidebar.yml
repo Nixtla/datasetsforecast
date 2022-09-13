@@ -1,0 +1,6 @@
+website:
+  sidebar:
+    contents:
+      - hierarchical.ipynb
+      - m3.ipynb
+      - utils.ipynb
