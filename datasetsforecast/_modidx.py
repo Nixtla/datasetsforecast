@@ -77,4 +77,10 @@ d = { 'settings': { 'branch': 'main',
                                         'datasetsforecast.utils.Info.__post_init__': ( 'utils.html#info.__post_init__',
                                                                                        'datasetsforecast/utils.py'),
                                         'datasetsforecast.utils.Info.get_group': ('utils.html#info.get_group', 'datasetsforecast/utils.py'),
-                                        'datasetsforecast.utils.download_file': ('utils.html#download_file', 'datasetsforecast/utils.py')}}}
+                                        'datasetsforecast.utils._async_download_file': ( 'utils.html#_async_download_file',
+                                                                                         'datasetsforecast/utils.py'),
+                                        'datasetsforecast.utils.async_download_files': ( 'utils.html#async_download_files',
+                                                                                         'datasetsforecast/utils.py'),
+                                        'datasetsforecast.utils.download_file': ('utils.html#download_file', 'datasetsforecast/utils.py'),
+                                        'datasetsforecast.utils.download_files': ( 'utils.html#download_files',
+                                                                                   'datasetsforecast/utils.py')}}}

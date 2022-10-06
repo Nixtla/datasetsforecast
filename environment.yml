@@ -2,11 +2,13 @@ name: datasetsforecast
 channels:
   - conda-forge
 dependencies:
+  - aiohttp
   - jupyterlab
   - numpy
   - pandas
   - pip
+  - requests
+  - tqdm
+  - xlrd>=1.0.0
   - pip:
     - nbdev
-    - tqdm
-    - xlrd>=1.0.0
