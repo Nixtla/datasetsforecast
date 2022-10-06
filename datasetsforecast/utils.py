@@ -85,6 +85,7 @@ async def _async_download_file(session, path: Path, source_url: str):
 # %% ../nbs/utils.ipynb 5
 async def async_download_files(path: Union[str, Path], urls: Iterable[str]):
     path = Path(path)
+    path.mkdir(exist_ok=True, parents=True)
     tasks = []
     async with aiohttp.ClientSession() as session:
         for url in urls:
@@ -95,11 +96,16 @@ async def async_download_files(path: Union[str, Path], urls: Iterable[str]):
 
 # %% ../nbs/utils.ipynb 7
 def download_files(directory: Union[str, Path], urls: Iterable[str]):
+    loop = asyncio.get_event_loop()
+    if loop.is_running():
+        raise Exception(
+            "Can't use this function when there's already a running loop. "
+            "Use `await async_download_files(...) instead.`"
+        )
     path = Path(directory)
-    path.mkdir(exist_ok=True, parents=True)
     asyncio.run(async_download_files(path, urls))
 
-# %% ../nbs/utils.ipynb 8
+# %% ../nbs/utils.ipynb 9
 @dataclass
 class Info:
     """
