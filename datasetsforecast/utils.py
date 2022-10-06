@@ -102,7 +102,7 @@ def download_files(directory: Union[str, Path], urls: Iterable[str]):
             "Can't use this function when there's already a running loop. "
             "Use `await async_download_files(...) instead.`"
         )
-    asyncio.run(async_download_files(path, urls))
+    asyncio.run(async_download_files(directory, urls))
 
 # %% ../nbs/utils.ipynb 9
 @dataclass
