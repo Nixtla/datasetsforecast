@@ -2,6 +2,7 @@ name: datasetsforecast
 channels:
   - conda-forge
 dependencies:
+  - aiohttp
   - jupyterlab
   - numpy
   - pandas
