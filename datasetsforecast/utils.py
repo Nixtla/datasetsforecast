@@ -75,7 +75,7 @@ def download_file(directory: str, source_url: str, decompress: bool = False) -> 
         logger.info(f'Successfully decompressed {filepath}')
 
 # %% ../nbs/utils.ipynb 4
-async def _async_download_file(session, path: Path, source_url: str):
+async def _async_download_file(session: aiohttp.ClientSession, path: Path, source_url: str):
     async with session.get(source_url) as response:
         content = await response.text()
     fname = source_url.split('/')[-1]
@@ -102,7 +102,6 @@ def download_files(directory: Union[str, Path], urls: Iterable[str]):
             "Can't use this function when there's already a running loop. "
             "Use `await async_download_files(...) instead.`"
         )
-    path = Path(directory)
     asyncio.run(async_download_files(path, urls))
 
 # %% ../nbs/utils.ipynb 9
