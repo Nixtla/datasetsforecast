@@ -3,18 +3,18 @@
 # %% auto 0
 __all__ = ['M4Info', 'Yearly', 'Quarterly', 'Monthly', 'Weekly', 'Daily', 'Hourly', 'Other', 'M4', 'M4Evaluation']
 
-# %% ../nbs/m4.ipynb 2
+# %% ../nbs/m4.ipynb 3
 import os
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
 
-from .utils import async_download_files, download_file, Info
+from .utils import Info, async_download_files, download_file, extract_file
+from .losses import mase, smape
 
-# %% ../nbs/m4.ipynb 4
+# %% ../nbs/m4.ipynb 5
 @dataclass
 class Yearly:
     seasonality: int = 1
@@ -73,10 +73,10 @@ class Other:
     n_ts: int = 5_000
     included_groups: Tuple = ('Weekly', 'Daily', 'Hourly')
 
-# %% ../nbs/m4.ipynb 5
+# %% ../nbs/m4.ipynb 6
 M4Info = Info((Yearly, Quarterly, Monthly, Weekly, Daily, Hourly, Other))
 
-# %% ../nbs/m4.ipynb 7
+# %% ../nbs/m4.ipynb 8
 @dataclass
 class M4:
     
@@ -169,8 +169,24 @@ class M4:
         for group in M4Info.groups:
             for split in ('train', 'test'):
                 urls.append(f'{M4.source_url}/{split.capitalize()}/{group}-{split}.csv')
-        urls.extend([f'{M4.source_url}/{fname}' for fname in ('M4-info.csv', M4.naive2_forecast_url)])
+        urls.extend([f'{M4.source_url}/M4-info.csv', M4.naive2_forecast_url])
         return urls
+
+    @staticmethod
+    def _missing_files(path):
+        files = []
+        for url in M4._download_urls():
+            fname = url.split('/')[-1]
+            if not os.path.exists(f'{path}/{fname}'):
+                files.append(url)
+        return files
+    
+    @staticmethod
+    def _decompress(urls, path):
+        for url in urls:
+            if url.endswith('.zip'):
+                fname = url.split('/')[-1]
+                extract_file(f'{path}/{fname}', path)        
 
     @staticmethod
     def download(directory: str) -> None:
@@ -183,11 +199,13 @@ class M4:
             Directory path to download dataset.
         """
         path = f'{directory}/m4/datasets/'
-        if os.path.exists(path):
+        missing_files = M4._missing_files(path)
+        if not missing_files:
             return
-        for url in M4._download_urls():
+        for url in missing_files:
             download_file(path, url)
-            
+        M4._decompress(missing_files, path)            
+
     @staticmethod
     async def async_download(directory: str) -> None:
         """
@@ -198,13 +216,14 @@ class M4:
         directory: str
             Directory path to download dataset.
         """
-        path = Path(f'{directory}/m4/datasets/')
-        if path.exists():
+        path = f'{directory}/m4/datasets/'
+        missing_files = M4._missing_files(path)
+        if not missing_files:
             return
-        path.mkdir(parents=True)
-        await async_download_files(path, M4._download_urls())
+        await async_download_files(path, missing_files)
+        M4._decompress(missing_files, path)
 
-# %% ../nbs/m4.ipynb 10
+# %% ../nbs/m4.ipynb 11
 class M4Evaluation:
     
     @staticmethod
@@ -243,7 +262,7 @@ class M4Evaluation:
         
         benchmark = pd.read_csv(filepath)
         benchmark = benchmark[benchmark['id'].str.startswith(initial)]
-        benchmark = benchmark.set_index('id').dropna(1)
+        benchmark = benchmark.set_index('id').dropna(axis=1)
         benchmark = benchmark.sort_values('id').values
         
         return benchmark
