@@ -2,5 +2,8 @@ website:
   sidebar:
     contents:
       - hierarchical.ipynb
+      - long_horizon.ipynb
+      - losses.ipynb
       - m3.ipynb
+      - m4.ipynb
       - utils.ipynb
