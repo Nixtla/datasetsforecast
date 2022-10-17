@@ -221,7 +221,6 @@ class M4:
         """
         path = f'{directory}/m4/datasets/'
         missing_files = M4._missing_files(path, group)
-        print(missing_files)
         if not missing_files:
             return
         await async_download_files(path, missing_files)
@@ -260,7 +259,6 @@ class M4Evaluation:
             filepath = f'{path}/{filename}'
             if not os.path.exists(filepath):
                 download_file(path, source_url, decompress=True)
-            
         else:
             filepath = f'{path}/submission-Naive2.csv'
         
