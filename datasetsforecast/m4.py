@@ -125,7 +125,7 @@ class M4:
             df, *_ = zip(*included_dfs)
             df = pd.concat(df)
         else:
-            M4.download(directory)
+            M4.download(directory, group)
             path = f'{directory}/m4/datasets'
             class_group = M4Info[group]
             S_df = pd.read_csv(f'{directory}/m4/datasets/M4-info.csv', 
@@ -164,18 +164,19 @@ class M4:
     
     
     @staticmethod
-    def _download_urls():
+    def _download_urls(group):
         urls = []
-        for group in M4Info.groups:
+        groups = M4Info.groups if group is None else [group]
+        for group in groups:
             for split in ('train', 'test'):
                 urls.append(f'{M4.source_url}/{split.capitalize()}/{group}-{split}.csv')
         urls.extend([f'{M4.source_url}/M4-info.csv', M4.naive2_forecast_url])
         return urls
 
     @staticmethod
-    def _missing_files(path):
+    def _missing_files(path, group):
         files = []
-        for url in M4._download_urls():
+        for url in M4._download_urls(group):
             fname = url.split('/')[-1]
             if not os.path.exists(f'{path}/{fname}'):
                 files.append(url)
@@ -189,7 +190,7 @@ class M4:
                 extract_file(f'{path}/{fname}', path)        
 
     @staticmethod
-    def download(directory: str) -> None:
+    def download(directory: str, group: Optional[str] = None) -> None:
         """
         Download M4 Dataset.
         
@@ -197,9 +198,11 @@ class M4:
         ----------
         directory: str
             Directory path to download dataset.
+        group: str, optional (default=None)
+            Name of the group to download. If None, downloads all.
         """
         path = f'{directory}/m4/datasets/'
-        missing_files = M4._missing_files(path)
+        missing_files = M4._missing_files(path, group)
         if not missing_files:
             return
         for url in missing_files:
@@ -207,7 +210,7 @@ class M4:
         M4._decompress(missing_files, path)            
 
     @staticmethod
-    async def async_download(directory: str) -> None:
+    async def async_download(directory: str, group: Optional[str] = None) -> None:
         """
         Download M4 Dataset.
         
@@ -217,7 +220,8 @@ class M4:
             Directory path to download dataset.
         """
         path = f'{directory}/m4/datasets/'
-        missing_files = M4._missing_files(path)
+        missing_files = M4._missing_files(path, group)
+        print(missing_files)
         if not missing_files:
             return
         await async_download_files(path, missing_files)

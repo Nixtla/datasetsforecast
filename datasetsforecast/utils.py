@@ -111,9 +111,9 @@ def download_files(directory: Union[str, Path], urls: Iterable[str]):
 # %% ../nbs/utils.ipynb 10
 async def _async_download_file(session: aiohttp.ClientSession, path: Path, source_url: str):
     async with session.get(source_url) as response:
-        content = await response.text()
+        content = await response.read()
     fname = source_url.split('/')[-1]
-    (path / fname).write_text(content)
+    (path / fname).write_bytes(content)
     return fname
 
 # %% ../nbs/utils.ipynb 11
