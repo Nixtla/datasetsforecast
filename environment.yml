@@ -4,6 +4,7 @@ channels:
 dependencies:
   - aiohttp
   - jupyterlab
+  - numba
   - numpy
   - pandas
   - pip
