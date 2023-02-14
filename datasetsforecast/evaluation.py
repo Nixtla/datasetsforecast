@@ -6,6 +6,7 @@ __all__ = ['evaluate_forecast']
 # %% ../nbs/evaluation.ipynb 2
 import pickle
 from functools import partial
+from inspect import signature
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import numpy as np
@@ -64,10 +65,10 @@ def _evaluate(
         for metric in metrics:
             y_hat = df[model].values
             metric_name = metric.__name__
-            if 'mase' in metric_name:
+            if 'y_train' in signature(metric).parameters:
                 if df_train is None:
-                    raise Exception('Please provide `Y_df` to compute mase')
-                metric_res = metric(y, y_hat, df_train[target_col].values)
+                    raise Exception(f'Please provide `Y_df` to compute {metric_name}')
+                metric_res = metric(y, y_hat, y_train=df_train[target_col].values)
             else:
                 metric_res = metric(y, y_hat)
             eval_[model][metric_name] = metric_res
