@@ -163,7 +163,7 @@ def evaluate_forecasts(
         target_col: str = 'y',
         level: Optional[List] = None,
         agg_fn: Callable = np.mean,
-        agg_by: List[str] = ['metric'],
+        agg_by: Optional[List[str]] = None,
         engine: Any = None,
         **transform_kwargs: Any,
     ) -> pd.DataFrame:
@@ -197,16 +197,18 @@ def evaluate_forecasts(
             target_col=target_col,
         ), 
         partition=dict(by=id_col) if not has_cutoff else dict(by=[id_col, 'cutoff']),
-        **transform_kwargs,
     )
     if agg_by is not None:
-        evaluation_df = transform(
-            evaluation_df,
-            using=_agg_evaluation,
-            engine=engine,
-            params=dict(agg_fn=agg_fn, agg_by=agg_by),
-            schema=_schema_agg_evaluation(evaluation_df, agg_by),
-            partition=agg_by,
-            **transform_kwargs,
-        )
+        agg_by = ['metric'] + agg_by
+    else:
+        agg_by = ['metric']
+    evaluation_df = transform(
+        evaluation_df,
+        using=_agg_evaluation,
+        engine=engine,
+        params=dict(agg_fn=agg_fn, agg_by=agg_by),
+        schema=_schema_agg_evaluation(evaluation_df, agg_by),
+        partition=agg_by,
+        **transform_kwargs,
+    )
     return evaluation_df
