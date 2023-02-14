@@ -162,12 +162,46 @@ def evaluate_forecast(
         id_col: str = 'unique_id',
         time_col: str = 'ds',
         target_col: str = 'y',
-        level: Optional[List] = None,
-        agg_fn: Callable = np.mean,
         agg_by: Optional[List[str]] = None,
+        agg_fn: Callable = np.mean,
         engine: Any = None,
         **transform_kwargs: Any,
     ) -> pd.DataFrame:
+    """Evaluate forecast using different metrics.
+    
+    Parameters
+    ----------
+    Y_hat_df : pandas DataFrame
+        Forecasts and models to evaluate.
+        Can contain the actual values given by `target_col`.
+    metrics : List of Callables
+        Functions with arguments `y`, `y_hat`, and optionally `y_train`.
+    Y_test_df :  pandas DataFrame, optional (default=None)
+        True values. 
+        Nedded if `Y_hat_df` does not have the true values.
+    Y_df : pandas DataFrame, optional (default=None)
+        Training set. Used to evaluate metrics such as `mase`. 
+    id_col : str (default='unique_id')
+        Column that identifies each serie. If 'index' then the index is used.
+    time_col : str (default='ds')
+        Column that identifies each timestep, its values can be timestamps or integers.
+    target_col : str (default='y')
+        Column that contains the target.
+    agg_by: List[str], optional (default=None)
+        List of columns to aggregate the results.
+        To get metrics per time series use [`id_col`].
+    agg_fn: Callable, (default=np.mean)
+        Function to aggregate metrics.
+    engine: Any
+        Engine to distributed computing.
+    transform_kwargs: Any
+        Extra arguments to pass to fugue's `transform`.
+        
+    Returns
+    -------
+    result : pandas DataFrame
+        Metrics with one column per model.
+    """
     if 'y' not in Y_hat_df.columns:
         raise Exception(
             'Please include the actual values in `Y_hat_df` '
@@ -189,7 +223,7 @@ def evaluate_forecast(
             id_col=id_col,
             time_col=time_col,
             target_col=target_col,
-            level=level,
+            level=None,
         ), 
         schema=_schema_evaluate(
             df, 
