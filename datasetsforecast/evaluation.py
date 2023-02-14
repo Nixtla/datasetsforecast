@@ -98,7 +98,7 @@ def _schema_evaluate(
         id_col: str = 'unique_id',
         time_col: str = 'ds',
         target_col: str = 'y',
-    ):
+    ) -> str: 
     cols_to_rm = '|'.join([id_col, time_col, target_col, 'cutoff', 'lo', 'hi'])
     has_cutoff = 'cutoff' in df.columns
     models = df.loc[:, ~df.columns.str.contains(cols_to_rm)].columns
@@ -136,7 +136,7 @@ def _agg_evaluation(
 def _schema_agg_evaluation(
         df: pd.DataFrame, 
         agg_by: Optional[List[str]] = None,
-    ) -> pd.DataFrame:
+    ) -> str:
     cols_to_rm = '|'.join(agg_by + ['unique_id', 'metric', 'cutoff', 'lo', 'hi'])
     models = df.loc[:, ~df.columns.str.contains(cols_to_rm)].columns
     str_models = ','.join([f'{model}:double' for model in models])
