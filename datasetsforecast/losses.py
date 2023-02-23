@@ -462,10 +462,8 @@ def mqloss(y: np.ndarray, y_hat: np.ndarray,
     n_q = len(quantiles)
     
     y_rep  = np.expand_dims(y, axis=-1)
-    error  = y_hat - y_rep
-    sq     = np.maximum(-error, np.zeros_like(error))
-    s1_q   = np.maximum(error, np.zeros_like(error))
-    mqloss = (quantiles * sq + (1 - quantiles) * s1_q)
+    error  = y_rep - y_hat
+    mqloss = np.maximum(quantiles * error, (quantiles - 1) * error)
     
     # Match y/weights dimensions and compute weighted average
     weights = np.repeat(np.expand_dims(weights, axis=-1), repeats=n_q, axis=-1)
