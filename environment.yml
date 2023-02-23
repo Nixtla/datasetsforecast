@@ -13,3 +13,4 @@ dependencies:
   - xlrd>=1.0.0
   - pip:
     - nbdev
+    - fugue
