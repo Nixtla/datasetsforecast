@@ -498,7 +498,7 @@ def coverage(
         ----------
         [1] https://www.jstor.org/stable/2629907            
     """ 
-    return np.logical_and(y>=y_hat_lo, y<=y_hat_hi).mean()
+    return 100 * np.logical_and(y>=y_hat_lo, y<=y_hat_hi).mean()
 
 # %% ../nbs/losses.ipynb 39
 def calibration(
