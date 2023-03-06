@@ -4,7 +4,6 @@
 __all__ = ['accuracy']
 
 # %% ../nbs/evaluation.ipynb 2
-import pickle
 from functools import partial
 from inspect import signature
 from typing import Any, Callable, Dict, List, Optional, Union
@@ -240,12 +239,12 @@ def accuracy(
     result : pandas DataFrame
         Metrics with one column per model.
     """
-    if 'y' not in Y_hat_df.columns:
+    if target_col not in fa.get_column_names(Y_hat_df):
         raise Exception(
             'Please include the actual values in `Y_hat_df` '
             'or pass `Y_test_df`.'
         )
-    df = Y_hat_df if Y_test_df is None else Y_hat_df.merge(Y_test_df, how='left', on=[id_col, time_col])
+    df = Y_hat_df if Y_test_df is None else fa.join(Y_hat_df, Y_test_df, how='left_outer', on=[id_col, time_col])
     transform_fn = partial(_cotransform, df2=Y_df) if Y_df is not None else transform   
     if Y_df is None:
         fn = _evaluate_without_insample
