@@ -250,7 +250,7 @@ def accuracy(
         fn = _evaluate_without_insample
     else:
         fn = _evaluate
-    has_cutoff = 'cutoff' in Y_hat_df.columns
+    has_cutoff = 'cutoff' in fa.get_column_names(Y_hat_df)
     evaluation_df = transform_fn(
         df, 
         using=fn, 
