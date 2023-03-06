@@ -11,6 +11,7 @@ dependencies:
   - requests
   - tqdm
   - xlrd>=1.0.0
+  - fugue
   - pip:
     - nbdev
-    - fugue
+    - fugue[dask,ray]>=0.8.1
