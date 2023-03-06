@@ -239,7 +239,7 @@ def accuracy(
     result : pandas DataFrame
         Metrics with one column per model.
     """
-    if target_col not in fa.get_column_names(Y_hat_df):
+    if target_col not in fa.get_column_names(Y_hat_df) and Y_test_df is None:
         raise Exception(
             'Please include the actual values in `Y_hat_df` '
             'or pass `Y_test_df`.'
