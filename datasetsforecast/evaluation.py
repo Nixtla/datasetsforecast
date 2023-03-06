@@ -11,6 +11,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
+import fugue.api as fa
 from fugue import transform
 from fugue.collections.yielded import Yielded
 from fugue.constants import FUGUE_CONF_WORKFLOW_EXCEPTION_INJECT
@@ -140,27 +141,21 @@ def _evaluate_without_insample(
 
 # %% ../nbs/evaluation.ipynb 9
 def _schema_evaluate(
-        df: pd.DataFrame,
+        df: DataFrame,
         id_col: str = 'unique_id',
         time_col: str = 'ds',
         target_col: str = 'y',
     ) -> str: 
-    cols_to_rm = '|'.join([id_col, time_col, target_col, 'cutoff', 'lo', 'hi'])
-    has_cutoff = 'cutoff' in df.columns
-    models = df.loc[:, ~df.columns.str.contains(cols_to_rm)].columns
+    cols_to_rm = [id_col, time_col, target_col, 'cutoff', '-lo-', '-hi-']
+    cols = fa.get_column_names(df)
+    has_cutoff = 'cutoff' in cols
+    models = [col for col in cols if not any(col_rm in col for col_rm in cols_to_rm)]
     str_models = ','.join([f"{model}:double" for model in models])
-    dtypes = df.dtypes
-    id_col_type = dtypes.loc[id_col]
-    if id_col_type == 'category':
-        raise NotImplementedError(
-            'Use of `category` type to identify each time series is not yet implemented. '
-            f'Please transform your {id_col} to string to continue.'
-        )
-    id_col_type = 'string' if id_col_type == 'object' else id_col_type
+    schema = fa.get_schema(df)
+    id_col_type = str(schema.get(id_col).type)
     cutoff_col_type = ''
     if has_cutoff:
-        cutoff_col_type = f"{dtypes.loc['cutoff']}".replace('64[ns]', '')
-        cutoff_col_type = 'string' if cutoff_col_type == 'object' else cutoff_col_type
+        cutoff_col_type = str(schema.get('cutoff').type)
     schema = (
         f'{id_col}:{id_col_type},metric:string,'
         + (f'cutoff:{cutoff_col_type},' if has_cutoff else '')
@@ -173,8 +168,9 @@ def _agg_evaluation(
         df_eval: pd.DataFrame, 
         agg_fn: Any, 
         agg_by: Any,
+        id_col: str = 'unique_id',
     ) -> pd.DataFrame:
-    cols_to_rm = '|'.join(agg_by + ['unique_id', 'metric', 'cutoff', 'lo', 'hi'])
+    cols_to_rm = '|'.join(agg_by + [id_col, 'metric', 'cutoff', '-lo-', '-hi-'])
     models = df_eval.loc[:, ~df_eval.columns.str.contains(cols_to_rm)].columns
     return df_eval.groupby(agg_by)[models].apply(agg_fn, axis=0).reset_index()
 
@@ -182,19 +178,14 @@ def _agg_evaluation(
 def _schema_agg_evaluation(
         df: pd.DataFrame, 
         agg_by: Optional[List[str]] = None,
+        id_col: str = 'unique_id',
     ) -> str:
-    cols_to_rm = '|'.join(agg_by + ['unique_id', 'metric', 'cutoff', 'lo', 'hi'])
-    models = df.loc[:, ~df.columns.str.contains(cols_to_rm)].columns
+    cols_to_rm = [id_col, 'metric', 'cutoff', '-lo-', '-hi-']
+    cols = fa.get_column_names(df)
+    models = [col for col in cols if col not in cols_to_rm]    
     str_models = ','.join([f'{model}:double' for model in models])
-    dtypes = df.dtypes
-    agg_by_types = [dtypes.loc[col] for col in agg_by]
-    if 'category' in agg_by_types:
-        raise NotImplementedError(
-            'Use of `category` type is not yet implemented. '
-            f'Please transform your columns to string to continue.'
-        )
-    agg_by_types = ['string' if col == 'object' else col for col in agg_by_types]
-    agg_by_types = [col.replace('64[ns]', '') for col in agg_by_types]
+    schema = fa.get_schema(df)
+    agg_by_types = [str(schema.get(col).type) for col in agg_by]
     schema = [f'{col}:{type_}' for col, type_ in zip(agg_by, agg_by_types)]
     schema = ','.join(schema) + ',' + str_models
     return schema
@@ -288,8 +279,8 @@ def accuracy(
         evaluation_df,
         using=_agg_evaluation,
         engine=engine,
-        params=dict(agg_fn=agg_fn, agg_by=agg_by),
-        schema=_schema_agg_evaluation(evaluation_df, agg_by),
+        params=dict(agg_fn=agg_fn, agg_by=agg_by, id_col=id_col),
+        schema=_schema_agg_evaluation(evaluation_df, agg_by, id_col=id_col),
         partition=agg_by,
         **transform_kwargs,
     )
