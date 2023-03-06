@@ -55,3 +55,26 @@ jobs:
 
       - name: Run tests
         run: nbdev_test --n_workers 1 --do_print
+
+  test-distributed:
+     runs-on: ${{ matrix.os }}
+     strategy:
+       fail-fast: false
+       matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.7, 3.8, 3.9, '3.10']
+     steps:
+       - name: Clone repo
+         uses: actions/checkout@v2
+
+       - name: Set up environment
+         uses: mamba-org/provision-with-micromamba@main
+         with:
+           extra-specs: python=${{ matrix.python-version }}
+           cache-env: true
+
+       - name: Install library with ray and dask
+         run: pip install ".[dev]" pytest
+
+       - name: Run tests
+         run: pytest action_files
