@@ -66,9 +66,12 @@ def _evaluate(
         target_col: str = 'y',
         level: Optional[List] = None,
     ) -> pd.DataFrame:
-    cols_to_rm = '|'.join([id_col, time_col, target_col, 'cutoff', 'lo', 'hi'])
-    has_cutoff = 'cutoff' in df.columns
-    models = df.loc[:, ~df.columns.str.contains(cols_to_rm)].columns
+    cols_to_rm = [id_col, time_col, target_col, 'cutoff']
+    regex_to_rm = ['-lo-', '-hi-']
+    cols = fa.get_column_names(df)
+    has_cutoff = 'cutoff' in cols
+    models = [col for col in cols if not any(col_rm == col for col_rm in cols_to_rm)]
+    models = [col for col in models if not any(col_rm in col for col_rm in regex_to_rm)]
     y = df[target_col].values
     eval_ = {}
     for model in models:
@@ -145,10 +148,12 @@ def _schema_evaluate(
         time_col: str = 'ds',
         target_col: str = 'y',
     ) -> str: 
-    cols_to_rm = [id_col, time_col, target_col, 'cutoff', '-lo-', '-hi-']
+    cols_to_rm = [id_col, time_col, target_col, 'cutoff']
+    regex_to_rm = ['-lo-', '-hi-']
     cols = fa.get_column_names(df)
     has_cutoff = 'cutoff' in cols
-    models = [col for col in cols if not any(col_rm in col for col_rm in cols_to_rm)]
+    models = [col for col in cols if not any(col_rm == col for col_rm in cols_to_rm)]
+    models = [col for col in models if not any(col_rm in col for col_rm in regex_to_rm)]
     str_models = ','.join([f"{model}:double" for model in models])
     schema = fa.get_schema(df)
     id_col_type = str(schema.get(id_col).type)
