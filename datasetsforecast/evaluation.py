@@ -191,18 +191,16 @@ def _schema_agg_evaluation(
 
 # %% ../nbs/evaluation.ipynb 15
 def accuracy(
-        Y_hat_df: pd.DataFrame,
+        Y_hat_df: DataFrame,
         metrics: List[Callable],
-        Y_test_df: Optional[pd.DataFrame] = None,
-        Y_df: Optional[pd.DataFrame] = None,
+        Y_test_df: Optional[DataFrame] = None,
+        Y_df: Optional[DataFrame] = None,
         id_col: str = 'unique_id',
         time_col: str = 'ds',
         target_col: str = 'y',
         level: Optional[List] = None,
         agg_by: Optional[List[str]] = None,
         agg_fn: Callable = np.mean,
-        engine: Any = None,
-        **transform_kwargs: Any,
     ) -> pd.DataFrame:
     """Evaluate forecast using different metrics.
     
@@ -229,14 +227,10 @@ def accuracy(
         To get metrics per time series use [`id_col`].
     agg_fn: Callable, (default=np.mean)
         Function to aggregate metrics.
-    engine: Any
-        Engine to distributed computing.
-    transform_kwargs: Any
-        Extra arguments to pass to fugue's `transform`.
         
     Returns
     -------
-    result : pandas DataFrame
+    result : DataFrame
         Metrics with one column per model.
     """
     if target_col not in fa.get_column_names(Y_hat_df) and Y_test_df is None:
