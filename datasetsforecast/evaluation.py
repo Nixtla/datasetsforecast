@@ -27,7 +27,7 @@ def _cotransform(
     partition: Any = None,
     engine: Any = None,
     engine_conf: Any = None,
-    force_output_fugue_dataframe: bool = False,
+    as_fugue: bool = False,
     as_local: bool = False,
 ) -> Any:
     dag = FugueWorkflow(compile_conf={FUGUE_CONF_WORKFLOW_EXCEPTION_INJECT: 0})
@@ -41,7 +41,7 @@ def _cotransform(
     tdf.yield_dataframe_as("result", as_local=as_local)
     dag.run(engine, conf=engine_conf)
     result = dag.yields["result"].result  # type:ignore
-    if force_output_fugue_dataframe or isinstance(df1, (DataFrame, Yielded)):
+    if as_fugue or isinstance(df1, (DataFrame, Yielded)):
         return result
     return result.as_pandas() if result.is_local else result.native
 
@@ -251,36 +251,38 @@ def accuracy(
     else:
         fn = _evaluate
     has_cutoff = 'cutoff' in fa.get_column_names(Y_hat_df)
-    evaluation_df = transform_fn(
-        df, 
-        using=fn, 
-        engine=engine, 
-        params=dict(
-            metrics=metrics,
-            id_col=id_col,
-            time_col=time_col,
-            target_col=target_col,
-            level=level,
-        ), 
-        schema=_schema_evaluate(
+    with fa.engine_context(infer_by=[df]) as e:
+        evaluation_df = transform_fn(
             df, 
-            id_col=id_col, 
-            time_col=time_col, 
-            target_col=target_col,
-        ), 
-        partition=dict(by=id_col) if not has_cutoff else dict(by=[id_col, 'cutoff']),
-    )
+            using=fn, 
+            engine=e, 
+            params=dict(
+                metrics=metrics,
+                id_col=id_col,
+                time_col=time_col,
+                target_col=target_col,
+                level=level,
+            ), 
+            schema=_schema_evaluate(
+                df, 
+                id_col=id_col, 
+                time_col=time_col, 
+                target_col=target_col,
+            ), 
+            partition=dict(by=id_col) if not has_cutoff else dict(by=[id_col, 'cutoff']),
+            as_fugue=True,
+        )
     if agg_by is not None:
         agg_by = ['metric'] + agg_by
     else:
         agg_by = ['metric']
-    evaluation_df = transform(
-        evaluation_df,
-        using=_agg_evaluation,
-        engine=engine,
-        params=dict(agg_fn=agg_fn, agg_by=agg_by, id_col=id_col),
-        schema=_schema_agg_evaluation(evaluation_df, agg_by, id_col=id_col),
-        partition=agg_by,
-        **transform_kwargs,
-    )
-    return evaluation_df
+    with fa.engine_context(infer_by=[df]) as e:
+        evaluation_df = transform(
+            evaluation_df,
+            using=_agg_evaluation,
+            engine=e,
+            params=dict(agg_fn=agg_fn, agg_by=agg_by, id_col=id_col),
+            schema=_schema_agg_evaluation(evaluation_df, agg_by, id_col=id_col),
+            partition=agg_by,
+        )
+    return fa.get_native_as_df(evaluation_df)
