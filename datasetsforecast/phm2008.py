@@ -8,6 +8,7 @@ import os
 from dataclasses import dataclass
 from typing import Tuple
 
+import numpy as np
 import pandas as pd
 
 from .utils import extract_file, download_file, Info
@@ -84,7 +85,7 @@ class PHM2008:
             extract_file(f'{path}CMAPSSData.zip', path)
 
     @staticmethod
-    def load(directory: str, group: str, clip: bool=True) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def load(directory: str, group: str, clip_rul: bool=True) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
         Downloads and loads M3 data.
 
@@ -95,6 +96,8 @@ class PHM2008:
         group: str
             Group name.
             Allowed groups: 'FD001', 'FD002', 'FD003', 'FD004'.
+        clip_rul: bool
+            Wether or not upper bound the remaining useful life to 125.
 
         Returns
         -------
@@ -136,6 +139,7 @@ class PHM2008:
                         sep='\s+', header=None, names=col_names)
         y_test = pd.read_csv((f'{path}/{group.rul_file}'), 
                             sep='\s+', header=None, names=['RUL'])
+        
 
         # drop non-informative features in training set
         drop_sensors = ['s_1', 's_5', 's_6', 's_10', 's_16', 's_18', 's_19']
@@ -145,18 +149,33 @@ class PHM2008:
         # Add piece-wise target remaining useful life
         # in the paper the MAX RUL is mentioned as 125
         train = _add_remaining_useful_life(train)
-        if clip:
-            train['RUL'].clip(upper=125, inplace=True)
 
         # Training set
-        Y_train_df = train.rename(columns={'unit_nr': 'unique_id',
-                                           'time_cycles': 'ds', 'RUL': 'y'})
+        Y_train_df = train.rename(columns={'unit_nr': 'unique_id', 'time_cycles': 'ds',
+                                           'RUL': 'y'})
 
         # drop non-informative features in testing set
         test.drop(labels=drop_labels, axis=1, inplace=True)
 
         # Testing set
-        Y_test_df = test.rename(columns={'unit_nr': 'unique_id',
-                                         'time_cycles': 'ds', 'RUL': 'y'})
+        Y_test_df = test.rename(columns={'unit_nr': 'unique_id', 'time_cycles': 'ds'})
+        
+        # Only last RUL is available, complementing Y_test with linearly decreasing RUL
+        count_ds = Y_test_df[['unique_id', 'ds']].groupby('unique_id').count().reset_index()
+        ruls_list= []
+        for index, row in count_ds.iterrows():
+            ruls_list.append(np.arange(row.ds+y_test.RUL.values[index]-1, 
+                                    y_test.RUL.values[index]-1, -1))
+        ruls_list = np.concatenate(ruls_list)
+        Y_test_df['y'] = ruls_list
+
+        # Check that last RULs match
+        last_rul = Y_test_df[['unique_id', 'y']].groupby('unique_id').last().reset_index()
+        last_rul = last_rul['y'].values
+        assert np.array_equal(last_rul, y_test.RUL.values)
+
+        if clip_rul:
+            Y_train_df['y'].clip(upper=125, inplace=True)
+            Y_test_df['y'].clip(upper=125, inplace=True)
 
         return Y_train_df, Y_test_df
