@@ -486,7 +486,10 @@ class FavoritaData:
             item_store_df['is_original'] = item_store_df['is_original'].fillna(0)
 
             # Regional Static Variables
-            hier_df = store_info[['store_nbr', 'country', 'state', 'city']]
+            # Adding prefix to avoid categorical hash collishion
+            hier_df = store_info[['store_nbr', 'country', 'state', 'city']].copy()
+            hier_df['state'] = 'state_['+ hier_df['state'].astype(str) + ']'
+            hier_df['city'] = 'city_['+ hier_df['city'].astype(str) + ']'
             static_bottom = nested_one_hot_encoding(hier_df, index_col='store_nbr')
             Agg = static_bottom.values.T
             S = np.concatenate([Agg, np.eye(len(filter_stores), dtype=np.float32)], axis=0)
