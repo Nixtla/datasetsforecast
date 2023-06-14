@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['FavoritaRawData', 'FavoritaData']
 
-# %% ../nbs/favorita.ipynb 3
+# %% ../nbs/favorita.ipynb 4
 import os
 import gc
 import timeit
@@ -23,7 +23,7 @@ from sklearn.preprocessing import OneHotEncoder
 
 from .utils import download_file, extract_file, Info #, CodeTimer
 
-# %% ../nbs/favorita.ipynb 6
+# %% ../nbs/favorita.ipynb 7
 # TODO: @kdgutier `CodeTimer`/`numpy_balance` are shared with hierarchicalforecast.utils
 # In case of merging datasetsforecast/hierarchicalforeast we wil need to keep only one.
 class CodeTimer:
@@ -108,7 +108,7 @@ def numpy_bfill(arr):
     out = arr[np.arange(idx.shape[0])[:,None], idx]
     return out
 
-# %% ../nbs/favorita.ipynb 11
+# %% ../nbs/favorita.ipynb 12
 def one_hot_encoding(df, index_col):
     """ 
     Encodes dataFrame `df`'s categorical variables skipping `index_col`.
@@ -175,7 +175,7 @@ def get_levels_from_S_df(S_df):
     assert sum([len(lv) for lv in levels]) == S_df.shape[0]
     return levels
 
-# %% ../nbs/favorita.ipynb 15
+# %% ../nbs/favorita.ipynb 16
 # TODO: @kdgutier `make_holidays_distance_df` partially shared with neuralforecast.utils
 # In particular some Transformers use a holiday-based global positional encoding.
 # Same goes for HINT experiment that uses such general purpose holiday distances.
@@ -224,7 +224,7 @@ def make_holidays_distance_df(holidays_df, dates):
     holidays_distance_df = pd.DataFrame(distance_dict)
     return holidays_distance_df
 
-# %% ../nbs/favorita.ipynb 17
+# %% ../nbs/favorita.ipynb 18
 @dataclass
 class Favorita200:
     freq: str = 'D'
@@ -265,7 +265,7 @@ class FavoritaComplete:
 
 FavoritaInfo = Info((Favorita200, Favorita500, FavoritaComplete))
 
-# %% ../nbs/favorita.ipynb 19
+# %% ../nbs/favorita.ipynb 20
 class FavoritaRawData:
     """ Favorita Raw Data
 
@@ -454,7 +454,7 @@ class FavoritaRawData:
 
         return filter_items, filter_stores, filter_dates, raw_group_data
 
-# %% ../nbs/favorita.ipynb 25
+# %% ../nbs/favorita.ipynb 26
 class FavoritaData:
     """ Favorita Data
 
