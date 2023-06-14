@@ -6,6 +6,7 @@ dependencies:
   - jupyterlab
   - numba
   - numpy
+  - scikit-learn  
   - pandas
   - pip
   - requests
