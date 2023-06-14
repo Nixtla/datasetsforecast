@@ -4,7 +4,7 @@
 __all__ = ['HierarchicalInfo', 'Labour', 'TourismLarge', 'TourismSmall', 'Traffic', 'Wiki2', 'OldTraffic', 'OldTourismLarge',
            'HierarchicalData']
 
-# %% ../nbs/hierarchical.ipynb 2
+# %% ../nbs/hierarchical.ipynb 3
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Tuple
@@ -14,12 +14,12 @@ import pandas as pd
 
 from .utils import download_file, Info
 
-# %% ../nbs/hierarchical.ipynb 3
+# %% ../nbs/hierarchical.ipynb 4
 @dataclass
 class Labour:
     freq: str = 'MS'
     horizon: int = 8
-    horizon2: int = 12
+    papers_horizon: int = 12
     seasonality: int = 12
     test_size: int = 125
     tags_names: Tuple[str] = (
@@ -29,12 +29,12 @@ class Labour:
         'Country/Employment/Gender/Region',
     )
 
-# %% ../nbs/hierarchical.ipynb 4
+# %% ../nbs/hierarchical.ipynb 5
 @dataclass
 class TourismLarge:
     freq: str = 'MS'
     horizon: int = 12
-    horizon2: int = 12
+    papers_horizon: int = 12
     seasonality: int = 12
     test_size: int = 57
     tags_names: Tuple[str] = (
@@ -48,12 +48,12 @@ class TourismLarge:
         'Country/State/Zone/Region/Purpose',
     )
 
-# %% ../nbs/hierarchical.ipynb 5
+# %% ../nbs/hierarchical.ipynb 6
 @dataclass
 class TourismSmall:
     freq: str = 'Q'
     horizon: int = 4
-    horizon2: int = 4
+    papers_horizon: int = 4
     seasonality: int = 4
     test_size: int = 9
     tags_names: Tuple[str] = (
@@ -63,12 +63,12 @@ class TourismSmall:
         'Country/Purpose/State/CityNonCity',
     )
 
-# %% ../nbs/hierarchical.ipynb 6
+# %% ../nbs/hierarchical.ipynb 7
 @dataclass
 class Traffic:
     freq: str = 'D'
     horizon: int = 14
-    horizon2: int = 7
+    papers_horizon: int = 7
     seasonality: int = 7
     test_size: int = 91
     tags_names: Tuple[str] = (
@@ -78,12 +78,12 @@ class Traffic:
         'Level4',
     )
 
-# %% ../nbs/hierarchical.ipynb 7
+# %% ../nbs/hierarchical.ipynb 8
 @dataclass
 class Wiki2:
     freq: str = 'D'
     horizon: int = 14
-    horizon2: int = 7
+    papers_horizon: int = 7
     seasonality: int = 7
     test_size: int = 91
     tags_names: Tuple[str] = (
@@ -94,12 +94,12 @@ class Wiki2:
         'Views/Country/Access/Agent/Topic'
     )
 
-# %% ../nbs/hierarchical.ipynb 8
+# %% ../nbs/hierarchical.ipynb 9
 @dataclass
 class OldTraffic:
     freq: str = 'D'
     horizon: int = 1
-    horizon2: int = 1
+    papers_horizon: int = 1
     seasonality: int = 7
     test_size: int = 91
     tags_names: Tuple[str] = (
@@ -109,12 +109,12 @@ class OldTraffic:
         'Level4',
     )
 
-# %% ../nbs/hierarchical.ipynb 9
+# %% ../nbs/hierarchical.ipynb 10
 @dataclass
 class OldTourismLarge:
     freq: str = 'MS'
     horizon: int = 12
-    horizon2: int = 12
+    papers_horizon: int = 12
     seasonality: int = 12
     test_size: int = 57
     tags_names: Tuple[str] = (
@@ -128,7 +128,7 @@ class OldTourismLarge:
         'Country/State/Zone/Region/Purpose',
     )
 
-# %% ../nbs/hierarchical.ipynb 10
+# %% ../nbs/hierarchical.ipynb 11
 HierarchicalInfo = Info(
     (
         Labour, TourismLarge, 
@@ -138,7 +138,7 @@ HierarchicalInfo = Info(
     )
 )
 
-# %% ../nbs/hierarchical.ipynb 11
+# %% ../nbs/hierarchical.ipynb 12
 class HierarchicalData:
     
     source_url: str = 'https://nixtla-public.s3.amazonaws.com/hierarchical-data/datasets.zip'
