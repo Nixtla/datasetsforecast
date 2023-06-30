@@ -1,6 +1,7 @@
 website:
   sidebar:
     contents:
+      - favorita.ipynb
       - hierarchical.ipynb
       - long_horizon.ipynb
       - losses.ipynb

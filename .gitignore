@@ -130,3 +130,5 @@ dmypy.json
 */data/*
 _docs/
 sidebar.yml
+.DS_Store
+_proc/
