@@ -132,3 +132,6 @@ _docs/
 sidebar.yml
 .DS_Store
 _proc/
+
+.gitattributes
+.gitconfig
