@@ -28,8 +28,8 @@ class ETTh1:
     freq: str = 'H'
     name: str = 'ETTh1'
     n_ts: int = 7
-    test_size: int = 11_520
-    val_size: int = 11_520
+    test_size: int = 2880
+    val_size: int = 2880
     horizons: Tuple[int] = (96, 192, 336, 720)
         
 @dataclass
@@ -43,8 +43,8 @@ class ETTh2:
     freq: str = 'H'
     name: str = 'ETTh2'
     n_ts: int = 7
-    test_size: int = 11_520
-    val_size: int = 11_520
+    test_size: int = 2880
+    val_size: int = 2880
     horizons: Tuple[int] = (96, 192, 336, 720)
 
 @dataclass
