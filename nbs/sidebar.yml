@@ -4,6 +4,7 @@ website:
       - favorita.ipynb
       - hierarchical.ipynb
       - long_horizon.ipynb
+      - long_horizon2.ipynb
       - losses.ipynb
       - m3.ipynb
       - m4.ipynb
