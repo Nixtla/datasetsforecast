@@ -1,0 +1,168 @@
+---
+output-file: hierarchical.html
+title: Hierarchical Datasets
+
+---
+
+Here we host a collection of datasets used in previous hierarchical
+research by Rangapuram et al. \[2021\], Olivares et al. \[2023\], and
+Kamarthi et al. \[2022\]. The benchmark datasets utilized include
+Australian Monthly Labour
+([`Labour`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#labour)),
+SF Bay Area daily Traffic
+([`Traffic`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#traffic),
+[`OldTraffic`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#oldtraffic)),
+Quarterly Australian Tourism Visits
+([`TourismSmall`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#tourismsmall)),
+Monthly Australian Tourism visits
+([`TourismLarge`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#tourismlarge),
+[`OldTourismLarge`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#oldtourismlarge)),
+and daily Wikipedia article views
+([`Wiki2`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#wiki2)).
+Old datasets favor the original datasets with minimal target variable
+preprocessing (Rangapuram et al. \[2021\], Olivares et al. \[2023\]),
+while the remaining datasets follow PROFHIT experimental settings.
+
+## References<br/>
+
+-   [Syama Sundar Rangapuram, Lucien D Werner, Konstantinos Benidis,
+    Pedro Mercado, Jan Gasthaus, Tim Januschowski. (2021). “End-to-End
+    Learning of Coherent Probabilistic Forecasts for Hierarchical Time
+    Series”. Proceedings of the 38th International Conference on Machine
+    Learning
+    (ICML).](https://proceedings.mlr.press/v139/rangapuram21a.html)<br/>
+-   [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei
+    Cao, Lee Dicker (2022).”Probabilistic Hierarchical Forecasting with
+    Deep Poisson Mixtures”. International Journal Forecasting, special
+    issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)<br/>
+-   [Harshavardhan Kamarthi, Lingkai Kong, Alexander Rodriguez, Chao
+    Zhang, and B. Prakash. PROFHIT: Probabilistic robust forecasting for
+    hierarchical time-series. Computing Research Repository.URL
+    https://arxiv.org/abs/2206.07940.](https://arxiv.org/abs/2206.07940)<br/>
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/hierarchical.py#L19"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### Labour
+
+> ``` text
+>  Labour (freq:str='MS', horizon:int=8, papers_horizon:int=12,
+>          seasonality:int=12, test_size:int=125,
+>          tags_names:Tuple[str]=('Country', 'Country/Region',
+>          'Country/Gender/Region', 'Country/Employment/Gender/Region'))
+> ```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/hierarchical.py#L34"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### TourismLarge
+
+> ``` text
+>  TourismLarge (freq:str='MS', horizon:int=12, papers_horizon:int=12,
+>                seasonality:int=12, test_size:int=57,
+>                tags_names:Tuple[str]=('Country', 'Country/State',
+>                'Country/State/Zone', 'Country/State/Zone/Region',
+>                'Country/Purpose', 'Country/State/Purpose',
+>                'Country/State/Zone/Purpose',
+>                'Country/State/Zone/Region/Purpose'))
+> ```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/hierarchical.py#L53"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### TourismSmall
+
+> ``` text
+>  TourismSmall (freq:str='Q', horizon:int=4, papers_horizon:int=4,
+>                seasonality:int=4, test_size:int=9,
+>                tags_names:Tuple[str]=('Country', 'Country/Purpose',
+>                'Country/Purpose/State',
+>                'Country/Purpose/State/CityNonCity'))
+> ```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/hierarchical.py#L68"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### Traffic
+
+> ``` text
+>  Traffic (freq:str='D', horizon:int=14, papers_horizon:int=7,
+>           seasonality:int=7, test_size:int=91,
+>           tags_names:Tuple[str]=('Level1', 'Level2', 'Level3', 'Level4'))
+> ```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/hierarchical.py#L83"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### Wiki2
+
+> ``` text
+>  Wiki2 (freq:str='D', horizon:int=14, papers_horizon:int=7,
+>         seasonality:int=7, test_size:int=91,
+>         tags_names:Tuple[str]=('Views', 'Views/Country',
+>         'Views/Country/Access', 'Views/Country/Access/Agent',
+>         'Views/Country/Access/Agent/Topic'))
+> ```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/hierarchical.py#L99"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### OldTraffic
+
+> ``` text
+>  OldTraffic (freq:str='D', horizon:int=1, papers_horizon:int=1,
+>              seasonality:int=7, test_size:int=91,
+>              tags_names:Tuple[str]=('Level1', 'Level2', 'Level3',
+>              'Level4'))
+> ```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/hierarchical.py#L114"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### OldTourismLarge
+
+> ``` text
+>  OldTourismLarge (freq:str='MS', horizon:int=12, papers_horizon:int=12,
+>                   seasonality:int=12, test_size:int=57,
+>                   tags_names:Tuple[str]=('Country', 'Country/State',
+>                   'Country/State/Zone', 'Country/State/Zone/Region',
+>                   'Country/Purpose', 'Country/State/Purpose',
+>                   'Country/State/Zone/Purpose',
+>                   'Country/State/Zone/Region/Purpose'))
+> ```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/hierarchical.py#L142"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### HierarchicalData
+
+> ``` text
+>  HierarchicalData ()
+> ```
+
+Initialize self. See help(type(self)) for accurate signature.
+

@@ -1,0 +1,109 @@
+---
+output-file: utils.html
+title: Datasets Utils
+
+---
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/utils.py#L33"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### download_file
+
+> ``` text
+>  download_file (directory:str, source_url:str, decompress:bool=False)
+> ```
+
+Download data from source_ulr inside directory.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/utils.py#L21"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### extract_file
+
+> ``` text
+>  extract_file (filepath, directory)
+> ```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/utils.py#L90"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### async_download_files
+
+> ``` text
+>  async_download_files (path:Union[str,pathlib.Path], urls:Iterable[str])
+> ```
+
+```python
+import tempfile
+
+import requests
+```
+
+
+```python
+gh_url = 'https://api.github.com/repos/Nixtla/datasetsforecast/git/trees/main'
+base_url = 'https://raw.githubusercontent.com/Nixtla/datasetsforecast/main'
+
+resp = requests.get(gh_url)
+urls = []
+for e in resp.json()['tree']:
+    if e['type'] == 'blob':
+        urls.append(f'{base_url}/{e["path"]}')
+with tempfile.TemporaryDirectory() as tmp:
+    tmp = Path(tmp)
+    await async_download_files(tmp, urls)
+    files = list(tmp.iterdir())
+    assert len(files) == len(urls)
+```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/utils.py#L102"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### download_files
+
+> ``` text
+>  download_files (directory:Union[str,pathlib.Path], urls:Iterable[str])
+> ```
+
+```python
+with tempfile.TemporaryDirectory() as tmp:
+    tmp = Path(tmp)
+    fname = tmp / 'script.py'
+    fname.write_text(f"""
+from datasetsforecast.utils import download_files
+    
+download_files('{tmp.as_posix()}', {urls})
+    """)
+    !python {fname}
+    fname.unlink()
+    files = list(tmp.iterdir())
+    assert len(files) == len(urls)
+```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/utils.py#L113"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### Info
+
+> ``` text
+>  Info (class_groups:Tuple[dataclass])
+> ```
+
+Info Dataclass of datasets. Args: groups (Tuple): Tuple of str groups
+class_groups (Tuple): Tuple of dataclasses.
+

@@ -1,0 +1,220 @@
+---
+description: Download and wrangling utility for long-horizon datasets.
+output-file: long_horizon.html
+title: Long-Horizon Datasets
+
+---
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/long_horizon2.py#L68"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### ETTm2
+
+> ``` text
+>  ETTm2 (freq:str='15T', name:str='ETTm2', n_ts:int=7, test_size:int=11520,
+>         val_size:int=11520, horizons:Tuple[int]=(96, 192, 336, 720))
+> ```
+
+The ETTm2 dataset monitors an electricity transformer from a region of a
+province of China including oil temperature and variants of load (such
+as high useful load and high useless load) from July 2016 to July 2018
+at a fifteen minute frequency.
+
+Reference: Zhou, et al. Informer: Beyond Efficient Transformer for Long
+Sequence Time-Series Forecasting. AAAI 2021.
+https://arxiv.org/abs/2012.07436
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/long_horizon2.py#L52"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### ETTm1
+
+> ``` text
+>  ETTm1 (freq:str='15T', name:str='ETTm1', n_ts:int=7, test_size:int=11520,
+>         val_size:int=11520, horizons:Tuple[int]=(96, 192, 336, 720))
+> ```
+
+The ETTm1 dataset monitors an electricity transformer from a region of a
+province of China including oil temperature and variants of load (such
+as high useful load and high useless load) from July 2016 to July 2018
+at a fifteen minute frequency.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/long_horizon2.py#L36"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### ETTh2
+
+> ``` text
+>  ETTh2 (freq:str='H', name:str='ETTh2', n_ts:int=1, test_size:int=11520,
+>         val_size:int=11520, horizons:Tuple[int]=(96, 192, 336, 720))
+> ```
+
+The ETTh2 dataset monitors an electricity transformer from a region of a
+province of China including oil temperature and variants of load (such
+as high useful load and high useless load) from July 2016 to July 2018
+at an hourly frequency.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/long_horizon2.py#L20"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### ETTh1
+
+> ``` text
+>  ETTh1 (freq:str='H', name:str='ETTh1', n_ts:int=1, test_size:int=11520,
+>         val_size:int=11520, horizons:Tuple[int]=(96, 192, 336, 720))
+> ```
+
+The ETTh1 dataset monitors an electricity transformer from a region of a
+province of China including oil temperature and variants of load (such
+as high useful load and high useless load) from July 2016 to July 2018
+at an hourly frequency.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/long_horizon2.py#L89"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### ECL
+
+> ``` text
+>  ECL (freq:str='15T', name:str='ECL', n_ts:int=321, test_size:int=5260,
+>       val_size:int=2632, horizons:Tuple[int]=(96, 192, 336, 720))
+> ```
+
+The Electricity dataset reports the fifteen minute electricity
+consumption (KWh) of 321 customers from 2012 to 2014. For comparability,
+we aggregate it hourly.
+
+Reference: Li, S et al. Enhancing the locality and breaking the memory
+bottleneck of Transformer on time series forecasting. NeurIPS 2019.
+http://arxiv.org/abs/1907.00235.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/long_horizon.py#L104"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### Exchange
+
+> ``` text
+>  Exchange (freq:str='D', name:str='Exchange', n_ts:int=8,
+>            test_size:int=1517, val_size:int=760, horizons:Tuple[int]=(96,
+>            192, 336, 720))
+> ```
+
+The Exchange dataset is a collection of daily exchange rates of eight
+countries relative to the US dollar. The countries include Australia,
+UK, Canada, Switzerland, China, Japan, New Zealand and Singapore from
+1990 to 2016.
+
+Reference: Lai, G., Chang, W., Yang, Y., and Liu, H. Modeling Long and
+Short-Term Temporal Patterns with Deep Neural Networks. SIGIR 2018.
+http://arxiv.org/abs/1703.07015.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/long_horizon2.py#L109"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### TrafficL
+
+> ``` text
+>  TrafficL (freq:str='H', name:str='traffic', n_ts:int=862,
+>            test_size:int=3508, val_size:int=1756, horizons:Tuple[int]=(96,
+>            192, 336, 720))
+> ```
+
+This large Traffic dataset was collected by the California Department of
+Transportation, it reports road hourly occupancy rates of 862 sensors,
+from January 2015 to December 2016.
+
+Reference: Lai, G., Chang, W., Yang, Y., and Liu, H. Modeling Long and
+Short-Term Temporal Patterns with Deep Neural Networks. SIGIR 2018.
+http://arxiv.org/abs/1703.07015.
+
+Wu, H., Xu, J., Wang, J., and Long, M. Autoformer: Decomposition
+Transformers with auto-correlation for long-term series forecasting.
+NeurIPS 2021. https://arxiv.org/abs/2106.13008.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/long_horizon.py#L150"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### ILI
+
+> ``` text
+>  ILI (freq:str='W', name:str='ili', n_ts:int=7, test_size:int=193,
+>       val_size:int=97, horizons:Tuple[int]=(24, 36, 48, 60))
+> ```
+
+This dataset reports weekly recorded influenza-like illness (ILI)
+patients from Centers for Disease Control and Prevention of the United
+States from 2002 to 2021. It is measured as a ratio of ILI patients
+versus the total patients in the week.
+
+Reference: Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:
+Decomposition Transformers with auto-correlation for long-term series
+forecasting. NeurIPS 2021. https://arxiv.org/abs/2106.13008.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/long_horizon2.py#L134"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### Weather
+
+> ``` text
+>  Weather (freq:str='10M', name:str='weather', n_ts:int=21,
+>           test_size:int=10539, val_size:int=5270, horizons:Tuple[int]=(96,
+>           192, 336, 720))
+> ```
+
+This Weather dataset contains the 2020 year of 21 meteorological
+measurements recorded every 10 minutes from the Weather Station of the
+Max Planck Biogeochemistry Institute in Jena, Germany.
+
+Reference: Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:
+Decomposition Transformers with auto-correlation for long-term series
+forecasting. NeurIPS 2021. https://arxiv.org/abs/2106.13008.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/long_horizon.py#L200"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### LongHorizon
+
+> ``` text
+>  LongHorizon (source_url:str='https://nhits-
+>               experiments.s3.amazonaws.com/datasets.zip')
+> ```
+
+This Long-Horizon datasets wrapper class, provides with utility to
+download and wrangle the following datasets:  
+ETT, ECL, Exchange, Traffic, ILI and Weather.
+
+-   Each set is normalized with the train data mean and standard
+    deviation.
+-   Datasets are partitioned into train, validation and test splits.
+-   For all datasets: 70%, 10%, and 20% of observations are train,
+    validation, test, except ETT that uses 20% validation.
+

@@ -1,0 +1,40 @@
+---
+output-file: evaluation.html
+title: Datasets Evaluation
+
+---
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/Nixtla/datasetsforecast/tree/main/blob/main/datasetsforecast/evaluation.py#L198"
+target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
+
+### accuracy
+
+> ``` text
+>  accuracy (Y_hat_df:fugue.dataframe.dataframe.DataFrame,
+>            metrics:List[Callable],
+>            Y_test_df:Optional[fugue.dataframe.dataframe.DataFrame]=None,
+>            Y_df:Optional[fugue.dataframe.dataframe.DataFrame]=None,
+>            id_col:str='unique_id', time_col:str='ds', target_col:str='y',
+>            level:Optional[List]=None, agg_by:Optional[List[str]]=None,
+>            agg_fn:Callable=<function mean at 0x7f6d8996c130>)
+> ```
+
+Evaluate forecast using different metrics.
+
+|             | **Type**      | **Default** | **Details**                                                                                                          |
+|------|------------------|-------------------------|-------------------------|
+| Y_hat_df    | DataFrame     |             | Forecasts and models to evaluate.<br/>Can contain the actual values given by `target_col`.                            |
+| metrics     | List          |             | Functions with arguments `y`, `y_hat`, and optionally `y_train`.                                                     |
+| Y_test_df   | Optional      | None        | True values. <br/>Nedded if `Y_hat_df` does not have the true values.                                                 |
+| Y_df        | Optional      | None        | Training set. Used to evaluate metrics such as [`mase`](https://Nixtla.github.io/datasetsforecast/losses.html#mase). |
+| id_col      | str           | unique_id   | Column that identifies each serie. If ‘index’ then the index is used.                                                |
+| time_col    | str           | ds          | Column that identifies each timestep, its values can be timestamps or integers.                                      |
+| target_col  | str           | y           | Column that contains the target.                                                                                     |
+| level       | Optional      | None        |                                                                                                                      |
+| agg_by      | Optional      | None        |                                                                                                                      |
+| agg_fn      | Callable      | mean        |                                                                                                                      |
+| **Returns** | **DataFrame** |             | **Metrics with one column per model.**                                                                               |
+
