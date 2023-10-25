@@ -1,6 +1,7 @@
 website:
   sidebar:
     contents:
+      - evaluation.ipynb
       - favorita.ipynb
       - hierarchical.ipynb
       - long_horizon.ipynb
@@ -8,4 +9,6 @@ website:
       - losses.ipynb
       - m3.ipynb
       - m4.ipynb
+      - m5.ipynb
+      - phm2008.ipynb
       - utils.ipynb
