@@ -1,6 +1,7 @@
 website:
   sidebar:
     contents:
+      - index.ipynb
       - evaluation.ipynb
       - favorita.ipynb
       - hierarchical.ipynb

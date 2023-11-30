@@ -22,13 +22,15 @@
   "navigation": [
     {
       "group": "",
+      "pages": ["index.html"]
+    },
+    {
+      "group": "Datasets",
       "pages": [
-        "evaluation.html",
         "favorita.html",
         "hierarchical.html",
         "long_horizon.html",
         "long_horizon2.html",
-        "losses.html",
         "m3.html",
         "m4.html",
         "m5.html",
