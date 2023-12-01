@@ -16,3 +16,4 @@ dependencies:
   - pip:
     - nbdev
     - fugue[dask,ray]>=0.8.1
+    - utilsforecast>=0.0.8
