@@ -114,44 +114,37 @@ class M5:
             **{f'd_{i+1}': np.float32 for i in range(1969)}
         }
         # Reading train and test sets
-        sales_train = pd.read_csv(f'{path}/sales_train_evaluation.csv', 
-                                  dtype=sales_dtypes)
-        sales_test = pd.read_csv(f'{path}/sales_test_evaluation.csv', 
-                                 dtype=sales_dtypes)
+        sales_train = pd.read_csv(f'{path}/sales_train_evaluation.csv', dtype=sales_dtypes)
+        sales_test = pd.read_csv(f'{path}/sales_test_evaluation.csv', dtype=sales_dtypes)
         sales = sales_train.merge(sales_test, how='left', 
                                   on=['item_id', 'dept_id', 'cat_id', 'store_id', 'state_id'])
-        sales['id'] = sales[['item_id', 'store_id']].astype(str).agg('_'.join, axis=1).astype('category')
+        sales['id'] = sales['item_id'].astype(str) + '_' + sales['store_id'].astype(str)
+        sales['id'] = sales['id'].astype('category')
         # Long format
         long = sales.melt(id_vars=['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id'], 
                           var_name='d', value_name='y')
+        # remove leading zeros from series
+        long['date_idx'] = long['d'].str.replace('d_', '').astype('int32')
+        long = long.sort_values(['id', 'date_idx'])
+        without_leading_zeros = long['y'].gt(0).groupby(long['id']).transform('cummax')
+        long = long[without_leading_zeros]
+
+        # merges
         long['d'] = long['d'].astype(cal.d.dtype)
         long = long.merge(cal, on=['d'])
         long = long.merge(prices, on=['store_id', 'item_id', 'wm_yr_wk'])
         long = long.drop(columns=['d', 'wm_yr_wk'])
-        
-        def first_nz_mask(values, index):
-            """Return a boolean mask where the True starts at the first non-zero value."""
-            mask = np.full(values.size, True)
-            for idx, value in enumerate(values):
-                if value == 0:
-                    mask[idx] = False
-                else:
-                    break
-            return mask
-        
-        long = long.sort_values(['id', 'date'], ignore_index=True)
-        keep_mask = long.groupby('id')['y'].transform(first_nz_mask, engine='numba')
-        long = long[keep_mask.astype(bool)]
-        long.rename(columns={'id': 'unique_id', 'date': 'ds'}, inplace=True)
-        Y_df = long.filter(items=['unique_id', 'ds', 'y'])
+
+        long = long.rename(columns={'id': 'unique_id', 'date': 'ds'})
+        Y_df = long[['unique_id', 'ds', 'y']]
         cats = ['item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
-        S_df = long.filter(items=['unique_id'] + cats)
-        S_df = S_df.drop_duplicates(ignore_index=True)
-        X_df = long.drop(columns=['y'] + cats)
+        S_df = long[['unique_id'] + cats].groupby('unique_id', observed=True).head(1)
+        x_cols = long.columns.drop(['y'] + cats)
+        X_df = long[x_cols]
         
         if cache:
             pd.to_pickle((Y_df, X_df, S_df), file_cache)
-        
+
         return Y_df, X_df, S_df
 
 # %% ../nbs/m5.ipynb 13
