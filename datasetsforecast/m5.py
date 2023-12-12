@@ -123,15 +123,16 @@ class M5:
         # Long format
         long = sales.melt(id_vars=['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id'], 
                           var_name='d', value_name='y')
+        # paste dates
+        long['d'] = long['d'].astype(cal.d.dtype)
+        long = long.merge(cal, on=['d'])
+
         # remove leading zeros from series
-        long['date_idx'] = long['d'].str.replace('d_', '').astype('int32')
-        long = long.sort_values(['id', 'date_idx'])
+        long = long.sort_values(['id', 'date'])
         without_leading_zeros = long['y'].gt(0).groupby(long['id']).transform('cummax')
         long = long[without_leading_zeros]
 
-        # merges
-        long['d'] = long['d'].astype(cal.d.dtype)
-        long = long.merge(cal, on=['d'])
+        # prices
         long = long.merge(prices, on=['store_id', 'item_id', 'wm_yr_wk'])
         long = long.drop(columns=['d', 'wm_yr_wk'])
 
