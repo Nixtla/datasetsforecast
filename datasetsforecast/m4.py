@@ -10,9 +10,9 @@ from typing import Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
+from utilsforecast.losses import mase, smape
 
 from .utils import Info, async_download_files, download_file, extract_file
-from .losses import mase, smape
 
 # %% ../nbs/m4.ipynb 5
 @dataclass
@@ -302,28 +302,26 @@ class M4Evaluation:
         seasonality = class_group.seasonality
         path = f'{directory}/m4/datasets'
         y_df, *_ = M4.load(directory, group)
-        
-        y_train = y_df.groupby('unique_id')['y'] 
-        y_train = y_train.apply(lambda x: x.head(-horizon).values)
-        y_train = y_train.values
-        
-        y_test = y_df.groupby('unique_id')['y']
-        y_test = y_test.tail(horizon)
-        y_test = y_test.values.reshape(-1, horizon)    
 
         naive2 = M4Evaluation.load_benchmark(directory, group)
-        smape_y_hat = smape(y_test, y_hat)
-        smape_naive2 = smape(y_test, naive2)
+        y_test = y_df.groupby('unique_id').tail(horizon).copy()
+        y_train = y_df.drop(y_test.index)
+        y_test['y_hat'] = y_hat.ravel()
+        y_test['naive2'] = naive2.ravel()
+
+        models = ['y_hat', 'naive2']
+        mases = mase(
+            y_test, models=models, seasonality=seasonality, train_df=y_train
+        )
+        smapes = smape(y_test, models=models)
+        avg_mases = mases[models].mean()
+        avg_smapes = smapes[models].mean()
+        mases_ratio = avg_mases['y_hat'] / avg_mases['naive2']
+        smapes_ratio = avg_smapes['y_hat'] / avg_smapes['naive2']
+        owa = 0.5 * (mases_ratio + smapes_ratio)
         
-        mase_y_hat = np.mean([mase(y_test[i], y_hat[i], y_train[i], seasonality)
-                              for i in range(class_group.n_ts)])
-        mase_naive2 = np.mean([mase(y_test[i], naive2[i], y_train[i], seasonality)
-                               for i in range(class_group.n_ts)])
-        
-        owa = .5 * (mase_y_hat / mase_naive2 + smape_y_hat / smape_naive2)
-        
-        evaluation = pd.DataFrame({'SMAPE': smape_y_hat,
-                                   'MASE': mase_y_hat,
+        evaluation = pd.DataFrame({'SMAPE': 200 * avg_smapes['y_hat'],
+                                   'MASE': avg_mases['y_hat'],
                                    'OWA': owa},
                                    index=[group])
         
