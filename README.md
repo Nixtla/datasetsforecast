@@ -12,13 +12,14 @@ pip install datasetsforecast
 
 ## Datasets
 
-- [Favorita](favorita.ipynb)
-- [Hierarchical](hierarchical.ipynb)
-- [Long horizon](long_horizon.ipynb)
-- [M3](m3.ipynb)
-- [M4](m4.ipynb)
-- [M5](m5.ipynb)
-- [PHM2008](phm2008.ipynb)
+- [Favorita](https://nixtlaverse.nixtla.io/datasetsforecast/favorita.html)
+- [Hierarchical](https://nixtlaverse.nixtla.io/datasetsforecast/hierarchical.html)
+- [Long
+  horizon](https://nixtlaverse.nixtla.io/datasetsforecast/long_horizon.html)
+- [M3](https://nixtlaverse.nixtla.io/datasetsforecast/m3.html)
+- [M4](https://nixtlaverse.nixtla.io/datasetsforecast/m4.html)
+- [M5](https://nixtlaverse.nixtla.io/datasetsforecast/m5.html)
+- [PHM2008](https://nixtlaverse.nixtla.io/datasetsforecast/phm2008.html)
 
 ## How to use
 
