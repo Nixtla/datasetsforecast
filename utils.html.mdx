@@ -16,7 +16,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  download_file (directory:str, source_url:str, decompress:bool=False)
 > ```
 
-Download data from source_ulr inside directory.
+*Download data from source_ulr inside directory.*
 
 ------------------------------------------------------------------------
 
@@ -43,6 +43,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 > ```
 
 ```python
+import os
 import tempfile
 
 import requests
@@ -50,14 +51,17 @@ import requests
 
 
 ```python
-gh_url = 'https://api.github.com/repos/Nixtla/datasetsforecast/git/trees/main'
+gh_url = 'https://api.github.com/repos/Nixtla/datasetsforecast/contents/'
 base_url = 'https://raw.githubusercontent.com/Nixtla/datasetsforecast/main'
 
-resp = requests.get(gh_url)
-urls = []
-for e in resp.json()['tree']:
-    if e['type'] == 'blob':
-        urls.append(f'{base_url}/{e["path"]}')
+headers = {}
+gh_token = os.getenv('GITHUB_TOKEN')
+if gh_token is not None:
+    headers = {'Authorization': f'Bearer: {gh_token}'}
+resp = requests.get(gh_url, headers=headers)
+if resp.status_code != 200:
+    raise Exception(resp.text)
+urls = [f'{base_url}/{e["path"]}' for e in resp.json() if e['type'] == 'file']
 with tempfile.TemporaryDirectory() as tmp:
     tmp = Path(tmp)
     await async_download_files(tmp, urls)
@@ -104,6 +108,6 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  Info (class_groups:Tuple[dataclass])
 > ```
 
-Info Dataclass of datasets. Args: groups (Tuple): Tuple of str groups
-class_groups (Tuple): Tuple of dataclasses.
+*Info Dataclass of datasets. Args: groups (Tuple): Tuple of str groups
+class_groups (Tuple): Tuple of dataclasses.*
 

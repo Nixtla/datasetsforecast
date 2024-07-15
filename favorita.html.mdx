@@ -23,13 +23,13 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  numpy_balance (*arrs)
 > ```
 
-Fast NumPy implementation of ‘balance’ operation, useful to create a
+\*Fast NumPy implementation of ‘balance’ operation, useful to create a
 balanced panel dataset, ie a dataset with all the interactions of
 ‘unique_id’ and ‘ds’.
 
 **Parameters:**<br/> `arrs`: NumPy arrays.<br/>
 
-**Returns:**<br/> `out`: NumPy array.
+**Returns:**<br/> `out`: NumPy array.\*
 
 ------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  numpy_ffill (arr)
 > ```
 
-Fast NumPy implementation of `ffill` that fills missing values in an
+\*Fast NumPy implementation of `ffill` that fills missing values in an
 array by propagating the last non-missing value forward.
 
 For example, if the array has the following values:<br/> 0 1 2 3<br/> 1 2
@@ -54,7 +54,7 @@ The `ffill` method would fill the missing values as follows:<br/> 0 1 2
 
 **Parameters:**<br/> `arr`: NumPy array.<br/>
 
-**Returns:**<br/> `out`: NumPy array.
+**Returns:**<br/> `out`: NumPy array.\*
 
 ------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  numpy_bfill (arr)
 > ```
 
-Fast NumPy implementation of `bfill` that fills missing values in an
+\*Fast NumPy implementation of `bfill` that fills missing values in an
 array by propagating the last non-missing value backwards.
 
 For example, if the array has the following values:<br/> 0 1 2 3<br/> 1 2
@@ -79,7 +79,7 @@ The `bfill` method would fill the missing values as follows:<br/> 0 1 2
 
 **Parameters:**<br/> `arr`: NumPy array.<br/>
 
-**Returns:** `out`: NumPy array.
+**Returns:** `out`: NumPy array.\*
 
 ### Pandas Wrangling
 
@@ -95,13 +95,13 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  one_hot_encoding (df, index_col)
 > ```
 
-Encodes dataFrame `df`’s categorical variables skipping `index_col`.
+\*Encodes dataFrame `df`’s categorical variables skipping `index_col`.
 
 **Parameters:**<br/> `df`: pd.DataFrame with categorical columns.<br/>
 `index_col`: str, the index column to avoid encoding.<br/>
 
 **Returns:** `one_hot_concat_df`: pd.DataFrame with one hot encoded
-categorical columns.<br/>
+categorical columns.<br/>\*
 
 ------------------------------------------------------------------------
 
@@ -115,7 +115,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  nested_one_hot_encoding (df, index_col)
 > ```
 
-Encodes dataFrame `df`’s hierarchically-nested categorical variables
+\*Encodes dataFrame `df`’s hierarchically-nested categorical variables
 skipping `index_col`.
 
 Nested categorical variables (example geographic levels country\>state),
@@ -127,7 +127,7 @@ categorical columns.<br/> `index_col`: str, the index column to avoid
 encoding.<br/>
 
 **Returns:**<br/> `one_hot_concat_df`: pd.DataFrame with one hot encoded
-hierarchically-nested categorical columns.<br/>
+hierarchically-nested categorical columns.<br/>\*
 
 ------------------------------------------------------------------------
 
@@ -141,7 +141,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  get_levels_from_S_df (S_df)
 > ```
 
-Get hierarchical index levels implied by aggregation constraints
+\*Get hierarchical index levels implied by aggregation constraints
 dataframe `S_df`.
 
 Create levels from summation matrix (base, bottom). Goes through the
@@ -153,7 +153,7 @@ constraints to discover blocks/hierarchy levels.
 method](https://nixtla.github.io/hierarchicalforecast/utils.html#aggregate).<br/>
 
 **Returns:**<br/> `levels`: list, with hierarchical aggregation indexes,
-where each entry is a level.
+where each entry is a level.\*
 
 ## Favorita Dataset
 
@@ -171,7 +171,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  FavoritaRawData ()
 > ```
 
-Favorita Raw Data
+\*Favorita Raw Data
 
 Raw subset datasets from the Favorita 2018 Kaggle competition. This
 class contains utilities to download, load and filter portions of the
@@ -179,7 +179,7 @@ dataset.
 
 If you prefer, you can also download original dataset available from
 Kaggle directly.<br/> `pip install kaggle --upgrade`<br/>
-`kaggle competitions download -c favorita-grocery-sales-forecasting`
+`kaggle competitions download -c favorita-grocery-sales-forecasting`\*
 
 ------------------------------------------------------------------------
 
@@ -193,7 +193,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  FavoritaRawData._load_raw_group_data (directory, group, verbose=False)
 > ```
 
-Load raw group data.
+\*Load raw group data.
 
 Reads, filters and sorts Favorita subset dataset.
 
@@ -207,7 +207,7 @@ identifiers in the Favorita subset.<br/> `filter_stores`: ordered list
 with unique store identifiers in the Favorita subset.<br/>
 `filter_dates`: ordered list with dates in the Favorita subset.<br/>
 `raw_group_data`: dictionary with original raw Favorita pd.DataFrames,
-temporal, oil, items, store_info, holidays, transactions. <br/>
+temporal, oil, items, store_info, holidays, transactions. <br/>\*
 
 #### Favorita Raw Usage example
 
@@ -247,7 +247,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >  FavoritaData ()
 > ```
 
-Favorita Data
+\*Favorita Data
 
 The processed Favorita dataset of grocery contains item sales daily
 history with additional information on promotions, items, stores, and
@@ -258,7 +258,7 @@ wrangling matches that of the DPMN paper.
 -   [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei
     Cao, Lee Dicker (2022).”Probabilistic Hierarchical Forecasting with
     Deep Poisson Mixtures”. International Journal Forecasting, special
-    issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)
+    issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)\*
 
 ------------------------------------------------------------------------
 
@@ -273,7 +273,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >                                  cache:bool=True, verbose:bool=False)
 > ```
 
-Load Favorita group datasets.
+\*Load Favorita group datasets.
 
 For the exploration of more complex models, we make available the entire
 information including data at the bottom level of the items sold in
@@ -291,7 +291,7 @@ bottom level series.<br/> `static_agg`: pd.DataFrame, with static
 variables of aggregate level series.<br/> `temporal_bottom`:
 pd.DataFrame, with temporal variables of bottom level series.<br/>
 `temporal_agg`: pd.DataFrame, with temporal variables of aggregate level
-series.<br/>
+series.<br/>\*
 
 ------------------------------------------------------------------------
 
@@ -306,7 +306,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >                     verbose:bool=False)
 > ```
 
-Load Favorita forecasting benchmark dataset.
+\*Load Favorita forecasting benchmark dataset.
 
 In contrast with other hierarchical datasets, this dataset contains a
 geographic hierarchy for each individual grocery item series, identified
@@ -326,7 +326,7 @@ or not print partial outputs.<br/>
 
 **Returns:**<br/> `Y_df`: pd.DataFrame, target base time series with
 columns \[‘item_id’, ‘hier_id’, ‘ds’, ‘y’\].<br/> `S_df`: pd.DataFrame,
-hierarchical constraints dataframe of size (base, bottom).<br/>
+hierarchical constraints dataframe of size (base, bottom).<br/>\*
 
 ```python
 # #| hide
