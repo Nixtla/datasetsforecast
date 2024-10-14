@@ -59,11 +59,11 @@ jobs:
       - name: Run tests (windows)
         if: ${{ matrix.os == 'windows-latest' }} # prevent m5 errors
         run: >
-          uv run --python ${{ matrix.python-version }}
+          uv run --python ${{ matrix.python-version }} --extra dev
           -- nbdev_test --n_workers 0 --do_print --skip_file_glob "*m5*"
 
       - name: Run tests
         if: ${{ matrix.os != 'windows-latest' }} # prevent m5 errors
         run: >
-          uv run --python ${{ matrix.python-version }}
+          uv run --python ${{ matrix.python-version }} --extra dev
           -- nbdev_test --n_workers 0 --do_print
