@@ -33,4 +33,4 @@ jobs:
         run: pip install uv && uv pip install --system ".[dev]"
 
       - name: Run tests
-        run: nbdev_test --do_print --timings
+        run: nbdev_test --do_print --timing
