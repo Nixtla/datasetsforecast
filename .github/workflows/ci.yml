@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -32,10 +32,5 @@ jobs:
       - name: Install pip requirements
         run: pip install uv && uv pip install --system ".[dev]"
 
-      - name: Run tests (windows)
-        if: ${{ matrix.os == 'windows-latest' }} # prevent m5 errors
-        run: nbdev_test --n_workers 0 --do_print --skip_file_glob "*m5*"
-
       - name: Run tests
-        if: ${{ matrix.os != 'windows-latest' }} # prevent m5 errors
-        run: nbdev_test --n_workers 0 --do_print
+        run: nbdev_test --do_print --timings
