@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['FavoritaRawData', 'FavoritaData']
 
-# %% ../nbs/favorita.ipynb 4
+# %% ../nbs/favorita.ipynb 5
 import os
 import gc
 import timeit
@@ -23,7 +23,7 @@ from sklearn.preprocessing import OneHotEncoder
 
 from .utils import download_file, extract_file, Info #, CodeTimer
 
-# %% ../nbs/favorita.ipynb 7
+# %% ../nbs/favorita.ipynb 8
 # TODO: @kdgutier `CodeTimer`/`numpy_balance` are shared with hierarchicalforecast.utils
 # In case of merging datasetsforecast/hierarchicalforeast we wil need to keep only one.
 class CodeTimer:
@@ -108,7 +108,7 @@ def numpy_bfill(arr):
     out = arr[np.arange(idx.shape[0])[:,None], idx]
     return out
 
-# %% ../nbs/favorita.ipynb 12
+# %% ../nbs/favorita.ipynb 13
 def one_hot_encoding(df, index_col):
     """ 
     Encodes dataFrame `df`'s categorical variables skipping `index_col`.
@@ -175,7 +175,7 @@ def get_levels_from_S_df(S_df):
     assert sum([len(lv) for lv in levels]) == S_df.shape[0]
     return levels
 
-# %% ../nbs/favorita.ipynb 16
+# %% ../nbs/favorita.ipynb 17
 # TODO: @kdgutier `make_holidays_distance_df` partially shared with neuralforecast.utils
 # In particular some Transformers use a holiday-based global positional encoding.
 # Same goes for HINT experiment that uses such general purpose holiday distances.
@@ -224,7 +224,7 @@ def make_holidays_distance_df(holidays_df, dates):
     holidays_distance_df = pd.DataFrame(distance_dict)
     return holidays_distance_df
 
-# %% ../nbs/favorita.ipynb 18
+# %% ../nbs/favorita.ipynb 19
 @dataclass
 class Favorita200:
     freq: str = 'D'
@@ -265,7 +265,7 @@ class FavoritaComplete:
 
 FavoritaInfo = Info((Favorita200, Favorita500, FavoritaComplete))
 
-# %% ../nbs/favorita.ipynb 20
+# %% ../nbs/favorita.ipynb 21
 class FavoritaRawData:
     """ Favorita Raw Data
 
@@ -454,7 +454,7 @@ class FavoritaRawData:
 
         return filter_items, filter_stores, filter_dates, raw_group_data
 
-# %% ../nbs/favorita.ipynb 26
+# %% ../nbs/favorita.ipynb 27
 class FavoritaData:
     """ Favorita Data
 
@@ -463,7 +463,6 @@ class FavoritaData:
     January 2013 to August 2017, with a geographic hierarchy of states, cities, and stores. 
     This wrangling matches that of the DPMN paper.
 
-    - [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao, Lee Dicker (2022)."Probabilistic Hierarchical Forecasting with Deep Poisson Mixtures". International Journal Forecasting, special issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)
     """
     @staticmethod
     def _get_static_data(filter_items, filter_stores, items, store_info, temporal, verbose=False):
@@ -593,7 +592,21 @@ class FavoritaData:
                 balanced_df[col] = col_values.flatten()
                 balanced_df[col] = balanced_df[col].fillna(0)
             #check_nans(balanced_df)
-        
+
+            #-------------------- with CodeTimer('Promotions'): --------------------#
+            onpromotion = balanced_df['onpromotion'].values
+            onpromotion_lag = balanced_df[['unique_id', 'onpromotion']].groupby(['unique_id'])
+            onpromotion_lag = onpromotion_lag.shift(periods=1, fill_value=0).values.flatten()
+
+            onpromotion_start = 1 * ((onpromotion - onpromotion_lag)>0)
+            onpromotion_start = onpromotion_start.reshape(n_items * n_stores, n_dates)
+            onpromotion = onpromotion.reshape(n_items * n_stores, n_dates)
+
+            promotion_id = np.cumsum(onpromotion_start, axis=1) * onpromotion
+
+            balanced_df['onpromotion_start'] = onpromotion_start.flatten()
+            balanced_df['promotion_id'] = promotion_id.flatten().astype(np.int64)
+
         # Rename variables for StatsForecast/NeuralForecast compatibility
         balanced_df.rename(columns={"date": "ds", "unit_sales": "y"}, inplace=True)
 
@@ -901,3 +914,46 @@ class FavoritaData:
                 ds = ds, y = Y_hier.flatten()))
         
         return Y_df, S_df, tags
+    
+    @staticmethod
+    def load_promotions(directory: str, group: str, cache: bool=True, verbose: bool=False):
+        """
+        Load Favorita promotions benchmark dataset.
+
+        Normally time series forecasting assumes regularly sampled observations from same
+        generative processes. This dataset aims presents a more intricate problem, forecasting
+        sales at the promotion event. The unique feature of promotion forecasting is that 
+        promotions are irregular events of varying length; making standard forecasting approach 
+        not directly applicable and calling for the neural architecture innovations.
+
+        The dataset contains daily sales trajectories at the item-store level, and its promotions. 
+        The dataset is augmented with calendar variables (month, day of week, day of month), and
+        is accompanied with static features of the store location as well as the item characteristics.
+
+        **Parameters:**<br>
+        `directory`: str, directory where data will be downloaded and saved.<br>
+        `group`: str, dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'.<br>
+        `cache`: bool=False, If `True` saves and loads.<br>
+        `verbose`: bool=False, wether or not print partial outputs.<br>
+
+        **Returns:**<br>
+        `Y_df`: pd.DataFrame, augmented daily item-store sales and promotions.<br>
+        `static_df`: pd.DataFrame, store and item level static features.<br>
+        """
+        static_agg, static_bottom, temporal_agg, temporal_bottom, _ = \
+            FavoritaData.load_preprocessed(directory=directory, group=group,
+                                            cache=cache, verbose=verbose)
+
+        # Temporal Data
+        Y_df = temporal_bottom.copy()
+        Y_df['unique_promotion_id'] = Y_df['unique_id'].astype(str) + \
+                                      '_' + Y_df['promotion_id'].astype(str)
+
+        temporal_agg = temporal_agg[['item_nbr', 'ds', 'month', 'day_of_week', 'day_of_month']]
+        Y_df = Y_df.merge(temporal_agg, on=['item_nbr', 'ds'], how='left')
+
+        # Static Data
+        static_agg = static_agg.filter(regex=("family.*|item_nbr|perishable"))
+        static_df = static_bottom.merge(static_agg, on=['item_nbr'], how='left')
+
+        return Y_df, static_df    
