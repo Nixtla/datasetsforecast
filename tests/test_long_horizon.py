@@ -1,7 +1,10 @@
-from nbdev import *
-%load_ext autoreload
-%autoreload 2
-for group, meta in LongHorizonInfo:
+import pytest
+
+from datasetsforecast.long_horizon import LongHorizon, LongHorizonInfo
+
+
+@pytest.mark.parametrize("group,meta", LongHorizonInfo)
+def test_longhorizoninfo(group, meta):
     data, *_ = LongHorizon.load(directory='data', group=group)
     unique_elements = data.groupby(['unique_id', 'ds']).size()
     unique_ts = data.groupby('unique_id').size()
