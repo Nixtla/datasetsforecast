@@ -1,33 +1,10 @@
-#| eval: false
-import matplotlib.pyplot as plt
-from nbdev import *
-%load_ext autoreload
-%autoreload 2
-#| eval: false
-# Checking qualitatively that series are correctly normalized
-group = 'ETTh1'
-Y_df1 = LongHorizon2.load(directory='./data', group=group)
-Y_df2 = LongHorizon2.load(directory='./data', group=group, normalize=False)
+import pytest
 
-unique_id = 'OT'
+from datasetsforecast.long_horizon2 import LongHorizon2, LongHorizon2Info
 
-plot_df1 = Y_df1[Y_df1.unique_id==unique_id]
-plot_df2 = Y_df2[Y_df2.unique_id==unique_id]
 
-fig, ax1 = plt.subplots()
-
-ax2 = ax1.twinx()
-#ax1.plot(plot_df1.y[-2000:], 'b-')
-#ax1.plot((plot_df2.y[-2000:]-38)/10, 'g-')
-
-ax1.plot(plot_df1.y[-2000:], 'b-')
-ax2.plot(plot_df2.y[-2000:], 'g-')
-
-plt.show()
-# Unit testing for abscense of duplicate unique_id-ds
-# Unit testing for correct number of series
-# Unit testing for correct number of date stamps
-for group, meta in LongHorizon2Info:
+@pytest.mark.parametrize("group,meta", LongHorizon2Info)
+def test_longhorizon2(group, meta):
     Y_df = LongHorizon2.load(directory='data', group=group)
     unique_elements = Y_df.groupby(['unique_id', 'ds']).size()
     unique_ts = Y_df.groupby('unique_id').size()
