@@ -1,4 +1,10 @@
-for group, meta in M3Info:
+import pytest
+
+from datasetsforecast.m3 import M3, M3Info
+
+
+@pytest.mark.parametrize("group,meta", M3Info)
+def test_m3(group, meta):
     data, *_ = M3.load(directory='data', group=group)
     unique_elements = data.groupby(['unique_id', 'ds']).size()
     unique_ts = data.groupby('unique_id').size()
