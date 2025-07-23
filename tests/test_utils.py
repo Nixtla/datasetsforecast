@@ -27,7 +27,7 @@ def github_urls():
     return urls
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_async_download_files(github_urls):
     """Test async file downloading functionality."""
     with tempfile.TemporaryDirectory() as tmp:
