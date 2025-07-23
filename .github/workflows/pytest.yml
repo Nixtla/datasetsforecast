@@ -28,7 +28,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: pip install uv pytest && uv pip install --system ".[dev]" fugue[dask,spark]>=0.8.1 "dask<=2024.12.1"
+        run: pip install uv pytest && uv pip install --system ".[dev]"
 
       - name: Run pytest
         run: pytest tests -v -s
