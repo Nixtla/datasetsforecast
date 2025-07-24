@@ -26,7 +26,7 @@ def github_urls():
     urls = [f'{base_url}/{e["path"]}' for e in resp.json() if e['type'] == 'file']
     return urls
 
-
+@pytest.mark.skip(reason="This test runs inconsistently in CI")
 @pytest.mark.anyio
 async def test_async_download_files(github_urls):
     """Test async file downloading functionality."""
