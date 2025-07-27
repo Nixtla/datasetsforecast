@@ -6,7 +6,6 @@ from datasetsforecast.hierarchical import HierarchicalData, HierarchicalInfo
 
 @pytest.mark.parametrize("group,meta", HierarchicalInfo)
 def test_hierarchicalinfo(group, meta):  # noqa: ARG001
-    #if group not in ['OldTraffic', 'OldTourismLarge']:
     Y_df, S_df, tags = HierarchicalData.load('./data', group)
     assert all(S_df.loc[cats].values.sum() == S_df.shape[1] for _, cats in tags.items())
     assert len(S_df) == sum(len(v) for _, v in tags.items()), group
