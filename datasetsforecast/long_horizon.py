@@ -218,30 +218,22 @@ class LongHorizon:
                                           Optional[pd.DataFrame], 
                                           Optional[pd.DataFrame]]:
         """
-        
         Downloads and long-horizon forecasting benchmark datasets.
 
-            Parameters
-            ----------
-            directory: str
-                Directory where data will be downloaded.
-            group: str
-                Group name.
+        Args:
+            directory (str): Directory where data will be downloaded.
+            group (str): Group name.
                 Allowed groups: 'ETTh1', 'ETTh2', 
                                 'ETTm1', 'ETTm2',
                                 'ECL', 'Exchange',
                                 'Traffic', 'Weather', 'ILI'.
-            cache: bool
-                If `True` saves and loads 
+            cache (bool): If `True` saves and loads 
 
-            Returns
-            ------- 
-            y_df: pd.DataFrame
-                Target time series with columns ['unique_id', 'ds', 'y'].
-            X_df: pd.DataFrame
-                Exogenous time series with columns ['unique_id', 'ds', 'y']. 
-            S_df: pd.DataFrame
-                Static exogenous variables with columns ['unique_id', 'ds']. 
+        Returns:
+            Tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]: 
+                Target time series with columns ['unique_id', 'ds', 'y'],
+                Exogenous time series with columns ['unique_id', 'ds', 'y'], 
+                Static exogenous variables with columns ['unique_id', 'ds'] 
                 and static variables. 
         """
         if group not in LongHorizonInfo.groups:
@@ -277,10 +269,8 @@ class LongHorizon:
         """
         Download ETT Dataset.
         
-        Parameters
-        ----------
-        directory: str
-            Directory path to download dataset.
+        Args:
+            directory (str): Directory path to download dataset.
         """
         path = f'{directory}/longhorizon/datasets/'
         if not os.path.exists(path):

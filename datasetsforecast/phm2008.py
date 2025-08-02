@@ -73,10 +73,8 @@ class PHM2008:
         """
         Download PHM2008 Dataset.
         
-        Parameters
-        ----------
-        directory: str
-            Directory path to download dataset.
+        Args:
+            directory (str): Directory path to download dataset.
         """
         path = f'{directory}/phm2008/'
         if not os.path.exists(path):
@@ -89,20 +87,14 @@ class PHM2008:
         """
         Downloads and loads M3 data.
 
-        Parameters
-        ----------
-        directory: str
-            Directory where data will be downloaded.
-        group: str
-            Group name.
-            Allowed groups: 'FD001', 'FD002', 'FD003', 'FD004'.
-        clip_rul: bool
-            Wether or not upper bound the remaining useful life to 125.
+        Args:
+            directory (str): Directory where data will be downloaded.
+            group (str): Group name.
+                Allowed groups: 'FD001', 'FD002', 'FD003', 'FD004'.
+            clip_rul (bool): Wether or not upper bound the remaining useful life to 125.
 
-        Returns
-        -------
-        df: pd.DataFrame
-            Target time series with columns ['unique_id', 'ds', 'y', 'exogenous'].
+        Returns:
+            Tuple[pd.DataFrame, pd.DataFrame]: Target time series with columns ['unique_id', 'ds', 'y', 'exogenous'].
         """
         def _add_remaining_useful_life(df):
             # Get the total number of cycles for each unit

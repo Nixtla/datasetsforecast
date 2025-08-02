@@ -27,10 +27,8 @@ class M5:
         """
         Downloads M5 Competition Dataset.
         
-        Parameters
-        ----------
-        directory: str
-            Directory path to download dataset.
+        Args:
+            directory (str): Directory path to download dataset.
         """
         path = f'{directory}/m5/datasets'
         if not os.path.exists(path):
@@ -44,22 +42,16 @@ class M5:
                                                           pd.DataFrame]:
         """Downloads and loads M5 data.
 
-        Parameters
-        ----------
-        directory: str
-            Directory where data will be downloaded.
-        cache: bool
-            If `True` saves and loads.
+        Args:
+            directory (str): Directory where data will be downloaded.
+            cache (bool): If `True` saves and loads.
             
-        Returns
-        -------
-        Y_df: pd.DataFrame
-            Target time series with columns ['unique_id', 'ds', 'y'].
-        X_df: pd.DataFrame
-            Exogenous time series with columns ['unique_id', 'ds', 'y'].
-        S_df: pd.DataFrame
-            Static exogenous variables with columns ['unique_id', 'ds']. 
-            and static variables. 
+        Returns:
+            Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]: 
+                Target time series with columns ['unique_id', 'ds', 'y'],
+                Exogenous time series with columns ['unique_id', 'ds', 'y'],
+                Static exogenous variables with columns ['unique_id', 'ds'] 
+                and static variables. 
         """
         path = f'{directory}/m5/datasets'
         file_cache = f'{path}/m5.p'
@@ -172,22 +164,16 @@ class M5Evaluation:
                        validation: bool = False) -> np.ndarray:
         """Downloads and loads a bechmark forecasts.
         
-        Parameters
-        ----------
-        directory: str
-            Directory where data will be downloaded.
-        source_url: str, optional
-            Optional benchmark url obtained from 
-            https://github.com/Nixtla/m5-forecasts/tree/master/forecasts.
-            If `None` returns the M5 winner. 
-        validation: bool
-            Wheter return validation forecasts.
-            Default False, return test forecasts.
+        Args:
+            directory (str): Directory where data will be downloaded.
+            source_url (str, optional): Optional benchmark url obtained from 
+                https://github.com/Nixtla/m5-forecasts/tree/master/forecasts.
+                If `None` returns the M5 winner. 
+            validation (bool): Wheter return validation forecasts.
+                Default False, return test forecasts.
         
-        Returns
-        -------
-        benchmark: numpy array
-            Numpy array of shape (n_series, horizon).
+        Returns:
+            np.ndarray: Numpy array of shape (n_series, horizon).
         """
         path = f'{directory}/m5/datasets'
         if source_url is not None:
@@ -223,17 +209,13 @@ class M5Evaluation:
         """
         Aggregates the 30_480 series to get 42_840.
         
-        Parameters
-        ----------
-        y_hat: pd.DataFrame
-            Forecasts as wide pandas dataframe with columns ['unique_id'].
-        categories: pd.DataFrame
-            Categories of M5 dataset (not used).
+        Args:
+            y_hat (pd.DataFrame): Forecasts as wide pandas dataframe with columns ['unique_id'].
+            categories (pd.DataFrame, optional): Categories of M5 dataset (not used).
+                Defaults to None.
 
-        Returns
-        -------
-        df_agg: pd.DataFrame
-            Aggregated forecasts as wide pandas dataframe with columns ['unique_id'].
+        Returns:
+            pd.DataFrame: Aggregated forecasts as wide pandas dataframe with columns ['unique_id'].
         """
         y_hat_cat = y_hat.assign(total='Total')
 
@@ -257,24 +239,18 @@ class M5Evaluation:
                  validation: bool = False) -> pd.DataFrame:
         """Evaluates y_hat according to M4 methodology.
         
-        Parameters
-        ----------
-        directory: str
-            Directory where data will be downloaded.
-        validation: bool
-            Wheter perform validation evaluation.
-            Default False, return test evaluation.
-        y_hat: pandas datafrae, str
-            Forecasts as wide pandas dataframe with columns
-            ['unique_id'] and forecasts or
-            benchmark url from
-            https://github.com/Nixtla/m5-forecasts/tree/main/forecasts.
+        Args:
+            directory (str): Directory where data will be downloaded.
+            validation (bool): Wheter perform validation evaluation.
+                Default False, return test evaluation.
+            y_hat (Union[pd.DataFrame, str]): Forecasts as wide pandas dataframe with columns
+                ['unique_id'] and forecasts or
+                benchmark url from
+                https://github.com/Nixtla/m5-forecasts/tree/main/forecasts.
             
-        Returns
-        -------
-        evaluation: pandas dataframe
-            DataFrame with columns OWA, SMAPE, MASE
-            and group as index.
+        Returns:
+            pd.DataFrame: DataFrame with columns OWA, SMAPE, MASE
+                and group as index.
         """
         if isinstance(y_hat, str):
             y_hat = M5Evaluation.load_benchmark(directory, y_hat, validation)

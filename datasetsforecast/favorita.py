@@ -4,15 +4,15 @@
 __all__ = ['FavoritaRawData', 'FavoritaData']
 
 # %% ../nbs/favorita.ipynb 4
-import os
 import gc
+import os
 import timeit
-from typing import Tuple
 from dataclasses import dataclass
-
-from pathlib import Path
 from itertools import chain
+from pathlib import Path
+from typing import Tuple
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -41,16 +41,16 @@ class CodeTimer:
                   ' took:\t{0:.5f}'.format(self.took) + ' seconds')
 
 def numpy_balance(*arrs):
-    """
-    Fast NumPy implementation of 'balance' operation, useful to
-    create a balanced panel dataset, ie a dataset with all the 
+    """Fast NumPy implementation of 'balance' operation.
+    
+    Useful to create a balanced panel dataset, ie a dataset with all the 
     interactions of 'unique_id' and 'ds'.
 
-    **Parameters:**<br>
-    `arrs`: NumPy arrays.<br>
+    Args:
+        *arrs: NumPy arrays.
 
-    **Returns:**<br>
-    `out`: NumPy array.
+    Returns:
+        np.ndarray: NumPy array with balanced combinations.
     """
     N = len(arrs)
     out =  np.transpose(np.meshgrid(*arrs, indexing='ij'),
@@ -58,23 +58,23 @@ def numpy_balance(*arrs):
     return out
 
 def numpy_ffill(arr):
-    """
-    Fast NumPy implementation of `ffill` that fills missing values
-    in an array by propagating the last non-missing value forward.
+    """Fast NumPy implementation of `ffill` that fills missing values.
+    
+    Fills missing values in an array by propagating the last non-missing value forward.
 
-    For example, if the array has the following values:<br>
-    0  1  2    3<br>
-    1  2  NaN  4<br>
+    For example, if the array has the following values:
+    0  1  2    3
+    1  2  NaN  4
 
-    The `ffill` method would fill the missing values as follows:<br>
-    0  1  2  3<br>
-    1  2  2  4<br>
+    The `ffill` method would fill the missing values as follows:
+    0  1  2  3
+    1  2  2  4
 
-    **Parameters:**<br>
-    `arr`: NumPy array.<br>
+    Args:
+        arr (np.ndarray): NumPy array.
 
-    **Returns:**<br>
-    `out`: NumPy array.
+    Returns:
+        np.ndarray: NumPy array with forward-filled values.
     """
     # (n_series, n_dates) = arr.shape
     mask = np.isnan(arr)
@@ -84,23 +84,23 @@ def numpy_ffill(arr):
     return out
 
 def numpy_bfill(arr):
-    """
-    Fast NumPy implementation of `bfill` that fills missing values
-    in an array by propagating the last non-missing value backwards.
-
-    For example, if the array has the following values:<br>
-    0  1  2    3<br>
-    1  2  NaN  4<br>
-
-    The `bfill` method would fill the missing values as follows:<br>
-    0  1  2  3<br>
-    1  2  4  4<br>
+    """Fast NumPy implementation of `bfill` that fills missing values.
     
-    **Parameters:**<br>
-    `arr`: NumPy array.<br>
+    Fills missing values in an array by propagating the last non-missing value backwards.
 
-    **Returns:**
-    `out`: NumPy array.
+    For example, if the array has the following values:
+    0  1  2    3
+    1  2  NaN  4
+
+    The `bfill` method would fill the missing values as follows:
+    0  1  2  3
+    1  2  4  4
+    
+    Args:
+        arr (np.ndarray): NumPy array.
+
+    Returns:
+        np.ndarray: NumPy array with backward-filled values.
     """
     mask = np.isnan(arr)
     idx = np.where(~mask, np.arange(mask.shape[1]), mask.shape[1] - 1)
@@ -110,15 +110,14 @@ def numpy_bfill(arr):
 
 # %% ../nbs/favorita.ipynb 12
 def one_hot_encoding(df, index_col):
-    """ 
-    Encodes dataFrame `df`'s categorical variables skipping `index_col`.
+    """Encodes dataFrame's categorical variables skipping index column.
 
-    **Parameters:**<br>
-    `df`: pd.DataFrame with categorical columns.<br>
-    `index_col`: str, the index column to avoid encoding.<br>
+    Args:
+        df (pd.DataFrame): DataFrame with categorical columns.
+        index_col (str): The index column to avoid encoding.
 
-    **Returns:**
-    `one_hot_concat_df`: pd.DataFrame with one hot encoded categorical columns.<br>
+    Returns:
+        pd.DataFrame: DataFrame with one hot encoded categorical columns.
     """
     encoder = OneHotEncoder()
     columns = list(df.columns)
@@ -132,19 +131,18 @@ def one_hot_encoding(df, index_col):
     return one_hot_concat_df
 
 def nested_one_hot_encoding(df, index_col):
-    """ 
-    Encodes dataFrame `df`'s hierarchically-nested categorical variables skipping `index_col`.
+    """Encodes dataFrame's hierarchically-nested categorical variables.
+    
+    Skips the index column. Nested categorical variables (example geographic levels 
+    country>state), require the dummy features to preserve encoding order, to reflect 
+    the hierarchy of the categorical variables.
 
-    Nested categorical variables (example geographic levels country>state),
-    require the dummy features to preserve encoding order, to reflect the hierarchy
-    of the categorical variables.
+    Args:
+        df (pd.DataFrame): DataFrame with hierarchically-nested categorical columns.
+        index_col (str): The index column to avoid encoding.
 
-    **Parameters:**<br>
-    `df`: pd.DataFrame with hierarchically-nested categorical columns.<br>
-    `index_col`: str, the index column to avoid encoding.<br>
-
-    **Returns:**<br>
-    `one_hot_concat_df`: pd.DataFrame with one hot encoded hierarchically-nested categorical columns.<br>
+    Returns:
+        pd.DataFrame: DataFrame with one hot encoded hierarchically-nested categorical columns.
     """
     bottom_ids = list(df[index_col])
     del df[index_col]
@@ -157,17 +155,17 @@ def nested_one_hot_encoding(df, index_col):
     return one_hot_concat_df
 
 def get_levels_from_S_df(S_df):
-    """ Get hierarchical index levels implied by aggregation constraints dataframe `S_df`.
+    """Get hierarchical index levels implied by aggregation constraints dataframe.
 
     Create levels from summation matrix (base, bottom).
     Goes through the rows until all the bottom level series are 'covered'
     by the aggregation constraints to discover blocks/hierarchy levels.
 
-    **Parameters:**<br>
-    `S_df`: pd.DataFrame with summing matrix of size `(base, bottom)`, see [aggregate method](https://nixtla.github.io/hierarchicalforecast/utils.html#aggregate).<br>
+    Args:
+        S_df (pd.DataFrame): Summing matrix of size (base, bottom), see aggregate method.
 
-    **Returns:**<br>
-    `levels`: list, with hierarchical aggregation indexes, where each entry is a level.
+    Returns:
+        list: Hierarchical aggregation indexes, where each entry is a level.
     """
     cut_idxs, = np.where(S_df.sum(axis=1).cumsum() % S_df.shape[1] == 0.)
     levels = [S_df.iloc[(cut_idxs[i] + 1):(cut_idxs[i+1] + 1)].index.values for i in range(cut_idxs.size-1)]
@@ -267,14 +265,17 @@ FavoritaInfo = Info((Favorita200, Favorita500, FavoritaComplete))
 
 # %% ../nbs/favorita.ipynb 20
 class FavoritaRawData:
-    """ Favorita Raw Data
+    """Favorita Raw Data.
 
     Raw subset datasets from the Favorita 2018 Kaggle competition.
     This class contains utilities to download, load and filter portions of the dataset.
 
-    If you prefer, you can also download original dataset available from Kaggle directly.<br>
-    `pip install kaggle --upgrade`<br>
-    `kaggle competitions download -c favorita-grocery-sales-forecasting`
+    If you prefer, you can also download original dataset available from Kaggle directly:
+    
+    ```
+    pip install kaggle --upgrade
+    kaggle competitions download -c favorita-grocery-sales-forecasting
+    ```
     """
     source_url = 'https://www.dropbox.com/s/xi019gtvdtmsj9j/favorita-grocery-sales-forecasting2.zip?dl=1'
     files = ['holidays_events.csv.zip', 'items.csv.zip', 'oil.csv.zip', 'sample_submission.csv.zip',
@@ -291,9 +292,13 @@ class FavoritaRawData:
     @staticmethod
     def download(directory: str) -> None:
         """Downloads Favorita Competition Dataset.
+        
         The dataset weights 980MB, its download is not currently robust to
         brief interruptions of the process. It is recommended execute with
         good connection.
+        
+        Args:
+            directory (str): Directory where data will be downloaded.
         """
         if not os.path.exists(directory):
             download_file(directory, FavoritaRawData.source_url, decompress=True)
@@ -347,21 +352,22 @@ class FavoritaRawData:
 
     @staticmethod
     def _load_raw_group_data(directory, group, verbose=False):
-        """ Load raw group data.
+        """Load raw group data.
 
         Reads, filters and sorts Favorita subset dataset.
 
-        **Parameters:**<br>
-        `directory`: str, Directory where data will be downloaded.<br>
-        `group`: str, dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'.<br>
-        `verbose`: bool=False, wether or not print partial outputs.<br>
+        Args:
+            directory (str): Directory where data will be downloaded.
+            group (str): Dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'.
+            verbose (bool, optional): Whether or not print partial outputs. Defaults to False.
 
-        **Returns:**<br>
-        `filter_items`: ordered list with unique items identifiers in the Favorita subset.<br>
-        `filter_stores`: ordered list with unique store identifiers in the Favorita subset.<br>
-        `filter_dates`: ordered list with dates in the Favorita subset.<br>
-        `raw_group_data`: dictionary with original raw Favorita pd.DataFrames, 
-        temporal, oil, items, store_info, holidays, transactions. <br>
+        Returns:
+            tuple: A tuple containing:
+                - filter_items (list): Ordered list with unique items identifiers in the Favorita subset.
+                - filter_stores (list): Ordered list with unique store identifiers in the Favorita subset.
+                - filter_dates (list): Ordered list with dates in the Favorita subset.
+                - raw_group_data (dict): Dictionary with original raw Favorita DataFrames:
+                  temporal, oil, items, store_info, holidays, transactions.
         """
         if group not in FavoritaInfo.groups:
             raise Exception(f'group not found {group}, select from Favorita200, Favorita500, FavoritaComplete')
@@ -456,14 +462,18 @@ class FavoritaRawData:
 
 # %% ../nbs/favorita.ipynb 26
 class FavoritaData:
-    """ Favorita Data
+    """Favorita Data.
 
     The processed Favorita dataset of grocery contains item sales daily history with additional
     information on promotions, items, stores, and holidays, containing 371,312 series from 
     January 2013 to August 2017, with a geographic hierarchy of states, cities, and stores. 
     This wrangling matches that of the DPMN paper.
 
-    - [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao, Lee Dicker (2022)."Probabilistic Hierarchical Forecasting with Deep Poisson Mixtures". International Journal Forecasting, special issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)
+    References:
+        Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao, Lee Dicker (2022).
+        "Probabilistic Hierarchical Forecasting with Deep Poisson Mixtures". 
+        International Journal Forecasting, special issue.
+        https://doi.org/10.1016/j.ijforecast.2023.04.007
     """
     @staticmethod
     def _get_static_data(filter_items, filter_stores, items, store_info, temporal, verbose=False):
@@ -780,23 +790,24 @@ class FavoritaData:
     @staticmethod
     def load_preprocessed(directory: str, group: str, cache: bool=True, verbose: bool=False) -> \
         Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        """ Load Favorita group datasets.
+        """Load Favorita group datasets.
 
         For the exploration of more complex models, we make available the entire information
         including data at the bottom level of the items sold in Favorita stores, in addition
         to the aggregate/national level information for the items.
 
-        **Parameters:**<br>
-        `directory`: str, directory where data will be downloaded and saved.<br>
-        `group`: str, dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'.<br>
-        `cache`: bool=False, If `True` saves and loads.<br>
-        `verbose`: bool=False, wether or not print partial outputs.<br>
+        Args:
+            directory (str): Directory where data will be downloaded and saved.
+            group (str): Dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'.
+            cache (bool, optional): If True saves and loads. Defaults to True.
+            verbose (bool, optional): Whether or not print partial outputs. Defaults to False.
 
-        **Returns:**<br>
-        `static_bottom`: pd.DataFrame, with static variables of bottom level series.<br>
-        `static_agg`: pd.DataFrame, with static variables of aggregate level series.<br>
-        `temporal_bottom`: pd.DataFrame, with temporal variables of bottom level series.<br>
-        `temporal_agg`: pd.DataFrame, with temporal variables of aggregate level series.<br>
+        Returns:
+            tuple: A tuple containing:
+                - static_bottom (pd.DataFrame): Static variables of bottom level series.
+                - static_agg (pd.DataFrame): Static variables of aggregate level series.
+                - temporal_bottom (pd.DataFrame): Temporal variables of bottom level series.
+                - temporal_agg (pd.DataFrame): Temporal variables of aggregate level series.
         """
         group_path = f'{directory}/{group}'
 
@@ -853,25 +864,26 @@ class FavoritaData:
     
     @staticmethod
     def load(directory: str, group: str, cache: bool=True, verbose: bool=False):
-        """
-        Load Favorita forecasting benchmark dataset.
+        """Load Favorita forecasting benchmark dataset.
 
         In contrast with other hierarchical datasets, this dataset contains a geographic
         hierarchy for each individual grocery item series, identified with 'item_id' column.
         The geographic hierarchy is captured by the 'hier_id' column.
 
-        For this reason minor wrangling is needed to adapt it for use with [`HierarchicalForecast`](https://github.com/Nixtla/hierarchicalforecast),
-        and [`StatsForecast`](https://github.com/Nixtla/statsforecast) libraries.
+        For this reason minor wrangling is needed to adapt it for use with HierarchicalForecast,
+        and StatsForecast libraries.
 
-        **Parameters:**<br>
-        `directory`: str, directory where data will be downloaded and saved.<br>
-        `group`: str, dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'.<br>
-        `cache`: bool=False, If `True` saves and loads.<br>
-        `verbose`: bool=False, wether or not print partial outputs.<br>
+        Args:
+            directory (str): Directory where data will be downloaded and saved.
+            group (str): Dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'.
+            cache (bool, optional): If True saves and loads. Defaults to True.
+            verbose (bool, optional): Whether or not print partial outputs. Defaults to False.
 
-        **Returns:**<br>
-        `Y_df`: pd.DataFrame, target base time series with columns ['item_id', 'hier_id', 'ds', 'y'].<br>
-        `S_df`: pd.DataFrame, hierarchical constraints dataframe of size (base, bottom).<br>
+        Returns:
+            tuple: A tuple containing:
+                - Y_df (pd.DataFrame): Target base time series with columns ['item_id', 'hier_id', 'ds', 'y'].
+                - S_df (pd.DataFrame): Hierarchical constraints dataframe of size (base, bottom).
+                - tags (dict): Dictionary with hierarchical level information.
         """
         # Load preprocessed data
         _, _, _, temporal_bottom, S_df = \

@@ -10,7 +10,6 @@ from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
-
 from sklearn.preprocessing import StandardScaler
 
 from .utils import download_file, Info
@@ -181,12 +180,9 @@ class LongHorizon2:
         """
         Normalizes dataset.
 
-            Parameters
-            ----------     
-            data_mat: np.array
-                panel data in matrix of shape (n_time, n_series)
-            test_size: int
-                observations kept as test.
+        Args:
+            data_mat (np.array): panel data in matrix of shape (n_time, n_series)
+            test_size (int): observations kept as test.
         """
         scaler = StandardScaler()
         train_mat = data_mat[:-test_size, :]
@@ -199,26 +195,19 @@ class LongHorizon2:
              group: str,
              normalize: bool=True) -> pd.DataFrame:
         """
-
         Downloads and long-horizon forecasting benchmark datasets.
 
-            Parameters
-            ----------
-            directory: str
-                Directory where data will be downloaded.
-            group: str
-                Group name.
+        Args:
+            directory (str): Directory where data will be downloaded.
+            group (str): Group name.
                 Allowed groups: 'ETTh1', 'ETTh2', 
                                 'ETTm1', 'ETTm2',
                                 'ECL', 'Exchange',
                                 'Traffic', 'Weather', 'ILI'.
-            normalize: bool
-                If `True` std. normalize data or not
+            normalize (bool): If `True` std. normalize data or not
 
-            Returns
-            ------- 
-            y_df: pd.DataFrame
-                Target time series with columns ['unique_id', 'ds', 'y'].
+        Returns:
+            pd.DataFrame: Target time series with columns ['unique_id', 'ds', 'y'].
         """
         if group not in LongHorizon2Info.groups:
             raise Exception(f'group not found {group}')
@@ -259,10 +248,8 @@ class LongHorizon2:
         """
         Download Long Horizon 2 Datasets.
 
-        Parameters
-        ----------
-        directory: str
-            Directory path to download dataset.
+        Args:
+            directory (str): Directory path to download dataset.
         """
         path = f'{directory}/longhorizon2/'
         if not os.path.exists(path):

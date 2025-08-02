@@ -152,21 +152,15 @@ class HierarchicalData:
         """
         Downloads hierarchical forecasting benchmark datasets.
         
-            Parameters
-            ----------
-            directory: str
-                Directory where data will be downloaded.
-            group: str
-                Group name.
-            cache: bool
-                If `True` saves and loads
+        Args:
+            directory (str): Directory where data will be downloaded.
+            group (str): Group name.
+            cache (bool): If `True` saves and loads
                 
-            Returns
-            -------
-            Y_df: pd.DataFrame
+        Returns:
+            Tuple[pd.DataFrame, pd.DataFrame]: 
                 Target time series with columns ['unique_id', 'ds', 'y'].
-                Containes the base time series.
-            S_df: pd.DataFrame
+                Containes the base time series,
                 Summing matrix of size (hierarchies, bottom).
         """
         if group not in HierarchicalInfo.groups:
@@ -216,10 +210,8 @@ class HierarchicalData:
         """
         Download Hierarchical Datasets.
         
-            Parameters
-            ----------
-            directory: str
-                Directory path to download dataset.
+        Args:
+            directory (str): Directory path to download dataset.
         """
         path = f'{directory}/hierarchical/'
         if not Path(path).exists():

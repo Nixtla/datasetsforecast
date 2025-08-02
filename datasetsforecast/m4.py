@@ -91,24 +91,18 @@ class M4:
                                           Optional[pd.DataFrame]]:
         """Downloads and loads M4 data.
 
-        Parameters
-        ----------
-        directory: str
-            Directory where data will be downloaded.
-        group: str
-            Group name.
-            Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 
-                            'Weekly', 'Daily', 'Hourly'.
-        cache: bool
-            If `True` saves and loads 
+        Args:
+            directory (str): Directory where data will be downloaded.
+            group (str): Group name.
+                Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 
+                                'Weekly', 'Daily', 'Hourly'.
+            cache (bool): If `True` saves and loads 
             
-        Returns
-        -------
-        df: pd.DataFrame
-            Target time series with columns ['unique_id', 'ds', 'y'].  
-        S_df: pd.DataFrame
-            Static exogenous variables with columns ['unique_id', 'ds']. 
-            and static variables.       
+        Returns:
+            Tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]: 
+                Target time series with columns ['unique_id', 'ds', 'y'],  
+                Static exogenous variables with columns ['unique_id', 'ds'], 
+                and static variables.       
         """
         path = f'{directory}/m4/datasets'
         file_cache = f'{path}/{group}.p'
@@ -194,12 +188,10 @@ class M4:
         """
         Download M4 Dataset.
         
-        Parameters
-        ----------
-        directory: str
-            Directory path to download dataset.
-        group: str, optional (default=None)
-            Name of the group to download. If None, downloads all.
+        Args:
+            directory (str): Directory path to download dataset.
+            group (str, optional): Name of the group to download. If None, downloads all.
+                Defaults to None.
         """
         path = f'{directory}/m4/datasets/'
         missing_files = M4._missing_files(path, group)
@@ -214,10 +206,8 @@ class M4:
         """
         Download M4 Dataset.
         
-        Parameters
-        ----------
-        directory: str
-            Directory path to download dataset.
+        Args:
+            directory (str): Directory path to download dataset.
         """
         path = f'{directory}/m4/datasets/'
         missing_files = M4._missing_files(path, group)
@@ -234,23 +224,17 @@ class M4Evaluation:
                        source_url: Optional[str] = None) -> np.ndarray:
         """Downloads and loads a bechmark forecasts.
         
-        Parameters
-        ----------
-        directory: str
-            Directory where data will be downloaded.
-        group: str
-            Group name.
-            Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 
-                            'Weekly', 'Daily', 'Hourly'.
-        source_url: str, optional
-            Optional benchmark url obtained from 
-            https://github.com/Nixtla/m4-forecasts/tree/master/forecasts.
-            If `None` returns Naive2. 
+        Args:
+            directory (str): Directory where data will be downloaded.
+            group (str): Group name.
+                Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 
+                                'Weekly', 'Daily', 'Hourly'.
+            source_url (str, optional): Optional benchmark url obtained from 
+                https://github.com/Nixtla/m4-forecasts/tree/master/forecasts.
+                If `None` returns Naive2. 
         
-        Returns
-        -------
-        benchmark: numpy array
-            Numpy array of shape (n_series, horizon).
+        Returns:
+            np.ndarray: Numpy array of shape (n_series, horizon).
         """
         path = f'{directory}/m4/datasets'
         initial = group[0]
@@ -274,24 +258,18 @@ class M4Evaluation:
                  y_hat: Union[np.ndarray, str]) -> pd.DataFrame:
         """Evaluates y_hat according to M4 methodology.
         
-        Parameters
-        ----------
-        directory: str
-            Directory where data will be downloaded.
-        group: str
-            Group name.
-            Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 
-                            'Weekly', 'Daily', 'Hourly'.
-        y_hat: numpy array, str
-            Group forecasts as numpy array or
-            benchmark url from
-            https://github.com/Nixtla/m4-forecasts/tree/master/forecasts.
+        Args:
+            directory (str): Directory where data will be downloaded.
+            group (str): Group name.
+                Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 
+                                'Weekly', 'Daily', 'Hourly'.
+            y_hat (Union[np.ndarray, str]): Group forecasts as numpy array or
+                benchmark url from
+                https://github.com/Nixtla/m4-forecasts/tree/master/forecasts.
             
-        Returns
-        -------
-        evaluation: pandas dataframe
-            DataFrame with columns OWA, SMAPE, MASE
-            and group as index.
+        Returns:
+            pd.DataFrame: DataFrame with columns OWA, SMAPE, MASE
+                and group as index.
         """
         if isinstance(y_hat, str):
             y_hat = M4Evaluation.load_benchmark(directory, group, y_hat)

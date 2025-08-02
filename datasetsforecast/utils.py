@@ -6,12 +6,12 @@ __all__ = ['logger', 'extract_file', 'download_file', 'async_download_files', 'd
 # %% ../nbs/utils.ipynb 2
 import asyncio
 import logging
-import requests
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Tuple, Union
 
 import aiohttp
+import requests
 from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
@@ -33,14 +33,10 @@ def extract_file(filepath, directory):
 def download_file(directory: str, source_url: str, decompress: bool = False) -> None:
     """Download data from source_ulr inside directory.
 
-    Parameters
-    ----------
-    directory: str, Path
-        Custom directory where data will be downloaded.
-    source_url: str
-        URL where data is hosted.
-    decompress: bool
-        Wheter decompress downloaded file. Default False.
+    Args:
+        directory (str, Path): Custom directory where data will be downloaded.
+        source_url (str): URL where data is hosted.
+        decompress (bool): Wheter decompress downloaded file. Default False.
     """
     if isinstance(directory, str):
         directory = Path(directory)

@@ -73,18 +73,13 @@ class M3:
         """
         Downloads and loads M3 data.
 
-        Parameters
-        ----------
-        directory: str
-            Directory where data will be downloaded.
-        group: str
-            Group name.
-            Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 'Other'.
+        Args:
+            directory (str): Directory where data will be downloaded.
+            group (str): Group name.
+                Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 'Other'.
             
-        Returns
-        -------
-        df: pd.DataFrame
-            Target time series with columns ['unique_id', 'ds', 'y'].
+        Returns:
+            pd.DataFrame: Target time series with columns ['unique_id', 'ds', 'y'].
         """
         M3.download(directory)
         
@@ -123,10 +118,8 @@ class M3:
         """
         Download M3 Dataset.
         
-        Parameters
-        ----------
-        directory: str
-            Directory path to download dataset.
+        Args:
+            directory (str): Directory path to download dataset.
         """
         path = f'{directory}/m3/datasets/'
         if not os.path.exists(path):
