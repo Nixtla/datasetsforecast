@@ -8,10 +8,11 @@ __all__ = ['tst_flags', 'to_skip', 'mapper', 'print_execs', 'print_hide', 'other
 from functools import partial
 
 from fastcore.script import call_parse
+from nbdev.config import get_config
 from nbdev.processors import NBProcessor
 
 # %% cli.ipynb 5
-tst_flags = 'datasets distributed matplotlib polars pyarrow scipy'.split()
+tst_flags = get_config()['tst_flags'].split()
 to_skip = [
     'showdoc',
     'load_ext',
