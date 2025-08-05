@@ -21,7 +21,8 @@ import pandas as pd
 import sklearn.preprocessing as preprocessing
 from sklearn.preprocessing import OneHotEncoder
 
-from .utils import download_file, extract_file, Info #, CodeTimer
+from .utils import Info, download_file, extract_file  #, CodeTimer
+
 
 # %% ../nbs/favorita.ipynb 7
 # TODO: @kdgutier `CodeTimer`/`numpy_balance` are shared with hierarchicalforecast.utils
@@ -42,8 +43,8 @@ class CodeTimer:
 
 def numpy_balance(*arrs):
     """Fast NumPy implementation of 'balance' operation.
-    
-    Useful to create a balanced panel dataset, ie a dataset with all the 
+
+    Useful to create a balanced panel dataset, ie a dataset with all the
     interactions of 'unique_id' and 'ds'.
 
     Args:
@@ -59,7 +60,7 @@ def numpy_balance(*arrs):
 
 def numpy_ffill(arr):
     """Fast NumPy implementation of `ffill` that fills missing values.
-    
+
     Fills missing values in an array by propagating the last non-missing value forward.
 
     For example, if the array has the following values:
@@ -85,7 +86,7 @@ def numpy_ffill(arr):
 
 def numpy_bfill(arr):
     """Fast NumPy implementation of `bfill` that fills missing values.
-    
+
     Fills missing values in an array by propagating the last non-missing value backwards.
 
     For example, if the array has the following values:
@@ -95,7 +96,7 @@ def numpy_bfill(arr):
     The `bfill` method would fill the missing values as follows:
     0  1  2  3
     1  2  4  4
-    
+
     Args:
         arr (np.ndarray): NumPy array.
 
@@ -126,15 +127,15 @@ def one_hot_encoding(df, index_col):
     for col in columns:
         dummy_columns = [f'{col}_[{x}]' for x in list(df[col].unique())]
         dummy_values  = encoder.fit_transform(df[col].values.reshape(-1,1)).toarray()
-        one_hot_df    = pd.DataFrame(dummy_values, columns=dummy_columns)        
+        one_hot_df    = pd.DataFrame(dummy_values, columns=dummy_columns)
         one_hot_concat_df = pd.concat([one_hot_concat_df, one_hot_df], axis=1)
     return one_hot_concat_df
 
 def nested_one_hot_encoding(df, index_col):
     """Encodes dataFrame's hierarchically-nested categorical variables.
-    
-    Skips the index column. Nested categorical variables (example geographic levels 
-    country>state), require the dummy features to preserve encoding order, to reflect 
+
+    Skips the index column. Nested categorical variables (example geographic levels
+    country>state), require the dummy features to preserve encoding order, to reflect
     the hierarchy of the categorical variables.
 
     Args:
@@ -187,11 +188,11 @@ def distance_to_holiday(holiday_dates, dates):
     distance = np.expand_dims(dates_np, axis=1) - np.expand_dims(holiday_dates_np, axis=0)
     distance = np.abs(distance)
     distance = np.min(distance, axis=1)
-    
+
     # Convert to float
     distance = distance.astype(float)
     distance = distance * (distance>0)
-    
+
     # Fix start and end of date range
     # TODO: Think better way of fixing absence of holiday
     # It seems that the holidays dataframe has missing holidays
@@ -201,8 +202,8 @@ def distance_to_holiday(holiday_dates, dates):
     distance = np.abs(distance)
     distance[distance>183] = 365 - distance[distance>183]
     distance = np.abs(distance)
-    distance[distance>183] = 365 - distance[distance>183]    
-    
+    distance[distance>183] = 365 - distance[distance>183]
+
     # Scale
     distance = (distance/183) - 0.5
 
@@ -215,7 +216,7 @@ def make_holidays_distance_df(holidays_df, dates):
     for holiday in holidays_df.description.unique():
         holiday_dates = holidays_df[holidays_df.description==holiday]['date']
         holiday_dates = holiday_dates.tolist()
-        
+
         holiday_str = f'dist2_[{holiday}]'
         distance_dict[holiday_str] = distance_to_holiday(holiday_dates, dates)
 
@@ -271,7 +272,7 @@ class FavoritaRawData:
     This class contains utilities to download, load and filter portions of the dataset.
 
     If you prefer, you can also download original dataset available from Kaggle directly:
-    
+
     ```
     pip install kaggle --upgrade
     kaggle competitions download -c favorita-grocery-sales-forecasting
@@ -292,11 +293,11 @@ class FavoritaRawData:
     @staticmethod
     def download(directory: str) -> None:
         """Downloads Favorita Competition Dataset.
-        
+
         The dataset weights 980MB, its download is not currently robust to
         brief interruptions of the process. It is recommended execute with
         good connection.
-        
+
         Args:
             directory (str): Directory where data will be downloaded.
         """
@@ -334,7 +335,7 @@ class FavoritaRawData:
 
         # Change dtype for faster categorical wrangling
         items['class'] = items['class'].astype('category')
-        items['family'] = items['family'].astype('category')        
+        items['family'] = items['family'].astype('category')
         for col in ['country', 'state', 'city', 'store_nbr']:
             store_info[col] = store_info[col].astype('category')
 
@@ -378,8 +379,8 @@ class FavoritaRawData:
         with CodeTimer('Filter', verbose):
             # https://arxiv.org/pdf/2106.07630.pdf reported 1687 vs 1688 days in our wrangling
             # we follow https://arxiv.org/abs/2110.13179 that keeps 2017> dates
-            #date_range = pd.date_range(start_date, end_date, freq='D') 
-            #print('len(date_range)', len(date_range))    
+            #date_range = pd.date_range(start_date, end_date, freq='D')
+            #print('len(date_range)', len(date_range))
 
             temporal_dates  = temporal['date'].unique() # 1684 days
             start_date = '2017-01-01' # min(temporal_dates)
@@ -449,12 +450,12 @@ class FavoritaRawData:
             transactions = transactions.sort_values(by=['store_nbr', 'date'])
 
         raw_group_data = dict(
-            temporal=temporal, 
-            oil=oil, 
-            items=items, 
-            store_info=store_info, 
-            holidays=holidays, 
-            transactions=transactions, 
+            temporal=temporal,
+            oil=oil,
+            items=items,
+            store_info=store_info,
+            holidays=holidays,
+            transactions=transactions,
             test=test,
         )
 
@@ -465,13 +466,13 @@ class FavoritaData:
     """Favorita Data.
 
     The processed Favorita dataset of grocery contains item sales daily history with additional
-    information on promotions, items, stores, and holidays, containing 371,312 series from 
-    January 2013 to August 2017, with a geographic hierarchy of states, cities, and stores. 
+    information on promotions, items, stores, and holidays, containing 371,312 series from
+    January 2013 to August 2017, with a geographic hierarchy of states, cities, and stores.
     This wrangling matches that of the DPMN paper.
 
     References:
         Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao, Lee Dicker (2022).
-        "Probabilistic Hierarchical Forecasting with Deep Poisson Mixtures". 
+        "Probabilistic Hierarchical Forecasting with Deep Poisson Mixtures".
         International Journal Forecasting, special issue.
         https://doi.org/10.1016/j.ijforecast.2023.04.007
     """
@@ -503,7 +504,7 @@ class FavoritaData:
             static_bottom = nested_one_hot_encoding(hier_df, index_col='store_nbr')
             Agg = static_bottom.values.T
             S = np.concatenate([Agg, np.eye(len(filter_stores), dtype=np.float32)], axis=0)
-            
+
             filter_stores_str = [f'store_[{store}]' for store in filter_stores]
             S_df = pd.DataFrame(S, columns=filter_stores_str,
                                 index=list(static_bottom.columns)+filter_stores_str)
@@ -547,7 +548,7 @@ class FavoritaData:
     def _get_temporal_bottom(temporal, item_store_df, filter_dates, verbose=False):
         with CodeTimer('temporal_bottom', verbose):
             #-------------------- with CodeTimer('Temporal Balance') --------------------#
-            # Two stage fast numpy balance, 
+            # Two stage fast numpy balance,
             # for memory and computational efficiency
             #item_nbrs  = temporal['item_nbr'].unique()
             #store_nbrs = temporal['store_nbr'].unique()
@@ -603,7 +604,7 @@ class FavoritaData:
                 balanced_df[col] = col_values.flatten()
                 balanced_df[col] = balanced_df[col].fillna(0)
             #check_nans(balanced_df)
-        
+
         # Rename variables for StatsForecast/NeuralForecast compatibility
         balanced_df.rename(columns={"date": "ds", "unit_sales": "y"}, inplace=True)
 
@@ -690,7 +691,7 @@ class FavoritaData:
             hdays = holidays[holidays['transferred']==False].copy()
             hdays.rename(columns={'type': 'holiday_type'}, inplace=True)
 
-            national_hdays = hdays[hdays['locale']=='National']    
+            national_hdays = hdays[hdays['locale']=='National']
             national_hdays = national_hdays[national_hdays.holiday_type.isin(['Holiday', 'Transfer'])]
             national_hdays = make_holidays_distance_df(national_hdays, filter_dates)
 
@@ -727,7 +728,7 @@ class FavoritaData:
 
             transactions = transactions.sort_values(by=['store_nbr', 'date'])
             trans_values = transactions.transactions.values
-            
+
             trans_values = trans_values.reshape(len(filter_stores), len(filter_dates))
             trans_values = numpy_ffill(trans_values)
             trans_values = np.nan_to_num(trans_values)
@@ -825,11 +826,11 @@ class FavoritaData:
                 FavoritaRawData._load_raw_group_data(directory=directory, group=group, verbose=verbose)
 
             S_df, item_store_df, static_agg, static_bottom = \
-                              FavoritaData._get_static_data(filter_items=filter_items, 
+                              FavoritaData._get_static_data(filter_items=filter_items,
                                                         filter_stores=filter_stores,
-                                                        items=raw_group_data['items'], 
-                                                        store_info=raw_group_data['store_info'], 
-                                                        temporal=raw_group_data['temporal'], 
+                                                        items=raw_group_data['items'],
+                                                        store_info=raw_group_data['store_info'],
+                                                        temporal=raw_group_data['temporal'],
                                                         verbose=verbose)
 
             temporal_bottom = FavoritaData._get_temporal_bottom(temporal=raw_group_data['temporal'],
@@ -844,7 +845,7 @@ class FavoritaData:
                                                         holidays=raw_group_data['holidays'],
                                                         transactions=raw_group_data['transactions'],
                                                         temporal_bottom=temporal_bottom, verbose=verbose)
-            
+
         del raw_group_data
         gc.collect()
 
@@ -861,7 +862,7 @@ class FavoritaData:
         temporal_agg.to_feather(f'{group_path}/temporal_agg.feather')
 
         return static_agg, static_bottom, temporal_agg, temporal_bottom, S_df
-    
+
     @staticmethod
     def load(directory: str, group: str, cache: bool=True, verbose: bool=False):
         """Load Favorita forecasting benchmark dataset.
@@ -911,5 +912,5 @@ class FavoritaData:
         Y_df = pd.DataFrame(dict(
                 item_id = item_id, hier_id = hier_id,
                 ds = ds, y = Y_hier.flatten()))
-        
+
         return Y_df, S_df, tags

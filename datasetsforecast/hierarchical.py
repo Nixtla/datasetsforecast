@@ -12,7 +12,8 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 
-from .utils import download_file, Info
+from .utils import Info, download_file
+
 
 # %% ../nbs/hierarchical.ipynb 4
 @dataclass
@@ -131,7 +132,7 @@ class OldTourismLarge:
 # %% ../nbs/hierarchical.ipynb 11
 HierarchicalInfo = Info(
     (
-        Labour, TourismLarge, 
+        Labour, TourismLarge,
         TourismSmall,
         Traffic, Wiki2,
         OldTraffic, OldTourismLarge
@@ -140,7 +141,7 @@ HierarchicalInfo = Info(
 
 # %% ../nbs/hierarchical.ipynb 12
 class HierarchicalData:
-    
+
     source_url: str = 'https://nixtla-public.s3.amazonaws.com/hierarchical-data/datasets.zip'
     source_url_old_traffic: str ='https://www.dropbox.com/s/4nl5afkdr4djpuy/OldTraffic.zip?dl=1'
     source_url_old_tourisml: str = 'https://www.dropbox.com/s/ye78jnujhbxyggo/OldTourismLarge.zip?dl=1'
@@ -151,14 +152,14 @@ class HierarchicalData:
              cache: bool = True) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
         Downloads hierarchical forecasting benchmark datasets.
-        
+
         Args:
             directory (str): Directory where data will be downloaded.
             group (str): Group name.
             cache (bool): If `True` saves and loads
-                
+
         Returns:
-            Tuple[pd.DataFrame, pd.DataFrame]: 
+            Tuple[pd.DataFrame, pd.DataFrame]:
                 Target time series with columns ['unique_id', 'ds', 'y'].
                 Containes the base time series,
                 Summing matrix of size (hierarchies, bottom).
@@ -176,20 +177,20 @@ class HierarchicalData:
 
         HierarchicalData.download(directory)
         path = Path(f'{path}/{group}')
-        S_df = pd.read_csv(path / 'agg_mat.csv', index_col=0) 
+        S_df = pd.read_csv(path / 'agg_mat.csv', index_col=0)
         Y_df = pd.read_csv(path / 'data.csv', index_col=0).T
         Y_df = Y_df.stack()
         Y_df.name = 'y'
         Y_df.index = Y_df.index.set_names(['unique_id', 'ds'])
         Y_df = Y_df.reset_index()
-        
+
         if group == 'Labour':
             #for labour we avoid covid periods
             Y_df = Y_df.query('ds < "2020-01-01"').reset_index(drop=True)
-        
+
         if not all(Y_df['unique_id'].unique() == S_df.index):
             raise Exception('mismatch order between `Y_df` and `S_df`')
-        
+
         def get_levels_from_S(S_df):
             cut_idxs, = np.where(S_df.sum(axis=1).cumsum() % S_df.shape[1] == 0.)
             levels = [S_df.iloc[(cut_idxs[i] + 1):(cut_idxs[i+1] + 1)].index.values for i in range(cut_idxs.size-1)]
@@ -209,7 +210,7 @@ class HierarchicalData:
     def download(directory: str) -> None:
         """
         Download Hierarchical Datasets.
-        
+
         Args:
             directory (str): Directory path to download dataset.
         """

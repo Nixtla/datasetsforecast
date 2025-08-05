@@ -11,7 +11,8 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 
-from .utils import extract_file, download_file, Info
+from .utils import Info, download_file, extract_file
+
 
 # %% ../nbs/phm2008.ipynb 3
 @dataclass
@@ -72,7 +73,7 @@ class PHM2008:
     def download(directory: str) -> None:
         """
         Download PHM2008 Dataset.
-        
+
         Args:
             directory (str): Directory path to download dataset.
         """
@@ -114,10 +115,10 @@ class PHM2008:
             return result_frame
 
         PHM2008.download(directory)
-        
+
         path = f'{directory}/phm2008/CMAPSSData'
         group = PHM2008Info.get_group(group)
-        
+
         # define column names for easy indexing
         index_names = ['unit_nr', 'time_cycles']
         setting_names = ['setting_1', 'setting_2', 'setting_3']
@@ -125,13 +126,13 @@ class PHM2008:
         col_names = index_names + setting_names + sensor_names
 
         # read data
-        train = pd.read_csv((f'{path}/{group.train_file}'), 
+        train = pd.read_csv((f'{path}/{group.train_file}'),
                             sep='\s+', header=None, names=col_names)
-        test = pd.read_csv((f'{path}/{group.test_file}'), 
+        test = pd.read_csv((f'{path}/{group.test_file}'),
                         sep='\s+', header=None, names=col_names)
-        y_test = pd.read_csv((f'{path}/{group.rul_file}'), 
+        y_test = pd.read_csv((f'{path}/{group.rul_file}'),
                             sep='\s+', header=None, names=['RUL'])
-        
+
 
         # drop non-informative features in training set
         drop_sensors = ['s_1', 's_5', 's_6', 's_10', 's_16', 's_18', 's_19']
@@ -151,12 +152,12 @@ class PHM2008:
 
         # Testing set
         Y_test_df = test.rename(columns={'unit_nr': 'unique_id', 'time_cycles': 'ds'})
-        
+
         # Only last RUL is available, complementing Y_test with linearly decreasing RUL
         count_ds = Y_test_df[['unique_id', 'ds']].groupby('unique_id').count().reset_index()
         ruls_list= []
         for index, row in count_ds.iterrows():
-            ruls_list.append(np.arange(row.ds+y_test.RUL.values[index]-1, 
+            ruls_list.append(np.arange(row.ds+y_test.RUL.values[index]-1,
                                     y_test.RUL.values[index]-1, -1))
         ruls_list = np.concatenate(ruls_list)
         Y_test_df['y'] = ruls_list

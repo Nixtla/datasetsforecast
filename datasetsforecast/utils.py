@@ -113,9 +113,9 @@ class Info:
         groups (Tuple): Tuple of str groups
         class_groups (Tuple): Tuple of dataclasses.
     """
-    class_groups: Tuple[dataclass] 
+    class_groups: Tuple[dataclass]
     groups: Tuple[str] = field(init=False)
-    
+
     def __post_init__(self):
         self.groups = tuple(cls_.__name__ for cls_ in self.class_groups)
 
@@ -124,13 +124,13 @@ class Info:
         if group not in self.groups:
             raise Exception(f'Unknown group {group}')
         return self.class_groups[self.groups.index(group)]
-    
+
     def __getitem__(self, group: str):
         """Gets dataclass of group."""
         if group not in self.groups:
             raise Exception(f'Unknown group {group}')
         return self.class_groups[self.groups.index(group)]
-    
+
     def __iter__(self):
         for group in self.groups:
             yield group, self.get_group(group)

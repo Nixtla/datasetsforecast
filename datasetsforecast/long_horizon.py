@@ -11,15 +11,16 @@ from typing import Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from .utils import download_file, Info
+from .utils import Info, download_file
+
 
 # %% ../nbs/long_horizon.ipynb 4
 @dataclass
 class ETTh1:
     """
-    The ETTh1 dataset monitors an electricity transformer 
-    from a region of a province of China including oil temperature 
-    and variants of load (such as high useful load and high useless load) 
+    The ETTh1 dataset monitors an electricity transformer
+    from a region of a province of China including oil temperature
+    and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at an hourly frequency.
     """
     freq: str = 'H'
@@ -28,15 +29,15 @@ class ETTh1:
     test_size: int = 11_520
     val_size: int = 11_520
     horizons: Tuple[int] = (96, 192, 336, 720)
-        
+
 @dataclass
 class ETTh2:
     """
-    The ETTh2 dataset monitors an electricity transformer 
-    from a region of a province of China including oil temperature 
-    and variants of load (such as high useful load and high useless load) 
+    The ETTh2 dataset monitors an electricity transformer
+    from a region of a province of China including oil temperature
+    and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at an hourly frequency.
-    """    
+    """
     freq: str = 'H'
     name: str = 'ETTh2'
     n_ts: int = 1
@@ -47,28 +48,28 @@ class ETTh2:
 @dataclass
 class ETTm1:
     """
-    The ETTm1 dataset monitors an electricity transformer 
-    from a region of a province of China including oil temperature 
-    and variants of load (such as high useful load and high useless load) 
+    The ETTm1 dataset monitors an electricity transformer
+    from a region of a province of China including oil temperature
+    and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at a fifteen minute frequency.
-    """    
+    """
     freq: str = '15T'
     name: str = 'ETTm1'
     n_ts: int = 7
     test_size: int = 11_520
     val_size: int = 11_520
     horizons: Tuple[int] = (96, 192, 336, 720)
-        
+
 @dataclass
 class ETTm2:
     """
-    The ETTm2 dataset monitors an electricity transformer 
-    from a region of a province of China including oil temperature 
-    and variants of load (such as high useful load and high useless load) 
+    The ETTm2 dataset monitors an electricity transformer
+    from a region of a province of China including oil temperature
+    and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at a fifteen minute frequency.
-    
+
         Reference:
-        Zhou, et al. Informer: Beyond Efficient Transformer 
+        Zhou, et al. Informer: Beyond Efficient Transformer
         for Long Sequence Time-Series Forecasting. AAAI 2021.
         https://arxiv.org/abs/2012.07436
     """
@@ -83,12 +84,12 @@ class ETTm2:
 @dataclass
 class ECL:
     """
-    The Electricity dataset reports the fifteen minute electricity 
-    consumption (KWh) of 321 customers from 2012 to 2014. 
+    The Electricity dataset reports the fifteen minute electricity
+    consumption (KWh) of 321 customers from 2012 to 2014.
     For comparability, we aggregate it hourly.
-    
+
         Reference:
-        Li, S et al. Enhancing the locality and breaking the memory 
+        Li, S et al. Enhancing the locality and breaking the memory
         bottleneck of Transformer on time series forecasting.
         NeurIPS 2019. http://arxiv.org/abs/1907.00235.
     """
@@ -103,9 +104,9 @@ class ECL:
 @dataclass
 class Exchange:
     """
-    The Exchange dataset is a collection of daily exchange rates of 
-    eight countries relative to the US dollar. The countries include 
-    Australia, UK, Canada, Switzerland, China, Japan, New Zealand and 
+    The Exchange dataset is a collection of daily exchange rates of
+    eight countries relative to the US dollar. The countries include
+    Australia, UK, Canada, Switzerland, China, Japan, New Zealand and
     Singapore from 1990 to 2016.
 
         Reference:
@@ -124,19 +125,19 @@ class Exchange:
 @dataclass
 class TrafficL:
     """
-    This large Traffic dataset was collected by the California Department 
-    of Transportation, it reports road hourly occupancy rates of 862 sensors, 
+    This large Traffic dataset was collected by the California Department
+    of Transportation, it reports road hourly occupancy rates of 862 sensors,
     from January 2015 to December 2016.
-    
+
         Reference:
         Lai, G., Chang, W., Yang, Y., and Liu, H. Modeling Long and
         Short-Term Temporal Patterns with Deep Neural Networks.
         SIGIR 2018. http://arxiv.org/abs/1703.07015.
-        
+
         Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:
         Decomposition Transformers with auto-correlation for
-        long-term series forecasting. NeurIPS 2021. 
-        https://arxiv.org/abs/2106.13008.        
+        long-term series forecasting. NeurIPS 2021.
+        https://arxiv.org/abs/2106.13008.
     """
     freq: str = 'H'
     name: str = 'traffic'
@@ -149,16 +150,16 @@ class TrafficL:
 @dataclass
 class ILI:
     """
-    This dataset reports weekly recorded influenza-like illness (ILI) 
-    patients from Centers for Disease Control and Prevention of the 
-    United States from 2002 to 2021. It is measured as a ratio of ILI 
+    This dataset reports weekly recorded influenza-like illness (ILI)
+    patients from Centers for Disease Control and Prevention of the
+    United States from 2002 to 2021. It is measured as a ratio of ILI
     patients versus the total patients in the week.
-    
+
         Reference:
         Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:
         Decomposition Transformers with auto-correlation for
-        long-term series forecasting. NeurIPS 2021. 
-        https://arxiv.org/abs/2106.13008.    
+        long-term series forecasting. NeurIPS 2021.
+        https://arxiv.org/abs/2106.13008.
     """
     freq: str = 'W'
     name: str = 'ili'
@@ -171,15 +172,15 @@ class ILI:
 @dataclass
 class Weather:
     """
-    This Weather dataset contains the 2020 year of 21 meteorological 
+    This Weather dataset contains the 2020 year of 21 meteorological
     measurements
-    recorded every 10 minutes from the Weather Station of the Max Planck Biogeochemistry 
+    recorded every 10 minutes from the Weather Station of the Max Planck Biogeochemistry
     Institute in Jena, Germany.
 
         Reference:
         Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:
         Decomposition Transformers with auto-correlation for
-        long-term series forecasting. NeurIPS 2021. 
+        long-term series forecasting. NeurIPS 2021.
         https://arxiv.org/abs/2106.13008.
     """
     freq: str = '10M'
@@ -191,7 +192,7 @@ class Weather:
 
 # %% ../nbs/long_horizon.ipynb 10
 LongHorizonInfo = Info((
-        ETTh1, ETTh2, ETTm1, ETTm2, 
+        ETTh1, ETTh2, ETTm1, ETTm2,
         ECL, Exchange, TrafficL, ILI, Weather
 ))
 
@@ -200,22 +201,22 @@ LongHorizonInfo = Info((
 class LongHorizon:
     """
     This Long-Horizon datasets wrapper class, provides
-    with utility to download and wrangle the following datasets:    
+    with utility to download and wrangle the following datasets:
     ETT, ECL, Exchange, Traffic, ILI and Weather.
-    
+
     - Each set is normalized with the train data mean and standard deviation.
     - Datasets are partitioned into train, validation and test splits.
-    - For all datasets: 70%, 10%, and 20% of observations are train, validation, test, 
-      except ETT that uses 20% validation.  
+    - For all datasets: 70%, 10%, and 20% of observations are train, validation, test,
+      except ETT that uses 20% validation.
     """
-    
+
     source_url: str = 'https://nhits-experiments.s3.amazonaws.com/datasets.zip'
 
     @staticmethod
     def load(directory: str,
              group: str,
-             cache: bool = True) -> Tuple[pd.DataFrame, 
-                                          Optional[pd.DataFrame], 
+             cache: bool = True) -> Tuple[pd.DataFrame,
+                                          Optional[pd.DataFrame],
                                           Optional[pd.DataFrame]]:
         """
         Downloads and long-horizon forecasting benchmark datasets.
@@ -223,33 +224,33 @@ class LongHorizon:
         Args:
             directory (str): Directory where data will be downloaded.
             group (str): Group name.
-                Allowed groups: 'ETTh1', 'ETTh2', 
+                Allowed groups: 'ETTh1', 'ETTh2',
                                 'ETTm1', 'ETTm2',
                                 'ECL', 'Exchange',
                                 'Traffic', 'Weather', 'ILI'.
-            cache (bool): If `True` saves and loads 
+            cache (bool): If `True` saves and loads
 
         Returns:
-            Tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]: 
+            Tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]:
                 Target time series with columns ['unique_id', 'ds', 'y'],
-                Exogenous time series with columns ['unique_id', 'ds', 'y'], 
-                Static exogenous variables with columns ['unique_id', 'ds'] 
-                and static variables. 
+                Exogenous time series with columns ['unique_id', 'ds', 'y'],
+                Static exogenous variables with columns ['unique_id', 'ds']
+                and static variables.
         """
         if group not in LongHorizonInfo.groups:
             raise Exception(f'group not found {group}')
-            
+
         path = f'{directory}/longhorizon/datasets'
         file_cache = f'{path}/{group}.p'
-        
+
         if os.path.exists(file_cache) and cache:
             df, X_df, S_df = pd.read_pickle(file_cache)
-            
+
             return df, X_df, S_df
-        
+
         LongHorizon.download(directory)
         path = f'{directory}/longhorizon/datasets'
-        
+
         kind = 'M' if group not in ['ETTh1', 'ETTh2'] else 'S'
         name = LongHorizonInfo[group].name
         y_df = pd.read_csv(f'{path}/{name}/{kind}/df_y.csv')
@@ -257,18 +258,18 @@ class LongHorizon:
         y_df = y_df[['unique_id', 'ds', 'y']]
         X_df = pd.read_csv(f'{path}/{name}/{kind}/df_x.csv')
         X_df = y_df.drop('y', axis=1).merge(X_df, how='left', on=['ds'])
-       
+
         S_df = None
         if cache:
             pd.to_pickle((y_df, X_df, S_df), file_cache)
-            
+
         return y_df, X_df, S_df
 
     @staticmethod
     def download(directory: str) -> None:
         """
         Download ETT Dataset.
-        
+
         Args:
             directory (str): Directory path to download dataset.
         """

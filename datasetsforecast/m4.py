@@ -14,6 +14,7 @@ from utilsforecast.losses import mase, smape
 
 from .utils import Info, async_download_files, download_file, extract_file
 
+
 # %% ../nbs/m4.ipynb 5
 @dataclass
 class Yearly:
@@ -46,7 +47,7 @@ class Weekly:
     freq: str = 'W'
     name: str = 'Weekly'
     n_ts: int = 359
-        
+
 @dataclass
 class Daily:
     seasonality: int = 1
@@ -63,7 +64,7 @@ class Hourly:
     name: str = 'Hourly'
     n_ts: int = 414
 
-        
+
 @dataclass
 class Other:
     seasonality: int = 1
@@ -79,39 +80,39 @@ M4Info = Info((Yearly, Quarterly, Monthly, Weekly, Daily, Hourly, Other))
 # %% ../nbs/m4.ipynb 8
 @dataclass
 class M4:
-    
+
     source_url: str = 'https://raw.githubusercontent.com/Mcompetitions/M4-methods/master/Dataset/'
     naive2_forecast_url: str = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-Naive2.zip'
 
     @staticmethod
     def load(directory: str,
              group: str,
-             cache: bool = True) -> Tuple[pd.DataFrame, 
-                                          Optional[pd.DataFrame], 
+             cache: bool = True) -> Tuple[pd.DataFrame,
+                                          Optional[pd.DataFrame],
                                           Optional[pd.DataFrame]]:
         """Downloads and loads M4 data.
 
         Args:
             directory (str): Directory where data will be downloaded.
             group (str): Group name.
-                Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 
+                Allowed groups: 'Yearly', 'Quarterly', 'Monthly',
                                 'Weekly', 'Daily', 'Hourly'.
-            cache (bool): If `True` saves and loads 
-            
+            cache (bool): If `True` saves and loads
+
         Returns:
-            Tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]: 
-                Target time series with columns ['unique_id', 'ds', 'y'],  
-                Static exogenous variables with columns ['unique_id', 'ds'], 
-                and static variables.       
+            Tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]:
+                Target time series with columns ['unique_id', 'ds', 'y'],
+                Static exogenous variables with columns ['unique_id', 'ds'],
+                and static variables.
         """
         path = f'{directory}/m4/datasets'
         file_cache = f'{path}/{group}.p'
-        
+
         if os.path.exists(file_cache) and cache:
             df, X_df, S_df = pd.read_pickle(file_cache)
-            
+
             return df, X_df, S_df
-        
+
         if group == 'Other':
             #Special case.
             included_dfs = [M4.load(directory, gr) \
@@ -122,7 +123,7 @@ class M4:
             M4.download(directory, group)
             path = f'{directory}/m4/datasets'
             class_group = M4Info[group]
-            S_df = pd.read_csv(f'{directory}/m4/datasets/M4-info.csv', 
+            S_df = pd.read_csv(f'{directory}/m4/datasets/M4-info.csv',
                                usecols=['M4id','category'])
             S_df['category'] = S_df['category'].astype('category').cat.codes
             S_df.rename({'M4id': 'unique_id'}, axis=1, inplace=True)
@@ -147,16 +148,16 @@ class M4:
 
             df = pd.concat([df_train, df_test])
             df = df.sort_values(['unique_id', 'ds']).reset_index(drop=True)
-            
+
             S_df = S_df.sort_values('unique_id').reset_index(drop=True)
-        
+
         X_df = None
         if cache:
             pd.to_pickle((df, X_df, S_df), file_cache)
-            
+
         return df, None, S_df
-    
-    
+
+
     @staticmethod
     def _download_urls(group):
         urls = []
@@ -175,19 +176,19 @@ class M4:
             if not os.path.exists(f'{path}/{fname}'):
                 files.append(url)
         return files
-    
+
     @staticmethod
     def _decompress(urls, path):
         for url in urls:
             if url.endswith('.zip'):
                 fname = url.split('/')[-1]
-                extract_file(f'{path}/{fname}', path)        
+                extract_file(f'{path}/{fname}', path)
 
     @staticmethod
     def download(directory: str, group: Optional[str] = None) -> None:
         """
         Download M4 Dataset.
-        
+
         Args:
             directory (str): Directory path to download dataset.
             group (str, optional): Name of the group to download. If None, downloads all.
@@ -199,13 +200,13 @@ class M4:
             return
         for url in missing_files:
             download_file(path, url)
-        M4._decompress(missing_files, path)            
+        M4._decompress(missing_files, path)
 
     @staticmethod
     async def async_download(directory: str, group: Optional[str] = None) -> None:
         """
         Download M4 Dataset.
-        
+
         Args:
             directory (str): Directory path to download dataset.
         """
@@ -218,21 +219,21 @@ class M4:
 
 # %% ../nbs/m4.ipynb 11
 class M4Evaluation:
-    
+
     @staticmethod
     def load_benchmark(directory: str, group: str,
                        source_url: Optional[str] = None) -> np.ndarray:
         """Downloads and loads a bechmark forecasts.
-        
+
         Args:
             directory (str): Directory where data will be downloaded.
             group (str): Group name.
-                Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 
+                Allowed groups: 'Yearly', 'Quarterly', 'Monthly',
                                 'Weekly', 'Daily', 'Hourly'.
-            source_url (str, optional): Optional benchmark url obtained from 
+            source_url (str, optional): Optional benchmark url obtained from
                 https://github.com/Nixtla/m4-forecasts/tree/master/forecasts.
-                If `None` returns Naive2. 
-        
+                If `None` returns Naive2.
+
         Returns:
             np.ndarray: Numpy array of shape (n_series, horizon).
         """
@@ -245,35 +246,35 @@ class M4Evaluation:
                 download_file(path, source_url, decompress=True)
         else:
             filepath = f'{path}/submission-Naive2.csv'
-        
+
         benchmark = pd.read_csv(filepath)
         benchmark = benchmark[benchmark['id'].str.startswith(initial)]
         benchmark = benchmark.set_index('id').dropna(axis=1)
         benchmark = benchmark.sort_values('id').values
-        
+
         return benchmark
-    
+
     @staticmethod
-    def evaluate(directory: str, group: str, 
+    def evaluate(directory: str, group: str,
                  y_hat: Union[np.ndarray, str]) -> pd.DataFrame:
         """Evaluates y_hat according to M4 methodology.
-        
+
         Args:
             directory (str): Directory where data will be downloaded.
             group (str): Group name.
-                Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 
+                Allowed groups: 'Yearly', 'Quarterly', 'Monthly',
                                 'Weekly', 'Daily', 'Hourly'.
             y_hat (Union[np.ndarray, str]): Group forecasts as numpy array or
                 benchmark url from
                 https://github.com/Nixtla/m4-forecasts/tree/master/forecasts.
-            
+
         Returns:
             pd.DataFrame: DataFrame with columns OWA, SMAPE, MASE
                 and group as index.
         """
         if isinstance(y_hat, str):
             y_hat = M4Evaluation.load_benchmark(directory, group, y_hat)
-        
+
         initial = group[0]
         class_group = M4Info[group]
         horizon = class_group.horizon
@@ -297,10 +298,10 @@ class M4Evaluation:
         mases_ratio = avg_mases['y_hat'] / avg_mases['naive2']
         smapes_ratio = avg_smapes['y_hat'] / avg_smapes['naive2']
         owa = 0.5 * (mases_ratio + smapes_ratio)
-        
+
         evaluation = pd.DataFrame({'SMAPE': 200 * avg_smapes['y_hat'],
                                    'MASE': avg_mases['y_hat'],
                                    'OWA': owa},
                                    index=[group])
-        
+
         return evaluation

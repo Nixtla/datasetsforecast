@@ -10,7 +10,8 @@ from typing import Optional, Tuple
 
 import pandas as pd
 
-from .utils import download_file, Info
+from .utils import Info, download_file
+
 
 # %% ../nbs/m3.ipynb 4
 @dataclass
@@ -62,13 +63,13 @@ def _return_year(ts: pd.DataFrame) -> int:
 # %% ../nbs/m3.ipynb 7
 @dataclass
 class M3:
-    
+
     source_url = 'https://forecasters.org/data/m3comp/M3C.xls'
 
     @staticmethod
     def load(directory: str,
-             group: str) -> Tuple[pd.DataFrame, 
-                                  Optional[pd.DataFrame], 
+             group: str) -> Tuple[pd.DataFrame,
+                                  Optional[pd.DataFrame],
                                   Optional[pd.DataFrame]]:
         """
         Downloads and loads M3 data.
@@ -77,12 +78,12 @@ class M3:
             directory (str): Directory where data will be downloaded.
             group (str): Group name.
                 Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 'Other'.
-            
+
         Returns:
             pd.DataFrame: Target time series with columns ['unique_id', 'ds', 'y'].
         """
         M3.download(directory)
-        
+
         path = f'{directory}/m3/datasets/'
         file = f'{path}/M3C.xls'
 
@@ -110,14 +111,14 @@ class M3:
                                                          periods=df.shape[0],
                                                          freq=freq))
         df = df.filter(items=['unique_id', 'ds', 'y'])
-        
+
         return df, None, None
 
     @staticmethod
     def download(directory: str) -> None:
         """
         Download M3 Dataset.
-        
+
         Args:
             directory (str): Directory path to download dataset.
         """
