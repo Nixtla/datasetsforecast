@@ -17,7 +17,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [nixtla-linux-large-public, macos-latest, windows-latest]
+        os: [ubuntu-latest]
+        # os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
     steps:
       - name: Clone repo
