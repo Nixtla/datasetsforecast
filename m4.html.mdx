@@ -115,6 +115,7 @@ target="_blank" style={{ float: "right", fontSize: "smaller" }}>source</a>
 >      /Nixtla/m4-forecasts/raw/master/forecasts/submission-Naive2.zip')
 > ```
 
+
 ```python
 group = 'Hourly'
 await M4.async_download('data', group=group)
@@ -152,6 +153,7 @@ The results compared to the on-the-fly evaluation were obtained from the
 [official
 evaluation](https://github.com/Mcompetitions/M4-methods/blob/master/Evaluation%20and%20Ranks.xlsx).
 
+
 ```python
 from fastcore.test import test_close
 ```
@@ -170,6 +172,7 @@ esrnn_evaluation
 ### Numpy-based evaluation
 
 Also the method `evaluate` can recevie a numpy array of forecasts.
+
 
 ```python
 fforma_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-245.zip'
