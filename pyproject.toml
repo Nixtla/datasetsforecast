@@ -37,6 +37,8 @@ dependencies = [
 dev = [
     "pre-commit",
     "setuptools",
+    "pytest",
+    "pytest-cov",
     "pytest-asyncio",
 ]
 
