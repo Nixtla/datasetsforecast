@@ -63,3 +63,8 @@ addopts = [
     "--cov-report=html",
     "--cov-fail-under=80",
 ]
+
+[tool.coverage.run]
+omit = [
+    "datasetsforecast/favorita/*"
+]
