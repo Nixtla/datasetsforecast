@@ -26,7 +26,7 @@ dependencies = [
     "aiohttp",
     "numpy",
     "scikit-learn",
-    "pandas",
+    "pandas[plot]",
     "requests",
     "tqdm",
     "utilsforecast>=0.0.8",
