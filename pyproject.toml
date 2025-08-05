@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=36.2", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "datasetsforecast"
+version = "1.0.0"
+description = "Datasets for Time series forecasting"
+authors = [{name = "Nixtla", email = "business@nixtla.io"}]
+license = {text = "MIT License"}
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["time-series", "forecasting", "datasets"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "aiohttp",
+    "numpy",
+    "scikit-learn",
+    "pandas",
+    "requests",
+    "tqdm",
+    "utilsforecast>=0.0.8",
+    "xlrd>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "setuptools",
+    "pytest-asyncio",
+]
+
+[project.urls]
+Homepage = "https://github.com/Nixtla/datasetsforecast"
+Repository = "https://github.com/Nixtla/datasetsforecast"
+Documentation = "https://Nixtla.github.io/datasetsforecast/"
+
+[tool.setuptools]
+packages = ["datasetsforecast"]
+include-package-data = true
+zip-safe = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "--cov=datasetsforecast",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    # "--cov-fail-under=80",
+]
