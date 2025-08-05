@@ -4,7 +4,6 @@ from pandas._libs.tslibs.np_datetime import OutOfBoundsDatetime
 from datasetsforecast.favorita import FavoritaData
 
 
-@pytest.mark.skip(reason="This method fails in CI but runs locally")
 def test_favorita_data():
     """Test that cached and non-cached data loading produces consistent results."""
     group = 'Favorita200'
