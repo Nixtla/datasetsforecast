@@ -15,7 +15,7 @@
 
 Bug fixes and features are added through pull requests (PRs).
 
-##  PR submission guidelines
+## PR submission guidelines
 
 * Keep each PR focused. While it's more convenient, do not combine several unrelated fixes together. Create as many branches as needing to keep each PR focused.
 * Ensure that your PR includes a test that fails without your patch, and passes with it.
@@ -28,57 +28,68 @@ Bug fixes and features are added through pull requests (PRs).
 ### Local setup for working on a PR
 
 #### Clone the repository
+
 * HTTPS: `git clone https://github.com/Nixtla/datasetsforecast.git`
 * SSH: `git clone git@github.com:Nixtla/datasetsforecast.git`
 * GitHub CLI: `gh repo clone Nixtla/datasetsforecast`
 
-#### Set up a conda environment
-The repo comes with an `environment.yml` file which contains the libraries needed to run all the tests. In order to set up the environment you must have `conda` installed, we recommend [miniconda](https://docs.conda.io/en/latest/miniconda.html).
+## 🛠️ Create the Development Environment
 
-Once you have `conda` go to the top level directory of the repository and run the following lines (we recommend to use `python=3.10` for development, currently `python>=3.11` is not supported):
+```bash
+pip install uv
+uv venv --python 3.10
+source .venv/bin/activate
 
-```
-conda env create -f environment.yml
-```
-
-#### Install the library
-Once you have your environment setup, activate it using `conda activate datasetsforecast` and then install the library in editable mode using `pip install -e ".[dev]"`
-
-#### Install git hooks
-Before doing any changes to the code, please install the git hooks that run automatic scripts during each commit and merge to strip the notebooks of superfluous metadata (and avoid merge conflicts).
-```
-nbdev_install_hooks
+# Install the library in editable mode for development
+uv pip install -e ".[dev]" -U
 ```
 
-### Preview Changes
-You can preview changes in your local browser before pushing by using the `nbdev_preview`.
+## 🔧 Install Pre-commit Hooks
 
-### Building the library
-The library is built using the notebooks contained in the `nbs` folder. If you want to make any changes to the library you have to find the relevant notebook, make your changes and then call:
+Pre-commit hooks help maintain code quality by running checks before commits. 🛡️
+
+```bash
+pre-commit install
+pre-commit run --all-files
 ```
-nbdev_export
+
+## Viewing documentation locally
+
+The new documentation pipeline relies on `mintlify` and `lazydocs`.
+
+### install mintlify
+
+> [!NOTE]
+> Please install Node.js before proceeding.
+
+```sh
+npm i -g mint
 ```
 
-### Linters
-This project uses a couple of linters to validate different aspects of the code. Before opening a PR, please make sure that it passes all the linting tasks by following the next steps.
+For additional instructions, you can read about it [here](https://mintlify.com/docs/installation).
 
-* `mypy datasetsforecast/`
-* `flake8 --select=F datasetsforecast/`
+```sh
+uv pip install -e '.[dev]' lazydocs
+lazydocs .datasetsforecast
+python docs/to_mdx.py
+```
 
-### Running tests
-If you're working on the local interface you can just use `nbdev_test --n_workers 1 --do_print --timing`. 
+Finally to view the documentation
 
-### Cleaning notebooks
-Since the notebooks output cells can vary from run to run (even if they produce the same outputs) the notebooks are cleaned before committing them. Please make sure to run `nbdev_clean --clear_all` before committing your changes. If you clean the library's notebooks with this command please backtrack the changes you make to the example notebooks `git checkout nbs/examples`, unless you intend to change the examples.
+```sh
+mintlify dev
+```
+
+## Running tests
+
+If you're working on the local interface you can just use
+
+```sh
+uv run pytest
+```
 
 ## Do you want to contribute to the documentation?
 
-* Docs are automatically created from the notebooks in the `nbs` folder.
-* In order to modify the documentation:
-    1. Find the relevant notebook.
-    2. Make your changes.
-    3. Run all cells.
-    4. If you are modifying library notebooks (not in `nbs/examples`), clean all outputs using `Edit > Clear All Outputs`.
-    5. Run `nbdev_preview`.
-    6. Clean the notebook metadata using `nbdev_clean`.
-
+* The docs are automatically generated from the docstrings in the utilsforecast folder.
+* To contribute, ensure your docstrings follow the Google style format.
+* Once your docstring is correctly written, the documentation framework will scrape it and regenerate the corresponding `.mdx` files and your changes will then appear in the updated docs.
