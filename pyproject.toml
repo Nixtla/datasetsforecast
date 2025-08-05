@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "datasetsforecast"
-version = "1.0.0"
+dynamic = ["version"]
 description = "Datasets for Time series forecasting"
 authors = [{name = "Nixtla", email = "business@nixtla.io"}]
 license = {text = "MIT License"}
@@ -51,6 +51,9 @@ Documentation = "https://Nixtla.github.io/datasetsforecast/"
 packages = ["datasetsforecast"]
 include-package-data = true
 zip-safe = false
+
+[tool.setuptools.dynamic]
+version = {attr = "datasetsforecast.__version__"}
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
