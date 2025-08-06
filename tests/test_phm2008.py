@@ -3,6 +3,7 @@ import pytest
 from datasetsforecast.phm2008 import PHM2008, PHM2008Info
 
 
+@pytest.mark.skip(reason="dropbox download restriction")
 @pytest.mark.parametrize("group,meta", PHM2008Info)
 def test_phm2008(group, meta):
     # Checking that load works
