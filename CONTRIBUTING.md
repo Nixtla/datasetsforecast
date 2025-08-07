@@ -25,15 +25,17 @@ Bug fixes and features are added through pull requests (PRs).
 * Do not turn an already submitted PR into your development playground. If after you submitted PR, you discovered that more work is needed - close the PR, do the required work and then submit a new PR. Otherwise each of your commits requires attention from maintainers of the project.
 * If, however, you submitted a PR and received a request for changes, you should proceed with commits inside that PR, so that the maintainer can see the incremental fixes and won't need to review the whole PR again. In the exception case where you realize it'll take many many commits to complete the requests, then it's probably best to close the PR, do the work and then submit it again. Use common sense where you'd choose one way over another.
 
-### Local setup for working on a PR
+## Local setup for working on a PR
 
-#### Clone the repository
+### Clone the repository
 
 * HTTPS: `git clone https://github.com/Nixtla/datasetsforecast.git`
 * SSH: `git clone git@github.com:Nixtla/datasetsforecast.git`
 * GitHub CLI: `gh repo clone Nixtla/datasetsforecast`
 
-## 🛠️ Create the Development Environment
+### 🛠️ Create the Development Environment
+
+#### using `uv`
 
 ```bash
 pip install uv
@@ -44,7 +46,17 @@ source .venv/bin/activate
 uv pip install -e ".[dev]" -U
 ```
 
-## 🔧 Install Pre-commit Hooks
+#### using `conda`
+
+The repo comes with an `environment.yml` file which contains the libraries needed to run all the tests. In order to set up the environment you must have `conda` installed, we recommend [miniconda](https://docs.conda.io/en/latest/miniconda.html).
+
+Once you have `conda` go to the top level directory of the repository and run the following lines (we recommend to use `python=3.11` for development
+
+```bash
+conda env create -f environment.yml
+```
+
+### 🔧 Install Pre-commit Hooks
 
 Pre-commit hooks help maintain code quality by running checks before commits. 🛡️
 
@@ -53,11 +65,11 @@ pre-commit install
 pre-commit run --all-files
 ```
 
-## Viewing documentation locally
+### Viewing documentation locally
 
 The new documentation pipeline relies on `mintlify` and `lazydocs`.
 
-### install mintlify
+#### install mintlify
 
 > [!NOTE]
 > Please install Node.js before proceeding.
@@ -70,17 +82,18 @@ For additional instructions, you can read about it [here](https://mintlify.com/d
 
 ```sh
 uv pip install -e '.[dev]' lazydocs
-lazydocs .datasetsforecast
+lazydocs .datasetsforecast --no-watermark
 python docs/to_mdx.py
 ```
 
 Finally to view the documentation
 
 ```sh
+cd docs/mintlify
 mintlify dev
 ```
 
-## Running tests
+### Running tests
 
 If you're working on the local interface you can just use
 
