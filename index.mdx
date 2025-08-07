@@ -1,0 +1,37 @@
+---
+description: Datasets for time series forecasting
+title: "datasetsforecast"
+---
+## Install
+
+``` sh
+pip install datasetsforecast
+```
+
+## Datasets
+
+- [Favorita](https://nixtlaverse.nixtla.io/datasetsforecast/favorita.html)
+- [Hierarchical](https://nixtlaverse.nixtla.io/datasetsforecast/hierarchical.html)
+- [Long
+  horizon](https://nixtlaverse.nixtla.io/datasetsforecast/long_horizon.html)
+- [M3](https://nixtlaverse.nixtla.io/datasetsforecast/m3.html)
+- [M4](https://nixtlaverse.nixtla.io/datasetsforecast/m4.html)
+- [M5](https://nixtlaverse.nixtla.io/datasetsforecast/m5.html)
+- [PHM2008](https://nixtlaverse.nixtla.io/datasetsforecast/phm2008.html)
+
+## How to use
+
+All the modules have a `load` method which you can use to load the
+dataset for a specific group. If you don’t have the data locally it will
+be downloaded for you.
+
+``` python
+from datasetsforecast.phm2008 import PHM2008
+```
+
+``` python
+train_df, test_df = PHM2008.load(directory='data', group='FD001')
+train_df.shape, test_df.shape
+```
+
+    ((20631, 17), (13096, 17))
