@@ -300,6 +300,27 @@ class FavoritaRawData:
 
         Args:
             directory (str): Directory where data will be downloaded.
+
+        Examples:
+
+        ```python
+        from datasetsforecast.favorita import FavoritaRawData
+        verbose = True
+        group = 'Favorita200'  # 'Favorita500', 'FavoritaComplete'
+        directory = './data/favorita'  # directory = f's3://favorita'
+        filter_items, filter_stores, filter_dates, raw_group_data = FavoritaRawData._load_raw_group_data(directory=directory, group=group, verbose=verbose)
+        n_items = len(filter_items)
+        n_stores = len(filter_stores)
+        n_dates = len(filter_dates)
+        print('\\n')
+        print('n_stores: \\t', n_stores)
+        print('n_items: \\t', n_items)
+        print('n_dates: \\t', n_dates)
+        print('n_items * n_dates: \\t\\t', n_items * n_dates)
+        print('n_items * n_stores: \\t\\t', n_items * n_stores)
+        print('n_items * n_dates * n_stores: \\t', n_items * n_dates * n_stores)
+        ```
+
         """
         if not os.path.exists(directory):
             download_file(directory, FavoritaRawData.source_url, decompress=True)
@@ -885,6 +906,28 @@ class FavoritaData:
                 - Y_df (pd.DataFrame): Target base time series with columns ['item_id', 'hier_id', 'ds', 'y'].
                 - S_df (pd.DataFrame): Hierarchical constraints dataframe of size (base, bottom).
                 - tags (dict): Dictionary with hierarchical level information.
+
+        Example:
+
+        ```python
+        # Qualitative evaluation of hierarchical data
+        from datasetsforecast.favorita import FavoritaData
+        from hierarchicalforecast.utils import HierarchicalPlot
+
+        group = 'Favorita200' # 'Favorita500', 'FavoritaComplete'
+        directory = './data/favorita'
+        Y_df, S_df, tags = FavoritaData.load(directory=directory, group=group)
+
+        Y_item_df = Y_df[Y_df.item_id==1916577] # 112830, 1501570, 1916577
+        Y_item_df = Y_item_df.rename(columns={'hier_id': 'unique_id'})
+        Y_item_df = Y_item_df.set_index('unique_id')
+        del Y_item_df['item_id']
+
+        hplots = HierarchicalPlot(S=S_df, tags=tags)
+        hplots.plot_hierarchically_linked_series(
+            Y_df=Y_item_df, bottom_series='store_[40]',
+        )
+        ```
         """
         # Load preprocessed data
         _, _, _, temporal_bottom, S_df = \

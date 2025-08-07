@@ -175,6 +175,13 @@ class M5Evaluation:
 
         Returns:
             np.ndarray: Numpy array of shape (n_series, horizon).
+
+        Example:
+
+        ```python
+        winner_benchmark = M5Evaluation.load_benchmark('data')
+        winner_evaluation = M5Evaluation.evaluate('data', winner_benchmark)
+        ```
         """
         path = f'{directory}/m5/datasets'
         if source_url is not None:
@@ -252,6 +259,17 @@ class M5Evaluation:
         Returns:
             pd.DataFrame: DataFrame with columns OWA, SMAPE, MASE
                 and group as index.
+
+        Examples:
+
+        ```python
+        m5_winner_url = 'https://github.com/Nixtla/m5-forecasts/raw/main/forecasts/0001 YJ_STU.zip'
+        winner_evaluation = M5Evaluation.evaluate('data', m5_winner_url)
+
+        m5_second_place_url = 'https://github.com/Nixtla/m5-forecasts/raw/main/forecasts/0002 Matthias.zip'
+        m5_second_place_forecasts = M5Evaluation.load_benchmark('data', m5_second_place_url)
+        second_place_evaluation = M5Evaluation.evaluate('data', m5_second_place_forecasts)
+        ```
         """
         if isinstance(y_hat, str):
             y_hat = M5Evaluation.load_benchmark(directory, y_hat, validation)

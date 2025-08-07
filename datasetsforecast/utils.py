@@ -84,6 +84,31 @@ async def _async_download_file(session: aiohttp.ClientSession, path: Path, sourc
 
 # %% ../nbs/utils.ipynb 5
 async def async_download_files(path: Union[str, Path], urls: Iterable[str]):
+    """
+    Example:
+    ```python
+    import os
+    import tempfile
+
+    import requests
+    gh_url = 'https://api.github.com/repos/Nixtla/datasetsforecast/contents/'
+    base_url = 'https://raw.githubusercontent.com/Nixtla/datasetsforecast/main'
+
+    headers = {}
+    gh_token = os.getenv('GITHUB_TOKEN')
+    if gh_token is not None:
+        headers = {'Authorization': f'Bearer: {gh_token}'}
+    resp = requests.get(gh_url, headers=headers)
+    if resp.status_code != 200:
+        raise Exception(resp.text)
+    urls = [f'{base_url}/{e["path"]}' for e in resp.json() if e['type'] == 'file']
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        await async_download_files(tmp, urls)
+        files = list(tmp.iterdir())
+        assert len(files) == len(urls)
+    ```
+    """
     path = Path(path)
     path.mkdir(exist_ok=True, parents=True)
     tasks = []
@@ -96,6 +121,24 @@ async def async_download_files(path: Union[str, Path], urls: Iterable[str]):
 
 # %% ../nbs/utils.ipynb 8
 def download_files(directory: Union[str, Path], urls: Iterable[str]):
+    """
+    Example:
+
+    ```python
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        fname = tmp / 'script.py'
+        fname.write_text(f'''
+    from datasetsforecast.utils import download_files
+
+    download_files('{tmp.as_posix()}', {urls})
+        ''')
+        !python {fname}
+        fname.unlink()
+        files = list(tmp.iterdir())
+        assert len(files) == len(urls)
+    ```
+    """
     loop = asyncio.get_event_loop()
     if loop.is_running():
         raise Exception(

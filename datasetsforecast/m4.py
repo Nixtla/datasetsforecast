@@ -209,6 +209,18 @@ class M4:
 
         Args:
             directory (str): Directory path to download dataset.
+
+        Example:
+
+        ```python
+        group = 'Hourly'
+        await M4.async_download('data', group=group)
+        df, *_ = M4.load(directory='data', group=group)
+        n_series = len(np.unique(df.unique_id.values))
+        display_str  = f'Group: {group} '
+        display_str += f'n_series: {n_series}'
+        print(display_str)
+        ```
         """
         path = f'{directory}/m4/datasets/'
         missing_files = M4._missing_files(path, group)
@@ -271,6 +283,17 @@ class M4Evaluation:
         Returns:
             pd.DataFrame: DataFrame with columns OWA, SMAPE, MASE
                 and group as index.
+
+        Examples:
+
+        ```python
+        esrnn_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-118.zip'
+        esrnn_evaluation = M4Evaluation.evaluate('data', 'Hourly', esrnn_url)
+
+        fforma_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-245.zip'
+        fforma_forecasts = M4Evaluation.load_benchmark('data', 'Hourly', fforma_url)
+        fforma_evaluation = M4Evaluation.evaluate('data', 'Hourly', fforma_forecasts)
+        ```
         """
         if isinstance(y_hat, str):
             y_hat = M4Evaluation.load_benchmark(directory, group, y_hat)
