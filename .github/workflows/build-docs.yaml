@@ -20,7 +20,7 @@ jobs:
       - name: Build docs
         run: |
           pip install . lazydocs
-          lazydocs .datasetsforecast
+          lazydocs .datasetsforecast --no-watermark
           python docs/to_mdx.py
 
       - name: Deploy
