@@ -21,5 +21,5 @@ title: "datasetsforecast"
 """
 readme_text = Path("README.md").read_text()
 # skip first 4 lines as they contain title and description
-readme_text = header + readme_text.split("\n")[4:]
+readme_text = header + "\n".join(readme_text.split("\n")[4:])
 (output_path / "index.mdx").write_text(readme_text)
