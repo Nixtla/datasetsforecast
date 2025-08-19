@@ -45,7 +45,7 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/Nixtla/datasetsforecast"
 Repository = "https://github.com/Nixtla/datasetsforecast"
-Documentation = "https://Nixtla.github.io/datasetsforecast/"
+Documentation = "https://nixtlaverse.nixtla.io/datasetsforecast/"
 
 [tool.setuptools]
 packages = ["datasetsforecast"]
