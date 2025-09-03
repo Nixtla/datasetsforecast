@@ -488,10 +488,7 @@ class FavoritaData:
     This wrangling matches that of the DPMN paper.
 
     References:
-        Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao, Lee Dicker (2022).
-        "Probabilistic Hierarchical Forecasting with Deep Poisson Mixtures".
-        International Journal Forecasting, special issue.
-        https://doi.org/10.1016/j.ijforecast.2023.04.007
+        - [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao, Lee Dicker (2022). "Probabilistic Hierarchical Forecasting with Deep Poisson Mixtures". International Journal Forecasting, special issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007) 
     """
     @staticmethod
     def _get_static_data(filter_items, filter_stores, items, store_info, temporal, verbose=False):
