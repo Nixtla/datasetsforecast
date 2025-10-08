@@ -1,156 +1,110 @@
+# M5
 
-
-
-
-# <kbd>module</kbd> `datasetsforecast.m5`
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `M5`
-M5(source_url: str = 'https://github.com/Nixtla/m5-forecasts/raw/main/datasets/m5.zip') 
-
-
-
-### <kbd>method</kbd> `__init__`
+### `M5`
 
 ```python
-__init__(
-    source_url: str = 'https://github.com/Nixtla/m5-forecasts/raw/main/datasets/m5.zip'
-) → None
+M5(source_url='https://github.com/Nixtla/m5-forecasts/raw/main/datasets/m5.zip')
 ```
 
-
-
-
-
-
-
-
----
-
-
-
-### <kbd>method</kbd> `download`
+#### `M5.download`
 
 ```python
-download(directory: str) → None
+download(directory)
 ```
 
-Downloads M5 Competition Dataset. 
+Downloads M5 Competition Dataset.
 
+**Parameters:**
 
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
 
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory path to download dataset. 
-
----
-
-
-
-### <kbd>method</kbd> `load`
+#### `M5.load`
 
 ```python
-load(
-    directory: str,
-    cache: bool = True
-) → Tuple[DataFrame, DataFrame, DataFrame]
+load(directory, cache=True)
 ```
 
-Downloads and loads M5 data. 
+Downloads and loads M5 data.
 
+**Parameters:**
 
-
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory where data will be downloaded. 
- - <b>`cache`</b> (bool):  If `True` saves and loads. 
-
-
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`cache` | <code>[bool](#bool)</code> | If `True` saves and loads. | <code>True</code>
 
 **Returns:**
- Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:  Target time series with columns ['unique_id', 'ds', 'y'],  Exogenous time series with columns ['unique_id', 'ds', 'y'],  Static exogenous variables with columns ['unique_id', 'ds']  and static variables. 
 
+Type | Description
+---- | -----------
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame)\]</code> | Tuple\[pd.DataFrame, pd.DataFrame, pd.DataFrame\]:
+Target time series with columns ['unique_id', 'ds', 'y'],
+Exogenous time series with columns ['unique_id', 'ds', 'y'],
+Static exogenous variables with columns ['unique_id', 'ds']
+and static variables.
 
----
-
-
-
-## <kbd>class</kbd> `M5Evaluation`
-
-
-
-
-
-
-
----
-
-
-
-### <kbd>method</kbd> `aggregate_levels`
+#### `M5.source_url`
 
 ```python
-aggregate_levels(y_hat: DataFrame, categories: DataFrame = None) → DataFrame
+source_url: str = 'https://github.com/Nixtla/m5-forecasts/raw/main/datasets/m5.zip'
 ```
 
-Aggregates the 30_480 series to get 42_840. 
+## Evaluation class
 
+### `M5Evaluation`
 
-
-**Args:**
- 
- - <b>`y_hat`</b> (pd.DataFrame):  Forecasts as wide pandas dataframe with columns ['unique_id']. 
- - <b>`categories`</b> (pd.DataFrame, optional):  Categories of M5 dataset (not used).  Defaults to None. 
-
-
-
-**Returns:**
- 
- - <b>`pd.DataFrame`</b>:  Aggregated forecasts as wide pandas dataframe with columns ['unique_id']. 
-
----
-
-
-
-### <kbd>method</kbd> `evaluate`
+#### `M5Evaluation.aggregate_levels`
 
 ```python
-evaluate(
-    directory: str,
-    y_hat: Union[DataFrame, str],
-    validation: bool = False
-) → DataFrame
+aggregate_levels(y_hat, categories=None)
 ```
 
-Evaluates y_hat according to M4 methodology. 
+Aggregates the 30_480 series to get 42_840.
 
+**Parameters:**
 
-
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory where data will be downloaded. 
- - <b>`validation`</b> (bool):  Wheter perform validation evaluation.  Default False, return test evaluation. 
- - <b>`y_hat`</b> (Union[pd.DataFrame, str]):  Forecasts as wide pandas dataframe with columns  ['unique_id'] and forecasts or  benchmark url from 
- - <b>`https`</b>: //github.com/Nixtla/m5-forecasts/tree/main/forecasts. 
-
-
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`y_hat` | <code>[DataFrame](#pandas.DataFrame)</code> | Forecasts as wide pandas dataframe with columns ['unique_id']. | *required*
+`categories` | <code>[DataFrame](#pandas.DataFrame)</code> | Categories of M5 dataset (not used).
+Defaults to None. | <code>None</code>
 
 **Returns:**
- 
- - <b>`pd.DataFrame`</b>:  DataFrame with columns OWA, SMAPE, MASE  and group as index. 
 
+Type | Description
+---- | -----------
+<code>[DataFrame](#pandas.DataFrame)</code> | pd.DataFrame: Aggregated forecasts as wide pandas dataframe with columns ['unique_id'].
 
+#### `M5Evaluation.evaluate`
 
-**Examples:**
- 
+```python
+evaluate(directory, y_hat, validation=False)
+```
+
+Evaluates y_hat according to M4 methodology.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`validation` | <code>[bool](#bool)</code> | Wheter perform validation evaluation.
+Default False, return test evaluation. | <code>False</code>
+`y_hat` | <code>[Union](#typing.Union)\[[DataFrame](#pandas.DataFrame), [str](#str)\]</code> | Forecasts as wide pandas dataframe with columns
+['unique_id'] and forecasts or
+benchmark url from
+https://github.com/Nixtla/m5-forecasts/tree/main/forecasts. | *required*
+
+**Returns:**
+
+Type | Description
+---- | -----------
+<code>[DataFrame](#pandas.DataFrame)</code> | pd.DataFrame: DataFrame with columns OWA, SMAPE, MASE
+and group as index.
+
+Examples:
 
 ```python
 m5_winner_url = 'https://github.com/Nixtla/m5-forecasts/raw/main/forecasts/0001 YJ_STU.zip'
@@ -159,47 +113,116 @@ winner_evaluation = M5Evaluation.evaluate('data', m5_winner_url)
 m5_second_place_url = 'https://github.com/Nixtla/m5-forecasts/raw/main/forecasts/0002 Matthias.zip'
 m5_second_place_forecasts = M5Evaluation.load_benchmark('data', m5_second_place_url)
 second_place_evaluation = M5Evaluation.evaluate('data', m5_second_place_forecasts)
-``` 
-
----
-
-
-
-### <kbd>method</kbd> `load_benchmark`
-
-```python
-load_benchmark(
-    directory: str,
-    source_url: Optional[str] = None,
-    validation: bool = False
-) → ndarray
 ```
 
-Downloads and loads a bechmark forecasts. 
+#### `M5Evaluation.levels`
 
+```python
+levels: dict = dict(Level1=['total'], Level2=['state_id'], Level3=['store_id'], Level4=['cat_id'], Level5=['dept_id'], Level6=['state_id', 'cat_id'], Level7=['state_id', 'dept_id'], Level8=['store_id', 'cat_id'], Level9=['store_id', 'dept_id'], Level10=['item_id'], Level11=['state_id', 'item_id'], Level12=['item_id', 'store_id'])
+```
 
+#### `M5Evaluation.load_benchmark`
 
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory where data will be downloaded. 
- - <b>`source_url`</b> (str, optional):  Optional benchmark url obtained from 
- - <b>`https`</b>: //github.com/Nixtla/m5-forecasts/tree/master/forecasts. If `None` returns the M5 winner. 
- - <b>`validation`</b> (bool):  Wheter return validation forecasts.  Default False, return test forecasts. 
+```python
+load_benchmark(directory, source_url=None, validation=False)
+```
 
+Downloads and loads a bechmark forecasts.
 
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`source_url` | <code>[str](#str)</code> | Optional benchmark url obtained from
+https://github.com/Nixtla/m5-forecasts/tree/master/forecasts.
+If `None` returns the M5 winner. | <code>None</code>
+`validation` | <code>[bool](#bool)</code> | Wheter return validation forecasts.
+Default False, return test forecasts. | <code>False</code>
 
 **Returns:**
- 
- - <b>`np.ndarray`</b>:  Numpy array of shape (n_series, horizon). 
 
+Type | Description
+---- | -----------
+<code>[ndarray](#numpy.ndarray)</code> | np.ndarray: Numpy array of shape (n_series, horizon).
 
-
-**Example:**
- 
+Example:
 
 ```python
 winner_benchmark = M5Evaluation.load_benchmark('data')
 winner_evaluation = M5Evaluation.evaluate('data', winner_benchmark)
-``` 
+```
 
+### URL-based evaluation
 
+The method `evaluate` from the class
+[`M5Evaluation`](https://Nixtla.github.io/datasetsforecast/m5.html#m5evaluation)
+can receive a url of a [submission to the M5
+competiton](https://github.com/Nixtla/m5-forecasts/tree/main/forecasts).
+
+The results compared to the on-the-fly evaluation were obtained from the
+[official
+evaluation](https://github.com/Mcompetitions/M5-methods/blob/master/Scores%20and%20Ranks.xlsx).
+
+```python
+m5_winner_url = 'https://github.com/Nixtla/m5-forecasts/raw/main/forecasts/0001 YJ_STU.zip'
+winner_evaluation = M5Evaluation.evaluate('data', m5_winner_url)
+# Test of the same evaluation as the original one
+test_close(winner_evaluation.loc['Total'].item(), 0.520, eps=1e-3)
+winner_evaluation
+```
+
+### Pandas-based evaluation
+
+Also the method `evaluate` can recevie a pandas DataFrame of forecasts.
+
+```python
+m5_second_place_url = 'https://github.com/Nixtla/m5-forecasts/raw/main/forecasts/0002 Matthias.zip'
+m5_second_place_forecasts = M5Evaluation.load_benchmark('data', m5_second_place_url)
+second_place_evaluation = M5Evaluation.evaluate('data', m5_second_place_forecasts)
+# Test of the same evaluation as the original one
+test_close(second_place_evaluation.loc['Total'].item(), 0.528, eps=1e-3)
+second_place_evaluation
+```
+
+By default you can load the winner benchmark using the following.
+
+```python
+winner_benchmark = M5Evaluation.load_benchmark('data')
+winner_evaluation = M5Evaluation.evaluate('data', winner_benchmark)
+# Test of the same evaluation as the original one
+test_close(winner_evaluation.loc['Total'].item(), 0.520, eps=1e-3)
+winner_evaluation
+```
+
+### Validation evaluation
+
+You can also evaluate the official validation set.
+
+```python
+winner_benchmark_val = M5Evaluation.load_benchmark('data', validation=True)
+winner_evaluation_val = M5Evaluation.evaluate('data', winner_benchmark_val, validation=True)
+winner_evaluation_val
+```
+
+## Kaggle-Competition-M5 References
+
+The evaluation metric of the Favorita Kaggle competition was the
+normalized weighted root mean squared logarithmic error (NWRMSLE).
+Perishable items have a score weight of 1.25; otherwise, the weight is
+1.0.
+
+$$ NWRMSLE = \sqrt{\frac{\sum^{n}_{i=1} w_{i}\left(log(\hat{y}_{i}+1)  - log(y_{i}+1)\right)^{2}}{\sum^{n}_{i=1} w_{i}}}$$
+
+| Kaggle Competition Forecasting Methods | 16D ahead NWRMSLE |
+|:---------------------------------------------------------------:|:-----:|
+| [LGBM](https://www.kaggle.com/shixw125/1st-place-lgb-model-public-0-506-private-0-511/comments) \[1\] | 0.5091 |
+| [Seq2Seq WaveNet](https://arxiv.org/abs/1803.04037) \[2\] | 0.5129 |
+
+1. [Corporación Favorita. Corporación favorita grocery sales
+    forecasting. Kaggle Competition Leaderboard,
+    2018.](https://www.kaggle.com/c/favorita-grocery-sales-forecasting/leaderboard)
+2. [Glib Kechyn, Lucius Yu, Yangguang Zang, and Svyatoslav Kechyn.
+    Sales forecasting using wavenet within the framework of the Favorita
+    Kaggle competition. Computing Research Repository, abs/1803.04037,
+    2018](https://arxiv.org/abs/1803.04037).

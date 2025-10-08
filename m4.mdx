@@ -1,265 +1,288 @@
-
-
-
-
-# <kbd>module</kbd> `datasetsforecast.m4`
-
-
-
-
-
-
+---
+title: M4
 ---
 
-
-
-## <kbd>class</kbd> `Yearly`
-Yearly(seasonality: int = 1, horizon: int = 6, freq: str = 'Y', name: str = 'Yearly', n_ts: int = 23000) 
-
-
-
-### <kbd>method</kbd> `__init__`
+### `Other`
 
 ```python
-__init__(
-    seasonality: int = 1,
-    horizon: int = 6,
-    freq: str = 'Y',
-    name: str = 'Yearly',
-    n_ts: int = 23000
-) → None
+Other(seasonality=1, horizon=8, freq='D', name='Other', n_ts=5000, included_groups=('Weekly', 'Daily', 'Hourly'))
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Quarterly`
-Quarterly(seasonality: int = 4, horizon: int = 8, freq: str = 'Q', name: str = 'Quarterly', n_ts: int = 24000) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Other.freq`
 
 ```python
-__init__(
-    seasonality: int = 4,
-    horizon: int = 8,
-    freq: str = 'Q',
-    name: str = 'Quarterly',
-    n_ts: int = 24000
-) → None
+freq: str = 'D'
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Monthly`
-Monthly(seasonality: int = 12, horizon: int = 18, freq: str = 'M', name: str = 'Monthly', n_ts: int = 48000) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Other.horizon`
 
 ```python
-__init__(
-    seasonality: int = 12,
-    horizon: int = 18,
-    freq: str = 'M',
-    name: str = 'Monthly',
-    n_ts: int = 48000
-) → None
+horizon: int = 8
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Weekly`
-Weekly(seasonality: int = 1, horizon: int = 13, freq: str = 'W', name: str = 'Weekly', n_ts: int = 359) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Other.included_groups`
 
 ```python
-__init__(
-    seasonality: int = 1,
-    horizon: int = 13,
-    freq: str = 'W',
-    name: str = 'Weekly',
-    n_ts: int = 359
-) → None
+included_groups: Tuple = ('Weekly', 'Daily', 'Hourly')
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Daily`
-Daily(seasonality: int = 1, horizon: int = 14, freq: str = 'D', name: str = 'Daily', n_ts: int = 4227) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Other.n_ts`
 
 ```python
-__init__(
-    seasonality: int = 1,
-    horizon: int = 14,
-    freq: str = 'D',
-    name: str = 'Daily',
-    n_ts: int = 4227
-) → None
+n_ts: int = 5000
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Hourly`
-Hourly(seasonality: int = 24, horizon: int = 48, freq: str = 'H', name: str = 'Hourly', n_ts: int = 414) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Other.name`
 
 ```python
-__init__(
-    seasonality: int = 24,
-    horizon: int = 48,
-    freq: str = 'H',
-    name: str = 'Hourly',
-    n_ts: int = 414
-) → None
+name: str = 'Other'
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Other`
-Other(seasonality: int = 1, horizon: int = 8, freq: str = 'D', name: str = 'Other', n_ts: int = 5000, included_groups: Tuple = ('Weekly', 'Daily', 'Hourly')) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Other.seasonality`
 
 ```python
-__init__(
-    seasonality: int = 1,
-    horizon: int = 8,
-    freq: str = 'D',
-    name: str = 'Other',
-    n_ts: int = 5000,
-    included_groups: Tuple = ('Weekly', 'Daily', 'Hourly')
-) → None
+seasonality: int = 1
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `M4`
-M4(source_url: str = 'https://raw.githubusercontent.com/Mcompetitions/M4-methods/master/Dataset/', naive2_forecast_url: str = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-Naive2.zip') 
-
-
-
-### <kbd>method</kbd> `__init__`
+### `Hourly`
 
 ```python
-__init__(
-    source_url: str = 'https://raw.githubusercontent.com/Mcompetitions/M4-methods/master/Dataset/',
-    naive2_forecast_url: str = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-Naive2.zip'
-) → None
+Hourly(seasonality=24, horizon=48, freq='H', name='Hourly', n_ts=414)
 ```
 
-
-
-
-
-
-
-
----
-
-
-
-### <kbd>method</kbd> `async_download`
+#### `Hourly.freq`
 
 ```python
-async_download(directory: str, group: Optional[str] = None) → None
+freq: str = 'H'
 ```
 
-Download M4 Dataset. 
+#### `Hourly.horizon`
 
+```python
+horizon: int = 48
+```
 
+#### `Hourly.n_ts`
 
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory path to download dataset. 
+```python
+n_ts: int = 414
+```
 
+#### `Hourly.name`
 
+```python
+name: str = 'Hourly'
+```
 
-**Example:**
- 
+#### `Hourly.seasonality`
+
+```python
+seasonality: int = 24
+```
+
+### `Daily`
+
+```python
+Daily(seasonality=1, horizon=14, freq='D', name='Daily', n_ts=4227)
+```
+
+#### `Daily.freq`
+
+```python
+freq: str = 'D'
+```
+
+#### `Daily.horizon`
+
+```python
+horizon: int = 14
+```
+
+#### `Daily.n_ts`
+
+```python
+n_ts: int = 4227
+```
+
+#### `Daily.name`
+
+```python
+name: str = 'Daily'
+```
+
+#### `Daily.seasonality`
+
+```python
+seasonality: int = 1
+```
+
+### `Weekly`
+
+```python
+Weekly(seasonality=1, horizon=13, freq='W', name='Weekly', n_ts=359)
+```
+
+#### `Weekly.freq`
+
+```python
+freq: str = 'W'
+```
+
+#### `Weekly.horizon`
+
+```python
+horizon: int = 13
+```
+
+#### `Weekly.n_ts`
+
+```python
+n_ts: int = 359
+```
+
+#### `Weekly.name`
+
+```python
+name: str = 'Weekly'
+```
+
+#### `Weekly.seasonality`
+
+```python
+seasonality: int = 1
+```
+
+### `Monthly`
+
+```python
+Monthly(seasonality=12, horizon=18, freq='M', name='Monthly', n_ts=48000)
+```
+
+#### `Monthly.freq`
+
+```python
+freq: str = 'M'
+```
+
+#### `Monthly.horizon`
+
+```python
+horizon: int = 18
+```
+
+#### `Monthly.n_ts`
+
+```python
+n_ts: int = 48000
+```
+
+#### `Monthly.name`
+
+```python
+name: str = 'Monthly'
+```
+
+#### `Monthly.seasonality`
+
+```python
+seasonality: int = 12
+```
+
+### `Quarterly`
+
+```python
+Quarterly(seasonality=4, horizon=8, freq='Q', name='Quarterly', n_ts=24000)
+```
+
+#### `Quarterly.freq`
+
+```python
+freq: str = 'Q'
+```
+
+#### `Quarterly.horizon`
+
+```python
+horizon: int = 8
+```
+
+#### `Quarterly.n_ts`
+
+```python
+n_ts: int = 24000
+```
+
+#### `Quarterly.name`
+
+```python
+name: str = 'Quarterly'
+```
+
+#### `Quarterly.seasonality`
+
+```python
+seasonality: int = 4
+```
+
+### `Yearly`
+
+```python
+Yearly(seasonality=1, horizon=6, freq='Y', name='Yearly', n_ts=23000)
+```
+
+#### `Yearly.freq`
+
+```python
+freq: str = 'Y'
+```
+
+#### `Yearly.horizon`
+
+```python
+horizon: int = 6
+```
+
+#### `Yearly.n_ts`
+
+```python
+n_ts: int = 23000
+```
+
+#### `Yearly.name`
+
+```python
+name: str = 'Yearly'
+```
+
+#### `Yearly.seasonality`
+
+```python
+seasonality: int = 1
+```
+
+## Download data class
+
+### `M4`
+
+```python
+M4(source_url='https://raw.githubusercontent.com/Mcompetitions/M4-methods/master/Dataset/', naive2_forecast_url='https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-Naive2.zip')
+```
+
+#### `M4.async_download`
+
+```python
+async_download(directory, group=None)
+```
+
+Download M4 Dataset.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+
+Example:
 
 ```python
 group = 'Hourly'
@@ -269,102 +292,95 @@ n_series = len(np.unique(df.unique_id.values))
 display_str  = f'Group: {group} '
 display_str += f'n_series: {n_series}'
 print(display_str)
-``` 
-
----
-
-
-
-### <kbd>method</kbd> `download`
-
-```python
-download(directory: str, group: Optional[str] = None) → None
 ```
 
-Download M4 Dataset. 
-
-
-
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory path to download dataset. 
- - <b>`group`</b> (str, optional):  Name of the group to download. If None, downloads all.  Defaults to None. 
-
----
-
-
-
-### <kbd>method</kbd> `load`
+#### `M4.download`
 
 ```python
-load(
-    directory: str,
-    group: str,
-    cache: bool = True
-) → Tuple[DataFrame, Optional[DataFrame], Optional[DataFrame]]
+download(directory, group=None)
 ```
 
-Downloads and loads M4 data. 
+Download M4 Dataset.
 
+**Parameters:**
 
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+`group` | <code>[str](#str)</code> | Name of the group to download. If None, downloads all.
+Defaults to None. | <code>None</code>
 
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory where data will be downloaded. 
- - <b>`group`</b> (str):  Group name. 
- - <b>`Allowed groups`</b>:  'Yearly', 'Quarterly', 'Monthly',  'Weekly', 'Daily', 'Hourly'. 
- - <b>`cache`</b> (bool):  If `True` saves and loads 
+#### `M4.load`
 
+```python
+load(directory, group, cache=True)
+```
 
+Downloads and loads M4 data.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name.
+Allowed groups: 'Yearly', 'Quarterly', 'Monthly',
+'Weekly', 'Daily', 'Hourly'. | *required*
+`cache` | <code>[bool](#bool)</code> | If `True` saves and loads | <code>True</code>
 
 **Returns:**
- Tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]:  Target time series with columns ['unique_id', 'ds', 'y'],  Static exogenous variables with columns ['unique_id', 'ds'],  and static variables. 
 
+Type | Description
+---- | -----------
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\], [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\]\]</code> | Tuple\[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]\]:
+Target time series with columns ['unique_id', 'ds', 'y'],
+Static exogenous variables with columns ['unique_id', 'ds'],
+and static variables.
 
----
-
-
-
-## <kbd>class</kbd> `M4Evaluation`
-
-
-
-
-
-
-
----
-
-
-
-### <kbd>method</kbd> `evaluate`
+#### `M4.naive2_forecast_url`
 
 ```python
-evaluate(directory: str, group: str, y_hat: Union[ndarray, str]) → DataFrame
+naive2_forecast_url: str = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-Naive2.zip'
 ```
 
-Evaluates y_hat according to M4 methodology. 
+#### `M4.source_url`
 
+```python
+source_url: str = 'https://raw.githubusercontent.com/Mcompetitions/M4-methods/master/Dataset/'
+```
 
+## Evaluation class
 
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory where data will be downloaded. 
- - <b>`group`</b> (str):  Group name. 
- - <b>`Allowed groups`</b>:  'Yearly', 'Quarterly', 'Monthly',  'Weekly', 'Daily', 'Hourly'. 
- - <b>`y_hat`</b> (Union[np.ndarray, str]):  Group forecasts as numpy array or  benchmark url from 
- - <b>`https`</b>: //github.com/Nixtla/m4-forecasts/tree/master/forecasts. 
+### `M4Evaluation`
 
+#### `M4Evaluation.evaluate`
 
+```python
+evaluate(directory, group, y_hat)
+```
+
+Evaluates y_hat according to M4 methodology.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name.
+Allowed groups: 'Yearly', 'Quarterly', 'Monthly',
+'Weekly', 'Daily', 'Hourly'. | *required*
+`y_hat` | <code>[Union](#typing.Union)\[[ndarray](#numpy.ndarray), [str](#str)\]</code> | Group forecasts as numpy array or
+benchmark url from
+https://github.com/Nixtla/m4-forecasts/tree/master/forecasts. | *required*
 
 **Returns:**
- 
- - <b>`pd.DataFrame`</b>:  DataFrame with columns OWA, SMAPE, MASE  and group as index. 
 
+Type | Description
+---- | -----------
+<code>[DataFrame](#pandas.DataFrame)</code> | pd.DataFrame: DataFrame with columns OWA, SMAPE, MASE
+and group as index.
 
-
-**Examples:**
- 
+Examples:
 
 ```python
 esrnn_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-118.zip'
@@ -373,38 +389,70 @@ esrnn_evaluation = M4Evaluation.evaluate('data', 'Hourly', esrnn_url)
 fforma_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-245.zip'
 fforma_forecasts = M4Evaluation.load_benchmark('data', 'Hourly', fforma_url)
 fforma_evaluation = M4Evaluation.evaluate('data', 'Hourly', fforma_forecasts)
-``` 
-
----
-
-
-
-### <kbd>method</kbd> `load_benchmark`
-
-```python
-load_benchmark(
-    directory: str,
-    group: str,
-    source_url: Optional[str] = None
-) → ndarray
 ```
 
-Downloads and loads a bechmark forecasts. 
+#### `M4Evaluation.load_benchmark`
 
+```python
+load_benchmark(directory, group, source_url=None)
+```
 
+Downloads and loads a bechmark forecasts.
 
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory where data will be downloaded. 
- - <b>`group`</b> (str):  Group name. 
- - <b>`Allowed groups`</b>:  'Yearly', 'Quarterly', 'Monthly',  'Weekly', 'Daily', 'Hourly'. 
- - <b>`source_url`</b> (str, optional):  Optional benchmark url obtained from 
- - <b>`https`</b>: //github.com/Nixtla/m4-forecasts/tree/master/forecasts. If `None` returns Naive2. 
+**Parameters:**
 
-
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name.
+Allowed groups: 'Yearly', 'Quarterly', 'Monthly',
+'Weekly', 'Daily', 'Hourly'. | *required*
+`source_url` | <code>[str](#str)</code> | Optional benchmark url obtained from
+https://github.com/Nixtla/m4-forecasts/tree/master/forecasts.
+If `None` returns Naive2. | <code>None</code>
 
 **Returns:**
- 
- - <b>`np.ndarray`</b>:  Numpy array of shape (n_series, horizon). 
 
+Type | Description
+---- | -----------
+<code>[ndarray](#numpy.ndarray)</code> | np.ndarray: Numpy array of shape (n_series, horizon).
 
+### URL-based evaluation
+
+The method `evaluate` from the class
+[`M4Evaluation`](https://Nixtla.github.io/datasetsforecast/m4.html#m4evaluation)
+can receive a url of a [benchmark uploaded to the M4
+competiton](https://github.com/Mcompetitions/M4-methods/tree/master/Point%20Forecasts).
+
+The results compared to the on-the-fly evaluation were obtained from the
+[official
+evaluation](https://github.com/Mcompetitions/M4-methods/blob/master/Evaluation%20and%20Ranks.xlsx).
+
+```python
+from fastcore.test import test_close
+```
+
+```python
+esrnn_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-118.zip'
+esrnn_evaluation = M4Evaluation.evaluate('data', 'Hourly', esrnn_url)
+# Test of the same evaluation as the original one
+test_close(esrnn_evaluation['SMAPE'].item(), 9.328, eps=1e-3)
+test_close(esrnn_evaluation['MASE'].item(), 0.893, eps=1e-3)
+test_close(esrnn_evaluation['OWA'].item(), 0.440, eps=1e-3)
+esrnn_evaluation
+```
+
+### Numpy-based evaluation
+
+Also the method `evaluate` can recevie a numpy array of forecasts.
+
+```python
+fforma_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-245.zip'
+fforma_forecasts = M4Evaluation.load_benchmark('data', 'Hourly', fforma_url)
+fforma_evaluation = M4Evaluation.evaluate('data', 'Hourly', fforma_forecasts)
+# Test of the same evaluation as the original one
+test_close(fforma_evaluation['SMAPE'].item(), 11.506, eps=1e-3)
+test_close(fforma_evaluation['MASE'].item(), 0.819, eps=1e-3)
+test_close(fforma_evaluation['OWA'].item(), 0.484, eps=1e-3)
+fforma_evaluation
+```

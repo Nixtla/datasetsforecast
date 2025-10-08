@@ -1,63 +1,36 @@
+# Utils
 
+### `download_file`
 
+```python
+download_file(directory, source_url, decompress=False)
+```
 
+Download data from source_ulr inside directory.
 
-# <kbd>module</kbd> `datasetsforecast.utils`
+**Parameters:**
 
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>([str](#str), [Path](#pathlib.Path))</code> | Custom directory where data will be downloaded. | *required*
+`source_url` | <code>[str](#str)</code> | URL where data is hosted. | *required*
+`decompress` | <code>[bool](#bool)</code> | Wheter decompress downloaded file. Default False. | <code>False</code>
 
-
-
-
----
-
-
-
-## <kbd>function</kbd> `extract_file`
+### `extract_file`
 
 ```python
 extract_file(filepath, directory)
 ```
 
-
-
-
-
-
----
-
-
-
-## <kbd>function</kbd> `download_file`
+### `async_download_files`
 
 ```python
-download_file(directory: str, source_url: str, decompress: bool = False) → None
+async_download_files(path, urls)
 ```
 
-Download data from source_ulr inside directory. 
-
-
-
-**Args:**
- 
- - <b>`directory`</b> (str, Path):  Custom directory where data will be downloaded. 
- - <b>`source_url`</b> (str):  URL where data is hosted. 
- - <b>`decompress`</b> (bool):  Wheter decompress downloaded file. Default False. 
-
-
----
-
-
-
-## <kbd>function</kbd> `async_download_files`
+Example:
 
 ```python
-async_download_files(path: Union[str, Path], urls: Iterable[str])
-```
-
-
-
-**Example:**
- ```python
 import os
 import tempfile
 
@@ -68,87 +41,109 @@ base_url = 'https://raw.githubusercontent.com/Nixtla/datasetsforecast/main'
 headers = {}
 gh_token = os.getenv('GITHUB_TOKEN')
 if gh_token is not None:
-     headers = {'Authorization': f'Bearer: {gh_token}'}
+    headers = {'Authorization': f'Bearer: {gh_token}'}
 resp = requests.get(gh_url, headers=headers)
 if resp.status_code != 200:
-     raise Exception(resp.text)
+    raise Exception(resp.text)
 urls = [f'{base_url}/{e["path"]}' for e in resp.json() if e['type'] == 'file']
 with tempfile.TemporaryDirectory() as tmp:
-     tmp = Path(tmp)
-     await async_download_files(tmp, urls)
-     files = list(tmp.iterdir())
-     assert len(files) == len(urls)
-``` 
-
-
----
-
-
-
-## <kbd>function</kbd> `download_files`
-
-```python
-download_files(directory: Union[str, Path], urls: Iterable[str])
+    tmp = Path(tmp)
+    await async_download_files(tmp, urls)
+    files = list(tmp.iterdir())
+    assert len(files) == len(urls)
 ```
 
+```python
+import os
+import tempfile
 
+import requests
+```
 
-**Example:**
- 
+```python
+gh_url = 'https://api.github.com/repos/Nixtla/datasetsforecast/contents/'
+base_url = 'https://raw.githubusercontent.com/Nixtla/datasetsforecast/main'
+
+headers = {}
+gh_token = os.getenv('GITHUB_TOKEN')
+if gh_token is not None:
+    headers = {'Authorization': f'Bearer: {gh_token}'}
+resp = requests.get(gh_url, headers=headers)
+if resp.status_code != 200:
+    raise Exception(resp.text)
+urls = [f'{base_url}/{e["path"]}' for e in resp.json() if e['type'] == 'file']
+with tempfile.TemporaryDirectory() as tmp:
+    tmp = Path(tmp)
+    await async_download_files(tmp, urls)
+    files = list(tmp.iterdir())
+    assert len(files) == len(urls)
+```
+
+### `download_files`
+
+```python
+download_files(directory, urls)
+```
+
+Example:
 
 ```python
 with tempfile.TemporaryDirectory() as tmp:
-     tmp = Path(tmp)
-     fname = tmp / 'script.py'
-     fname.write_text(f'''
+    tmp = Path(tmp)
+    fname = tmp / 'script.py'
+    fname.write_text(f'''
 from datasetsforecast.utils import download_files
 
 download_files('{tmp.as_posix()}', {urls})
-     ''')
-     !python {fname}
-     fname.unlink()
-     files = list(tmp.iterdir())
-     assert len(files) == len(urls)
-``` 
-
-
----
-
-
-
-## <kbd>class</kbd> `Info`
-Info Dataclass of datasets. 
-
-**Args:**
- 
- - <b>`groups`</b> (Tuple):  Tuple of str groups 
- - <b>`class_groups`</b> (Tuple):  Tuple of dataclasses. 
-
-
-
-### <kbd>method</kbd> `__init__`
-
-```python
-__init__(class_groups: Tuple[dataclass]) → None
+    ''')
+    !python {fname}
+    fname.unlink()
+    files = list(tmp.iterdir())
+    assert len(files) == len(urls)
 ```
 
-
-
-
-
-
-
-
----
-
-
-
-### <kbd>method</kbd> `get_group`
-
 ```python
-get_group(group: str)
+with tempfile.TemporaryDirectory() as tmp:
+    tmp = Path(tmp)
+    fname = tmp / 'script.py'
+    fname.write_text(f"""
+from datasetsforecast.utils import download_files
+    
+download_files('{tmp.as_posix()}', {urls})
+    """)
+    !python {fname}
+    fname.unlink()
+    files = list(tmp.iterdir())
+    assert len(files) == len(urls)
 ```
 
-Gets dataclass of group. 
+### `Info`
 
+```python
+Info(class_groups)
+```
 
+Info Dataclass of datasets.
+Args:
+groups (Tuple): Tuple of str groups
+class_groups (Tuple): Tuple of dataclasses.
+
+#### `Info.class_groups`
+
+```python
+class_groups: Tuple[dataclass]
+```
+
+#### `Info.get_group`
+
+```python
+get_group(group)
+```
+
+Gets dataclass of group.
+
+#### `Info.groups`
+
+```python
+groups: Tuple[str] = field(init=False)
+```
