@@ -81,16 +81,13 @@ npm i -g mint
 For additional instructions, you can read about it [here](https://mintlify.com/docs/installation).
 
 ```sh
-uv pip install -e '.[dev]' lazydocs
-lazydocs .datasetsforecast --no-watermark
-python docs/to_mdx.py
+make all_docs
 ```
 
 Finally to view the documentation
 
 ```sh
-cd docs/mintlify
-mintlify dev
+make preview_docs
 ```
 
 ### Running tests
@@ -103,6 +100,9 @@ uv run pytest
 
 ## Do you want to contribute to the documentation?
 
-* The docs are automatically generated from the docstrings in the utilsforecast folder.
+* The docs are automatically generated from the docstrings in the `datasetsforecast` folder.
 * To contribute, ensure your docstrings follow the Google style format.
 * Once your docstring is correctly written, the documentation framework will scrape it and regenerate the corresponding `.mdx` files and your changes will then appear in the updated docs.
+* Make an appropriate entry in the `docs/mintlify/mint.json` file.
+* Run `make all_docs` to regenerate the documentation.
+* Run `make preview_docs` to view and test the documentation locally.
