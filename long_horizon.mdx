@@ -1,373 +1,481 @@
+# Long Horizon
 
+> Download and wrangling utility for long-horizon datasets.
 
-
-
-# <kbd>module</kbd> `datasetsforecast.long_horizon`
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `ETTh1`
-The ETTh1 dataset monitors an electricity transformer from a region of a province of China including oil temperature and variants of load (such as high useful load and high useless load) from July 2016 to July 2018 at an hourly frequency. 
-
-
-
-### <kbd>method</kbd> `__init__`
+### `ETTm2`
 
 ```python
-__init__(
-    freq: str = 'H',
-    name: str = 'ETTh1',
-    n_ts: int = 1,
-    test_size: int = 11520,
-    val_size: int = 11520,
-    horizons: Tuple[int] = (96, 192, 336, 720)
-) → None
+ETTm2(freq='15T', name='ETTm2', n_ts=7, test_size=11520, val_size=11520, horizons=(96, 192, 336, 720))
+```
+
+The ETTm2 dataset monitors an electricity transformer
+from a region of a province of China including oil temperature
+and variants of load (such as high useful load and high useless load)
+from July 2016 to July 2018 at a fifteen minute frequency.
+
+```
+Reference:
+Zhou, et al. Informer: Beyond Efficient Transformer
+for Long Sequence Time-Series Forecasting. AAAI 2021.
+https://arxiv.org/abs/2012.07436
+```
+
+#### `ETTm2.freq`
+
+```python
+freq: str = '15T'
+```
+
+#### `ETTm2.horizons`
+
+```python
+horizons: Tuple[int] = (96, 192, 336, 720)
+```
+
+#### `ETTm2.n_ts`
+
+```python
+n_ts: int = 7
+```
+
+#### `ETTm2.name`
+
+```python
+name: str = 'ETTm2'
+```
+
+#### `ETTm2.test_size`
+
+```python
+test_size: int = 11520
+```
+
+#### `ETTm2.val_size`
+
+```python
+val_size: int = 11520
+```
+
+### `ETTm1`
+
+```python
+ETTm1(freq='15T', name='ETTm1', n_ts=7, test_size=11520, val_size=11520, horizons=(96, 192, 336, 720))
+```
+
+The ETTm1 dataset monitors an electricity transformer
+from a region of a province of China including oil temperature
+and variants of load (such as high useful load and high useless load)
+from July 2016 to July 2018 at a fifteen minute frequency.
+
+#### `ETTm1.freq`
+
+```python
+freq: str = '15T'
+```
+
+#### `ETTm1.horizons`
+
+```python
+horizons: Tuple[int] = (96, 192, 336, 720)
+```
+
+#### `ETTm1.n_ts`
+
+```python
+n_ts: int = 7
+```
+
+#### `ETTm1.name`
+
+```python
+name: str = 'ETTm1'
+```
+
+#### `ETTm1.test_size`
+
+```python
+test_size: int = 11520
+```
+
+#### `ETTm1.val_size`
+
+```python
+val_size: int = 11520
+```
+
+### `ETTh2`
+
+```python
+ETTh2(freq='H', name='ETTh2', n_ts=1, test_size=11520, val_size=11520, horizons=(96, 192, 336, 720))
+```
+
+The ETTh2 dataset monitors an electricity transformer
+from a region of a province of China including oil temperature
+and variants of load (such as high useful load and high useless load)
+from July 2016 to July 2018 at an hourly frequency.
+
+#### `ETTh2.freq`
+
+```python
+freq: str = 'H'
+```
+
+#### `ETTh2.horizons`
+
+```python
+horizons: Tuple[int] = (96, 192, 336, 720)
+```
+
+#### `ETTh2.n_ts`
+
+```python
+n_ts: int = 1
+```
+
+#### `ETTh2.name`
+
+```python
+name: str = 'ETTh2'
+```
+
+#### `ETTh2.test_size`
+
+```python
+test_size: int = 11520
+```
+
+#### `ETTh2.val_size`
+
+```python
+val_size: int = 11520
+```
+
+### `ETTh1`
+
+```python
+ETTh1(freq='H', name='ETTh1', n_ts=1, test_size=11520, val_size=11520, horizons=(96, 192, 336, 720))
+```
+
+The ETTh1 dataset monitors an electricity transformer
+from a region of a province of China including oil temperature
+and variants of load (such as high useful load and high useless load)
+from July 2016 to July 2018 at an hourly frequency.
+
+#### `ETTh1.freq`
+
+```python
+freq: str = 'H'
+```
+
+#### `ETTh1.horizons`
+
+```python
+horizons: Tuple[int] = (96, 192, 336, 720)
+```
+
+#### `ETTh1.n_ts`
+
+```python
+n_ts: int = 1
+```
+
+#### `ETTh1.name`
+
+```python
+name: str = 'ETTh1'
+```
+
+#### `ETTh1.test_size`
+
+```python
+test_size: int = 11520
+```
+
+#### `ETTh1.val_size`
+
+```python
+val_size: int = 11520
+```
+
+### `ECL`
+
+```python
+ECL(freq='15T', name='ECL', n_ts=321, test_size=5260, val_size=2632, horizons=(96, 192, 336, 720))
+```
+
+The Electricity dataset reports the fifteen minute electricity
+consumption (KWh) of 321 customers from 2012 to 2014.
+For comparability, we aggregate it hourly.
+
+```
+Reference:
+Li, S et al. Enhancing the locality and breaking the memory
+bottleneck of Transformer on time series forecasting.
+NeurIPS 2019. http://arxiv.org/abs/1907.00235.
+```
+
+#### `ECL.freq`
+
+```python
+freq: str = '15T'
+```
+
+#### `ECL.horizons`
+
+```python
+horizons: Tuple[int] = (96, 192, 336, 720)
+```
+
+#### `ECL.n_ts`
+
+```python
+n_ts: int = 321
+```
+
+#### `ECL.name`
+
+```python
+name: str = 'ECL'
+```
+
+#### `ECL.test_size`
+
+```python
+test_size: int = 5260
+```
+
+#### `ECL.val_size`
+
+```python
+val_size: int = 2632
+```
+
+### `Exchange`
+
+```python
+Exchange(freq='D', name='Exchange', n_ts=8, test_size=1517, val_size=760, horizons=(96, 192, 336, 720))
+```
+
+The Exchange dataset is a collection of daily exchange rates of
+eight countries relative to the US dollar. The countries include
+Australia, UK, Canada, Switzerland, China, Japan, New Zealand and
+Singapore from 1990 to 2016.
+
+```
+Reference:
+Lai, G., Chang, W., Yang, Y., and Liu, H. Modeling Long and
+Short-Term Temporal Patterns with Deep Neural Networks.
+SIGIR 2018. http://arxiv.org/abs/1703.07015.
+```
+
+#### `Exchange.freq`
+
+```python
+freq: str = 'D'
+```
+
+#### `Exchange.horizons`
+
+```python
+horizons: Tuple[int] = (96, 192, 336, 720)
+```
+
+#### `Exchange.n_ts`
+
+```python
+n_ts: int = 8
+```
+
+#### `Exchange.name`
+
+```python
+name: str = 'Exchange'
+```
+
+#### `Exchange.test_size`
+
+```python
+test_size: int = 1517
+```
+
+#### `Exchange.val_size`
+
+```python
+val_size: int = 760
 ```
 
 
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `ETTh2`
-The ETTh2 dataset monitors an electricity transformer from a region of a province of China including oil temperature and variants of load (such as high useful load and high useless load) from July 2016 to July 2018 at an hourly frequency. 
-
-
-
-### <kbd>method</kbd> `__init__`
+### `ILI`
 
 ```python
-__init__(
-    freq: str = 'H',
-    name: str = 'ETTh2',
-    n_ts: int = 1,
-    test_size: int = 11520,
-    val_size: int = 11520,
-    horizons: Tuple[int] = (96, 192, 336, 720)
-) → None
+ILI(freq='W', name='ili', n_ts=7, test_size=193, val_size=97, horizons=(24, 36, 48, 60))
 ```
 
+This dataset reports weekly recorded influenza-like illness (ILI)
+patients from Centers for Disease Control and Prevention of the
+United States from 2002 to 2021. It is measured as a ratio of ILI
+patients versus the total patients in the week.
 
+```
+Reference:
+Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:
+Decomposition Transformers with auto-correlation for
+long-term series forecasting. NeurIPS 2021.
+https://arxiv.org/abs/2106.13008.
+```
 
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `ETTm1`
-The ETTm1 dataset monitors an electricity transformer from a region of a province of China including oil temperature and variants of load (such as high useful load and high useless load) from July 2016 to July 2018 at a fifteen minute frequency. 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `ILI.freq`
 
 ```python
-__init__(
-    freq: str = '15T',
-    name: str = 'ETTm1',
-    n_ts: int = 7,
-    test_size: int = 11520,
-    val_size: int = 11520,
-    horizons: Tuple[int] = (96, 192, 336, 720)
-) → None
+freq: str = 'W'
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `ETTm2`
-The ETTm2 dataset monitors an electricity transformer from a region of a province of China including oil temperature and variants of load (such as high useful load and high useless load) from July 2016 to July 2018 at a fifteen minute frequency. 
-
- Reference:  Zhou, et al. Informer: Beyond Efficient Transformer  for Long Sequence Time-Series Forecasting. AAAI 2021.  https://arxiv.org/abs/2012.07436 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `ILI.horizons`
 
 ```python
-__init__(
-    freq: str = '15T',
-    name: str = 'ETTm2',
-    n_ts: int = 7,
-    test_size: int = 11520,
-    val_size: int = 11520,
-    horizons: Tuple[int] = (96, 192, 336, 720)
-) → None
+horizons: Tuple[int] = (24, 36, 48, 60)
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `ECL`
-The Electricity dataset reports the fifteen minute electricity consumption (KWh) of 321 customers from 2012 to 2014. For comparability, we aggregate it hourly. 
-
- Reference:  Li, S et al. Enhancing the locality and breaking the memory  bottleneck of Transformer on time series forecasting.  NeurIPS 2019. http://arxiv.org/abs/1907.00235. 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `ILI.n_ts`
 
 ```python
-__init__(
-    freq: str = '15T',
-    name: str = 'ECL',
-    n_ts: int = 321,
-    test_size: int = 5260,
-    val_size: int = 2632,
-    horizons: Tuple[int] = (96, 192, 336, 720)
-) → None
+n_ts: int = 7
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Exchange`
-The Exchange dataset is a collection of daily exchange rates of eight countries relative to the US dollar. The countries include Australia, UK, Canada, Switzerland, China, Japan, New Zealand and Singapore from 1990 to 2016. 
-
- Reference:  Lai, G., Chang, W., Yang, Y., and Liu, H. Modeling Long and  Short-Term Temporal Patterns with Deep Neural Networks.  SIGIR 2018. http://arxiv.org/abs/1703.07015. 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `ILI.name`
 
 ```python
-__init__(
-    freq: str = 'D',
-    name: str = 'Exchange',
-    n_ts: int = 8,
-    test_size: int = 1517,
-    val_size: int = 760,
-    horizons: Tuple[int] = (96, 192, 336, 720)
-) → None
+name: str = 'ili'
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `TrafficL`
-This large Traffic dataset was collected by the California Department of Transportation, it reports road hourly occupancy rates of 862 sensors, from January 2015 to December 2016. 
-
- Reference:  Lai, G., Chang, W., Yang, Y., and Liu, H. Modeling Long and  Short-Term Temporal Patterns with Deep Neural Networks.  SIGIR 2018. http://arxiv.org/abs/1703.07015. 
-
- Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:  Decomposition Transformers with auto-correlation for  long-term series forecasting. NeurIPS 2021.  https://arxiv.org/abs/2106.13008. 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `ILI.test_size`
 
 ```python
-__init__(
-    freq: str = 'H',
-    name: str = 'traffic',
-    n_ts: int = 862,
-    test_size: int = 3508,
-    val_size: int = 1756,
-    horizons: Tuple[int] = (96, 192, 336, 720)
-) → None
+test_size: int = 193
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `ILI`
-This dataset reports weekly recorded influenza-like illness (ILI) patients from Centers for Disease Control and Prevention of the United States from 2002 to 2021. It is measured as a ratio of ILI patients versus the total patients in the week. 
-
- Reference:  Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:  Decomposition Transformers with auto-correlation for  long-term series forecasting. NeurIPS 2021.  https://arxiv.org/abs/2106.13008. 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `ILI.val_size`
 
 ```python
-__init__(
-    freq: str = 'W',
-    name: str = 'ili',
-    n_ts: int = 7,
-    test_size: int = 193,
-    val_size: int = 97,
-    horizons: Tuple[int] = (24, 36, 48, 60)
-) → None
+val_size: int = 97
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Weather`
-This Weather dataset contains the 2020 year of 21 meteorological measurements recorded every 10 minutes from the Weather Station of the Max Planck Biogeochemistry Institute in Jena, Germany. 
-
- Reference:  Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:  Decomposition Transformers with auto-correlation for  long-term series forecasting. NeurIPS 2021.  https://arxiv.org/abs/2106.13008. 
-
-
-
-### <kbd>method</kbd> `__init__`
+### `Weather`
 
 ```python
-__init__(
-    freq: str = '10M',
-    name: str = 'weather',
-    n_ts: int = 21,
-    test_size: int = 10539,
-    val_size: int = 5270,
-    horizons: Tuple[int] = (96, 192, 336, 720)
-) → None
+Weather(freq='10M', name='weather', n_ts=21, test_size=10539, val_size=5270, horizons=(96, 192, 336, 720))
 ```
 
+This Weather dataset contains the 2020 year of 21 meteorological
+measurements
+recorded every 10 minutes from the Weather Station of the Max Planck Biogeochemistry
+Institute in Jena, Germany.
 
+```
+Reference:
+Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:
+Decomposition Transformers with auto-correlation for
+long-term series forecasting. NeurIPS 2021.
+https://arxiv.org/abs/2106.13008.
+```
 
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `LongHorizon`
-This Long-Horizon datasets wrapper class, provides with utility to download and wrangle the following datasets: ETT, ECL, Exchange, Traffic, ILI and Weather. 
-
-
-- Each set is normalized with the train data mean and standard deviation. 
-- Datasets are partitioned into train, validation and test splits. 
-- For all datasets: 70%, 10%, and 20% of observations are train, validation, test,  except ETT that uses 20% validation. 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Weather.freq`
 
 ```python
-__init__(
-    source_url: str = 'https://nhits-experiments.s3.amazonaws.com/datasets.zip'
-) → None
+freq: str = '10M'
 ```
 
-
-
-
-
-
-
-
----
-
-
-
-### <kbd>method</kbd> `download`
+#### `Weather.horizons`
 
 ```python
-download(directory: str) → None
+horizons: Tuple[int] = (96, 192, 336, 720)
 ```
 
-Download ETT Dataset. 
-
-
-
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory path to download dataset. 
-
----
-
-
-
-### <kbd>method</kbd> `load`
+#### `Weather.n_ts`
 
 ```python
-load(
-    directory: str,
-    group: str,
-    cache: bool = True
-) → Tuple[DataFrame, Optional[DataFrame], Optional[DataFrame]]
+n_ts: int = 21
 ```
 
-Downloads and long-horizon forecasting benchmark datasets. 
+#### `Weather.name`
 
+```python
+name: str = 'weather'
+```
 
+#### `Weather.test_size`
 
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory where data will be downloaded. 
- - <b>`group`</b> (str):  Group name. 
- - <b>`Allowed groups`</b>:  'ETTh1', 'ETTh2',  'ETTm1', 'ETTm2',  'ECL', 'Exchange',  'Traffic', 'Weather', 'ILI'. 
- - <b>`cache`</b> (bool):  If `True` saves and loads 
+```python
+test_size: int = 10539
+```
 
+#### `Weather.val_size`
 
+```python
+val_size: int = 5270
+```
+
+### `LongHorizon`
+
+```python
+LongHorizon(source_url='https://nhits-experiments.s3.amazonaws.com/datasets.zip')
+```
+
+This Long-Horizon datasets wrapper class, provides
+with utility to download and wrangle the following datasets:
+ETT, ECL, Exchange, Traffic, ILI and Weather.
+
+- Each set is normalized with the train data mean and standard deviation.
+- Datasets are partitioned into train, validation and test splits.
+- For all datasets: 70%, 10%, and 20% of observations are train, validation, test,
+  except ETT that uses 20% validation.
+
+#### `LongHorizon.download`
+
+```python
+download(directory)
+```
+
+Download ETT Dataset.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+
+#### `LongHorizon.load`
+
+```python
+load(directory, group, cache=True)
+```
+
+Downloads and long-horizon forecasting benchmark datasets.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name.
+Allowed groups: 'ETTh1', 'ETTh2',
+'ETTm1', 'ETTm2',
+'ECL', 'Exchange',
+'Traffic', 'Weather', 'ILI'. | *required*
+`cache` | <code>[bool](#bool)</code> | If `True` saves and loads | <code>True</code>
 
 **Returns:**
- Tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]:  Target time series with columns ['unique_id', 'ds', 'y'],  Exogenous time series with columns ['unique_id', 'ds', 'y'],  Static exogenous variables with columns ['unique_id', 'ds']  and static variables. 
 
+Type | Description
+---- | -----------
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\], [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\]\]</code> | Tuple\[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]\]:
+Target time series with columns ['unique_id', 'ds', 'y'],
+Exogenous time series with columns ['unique_id', 'ds', 'y'],
+Static exogenous variables with columns ['unique_id', 'ds']
+and static variables.
 
+#### `LongHorizon.source_url`
+
+```python
+source_url: str = 'https://nhits-experiments.s3.amazonaws.com/datasets.zip'
+```

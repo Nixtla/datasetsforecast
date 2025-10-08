@@ -1,281 +1,313 @@
+# Hierarchical
 
-
-
-
-# <kbd>module</kbd> `datasetsforecast.hierarchical`
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Labour`
-Labour(freq: str = 'MS', horizon: int = 8, papers_horizon: int = 12, seasonality: int = 12, test_size: int = 125, tags_names: Tuple[str] = ('Country', 'Country/Region', 'Country/Gender/Region', 'Country/Employment/Gender/Region')) 
-
-
-
-### <kbd>method</kbd> `__init__`
+### `Labour`
 
 ```python
-__init__(
-    freq: str = 'MS',
-    horizon: int = 8,
-    papers_horizon: int = 12,
-    seasonality: int = 12,
-    test_size: int = 125,
-    tags_names: Tuple[str] = ('Country', 'Country/Region', 'Country/Gender/Region', 'Country/Employment/Gender/Region')
-) → None
+Labour(freq='MS', horizon=8, papers_horizon=12, seasonality=12, test_size=125, tags_names=('Country', 'Country/Region', 'Country/Gender/Region', 'Country/Employment/Gender/Region'))
+```
+
+#### `Labour.freq`
+
+```python
+freq: str = 'MS'
+```
+
+#### `Labour.horizon`
+
+```python
+horizon: int = 8
+```
+
+#### `Labour.papers_horizon`
+
+```python
+papers_horizon: int = 12
+```
+
+#### `Labour.seasonality`
+
+```python
+seasonality: int = 12
+```
+
+#### `Labour.tags_names`
+
+```python
+tags_names: Tuple[str] = ('Country', 'Country/Region', 'Country/Gender/Region', 'Country/Employment/Gender/Region')
+```
+
+#### `Labour.test_size`
+
+```python
+test_size: int = 125
+```
+
+### `TourismLarge`
+
+```python
+TourismLarge(freq='MS', horizon=12, papers_horizon=12, seasonality=12, test_size=57, tags_names=('Country', 'Country/State', 'Country/State/Zone', 'Country/State/Zone/Region', 'Country/Purpose', 'Country/State/Purpose', 'Country/State/Zone/Purpose', 'Country/State/Zone/Region/Purpose'))
+```
+
+#### `TourismLarge.freq`
+
+```python
+freq: str = 'MS'
+```
+
+#### `TourismLarge.horizon`
+
+```python
+horizon: int = 12
+```
+
+#### `TourismLarge.papers_horizon`
+
+```python
+papers_horizon: int = 12
+```
+
+#### `TourismLarge.seasonality`
+
+```python
+seasonality: int = 12
+```
+
+#### `TourismLarge.tags_names`
+
+```python
+tags_names: Tuple[str] = ('Country', 'Country/State', 'Country/State/Zone', 'Country/State/Zone/Region', 'Country/Purpose', 'Country/State/Purpose', 'Country/State/Zone/Purpose', 'Country/State/Zone/Region/Purpose')
+```
+
+#### `TourismLarge.test_size`
+
+```python
+test_size: int = 57
+```
+
+### `TourismSmall`
+
+```python
+TourismSmall(freq='Q', horizon=4, papers_horizon=4, seasonality=4, test_size=9, tags_names=('Country', 'Country/Purpose', 'Country/Purpose/State', 'Country/Purpose/State/CityNonCity'))
+```
+
+#### `TourismSmall.freq`
+
+```python
+freq: str = 'Q'
+```
+
+#### `TourismSmall.horizon`
+
+```python
+horizon: int = 4
+```
+
+#### `TourismSmall.papers_horizon`
+
+```python
+papers_horizon: int = 4
+```
+
+#### `TourismSmall.seasonality`
+
+```python
+seasonality: int = 4
+```
+
+#### `TourismSmall.tags_names`
+
+```python
+tags_names: Tuple[str] = ('Country', 'Country/Purpose', 'Country/Purpose/State', 'Country/Purpose/State/CityNonCity')
+```
+
+#### `TourismSmall.test_size`
+
+```python
+test_size: int = 9
+```
+
+### `Traffic`
+
+```python
+Traffic(freq='D', horizon=14, papers_horizon=7, seasonality=7, test_size=91, tags_names=('Level1', 'Level2', 'Level3', 'Level4'))
+```
+
+#### `Traffic.freq`
+
+```python
+freq: str = 'D'
+```
+
+#### `Traffic.horizon`
+
+```python
+horizon: int = 14
+```
+
+#### `Traffic.papers_horizon`
+
+```python
+papers_horizon: int = 7
+```
+
+#### `Traffic.seasonality`
+
+```python
+seasonality: int = 7
+```
+
+#### `Traffic.tags_names`
+
+```python
+tags_names: Tuple[str] = ('Level1', 'Level2', 'Level3', 'Level4')
+```
+
+#### `Traffic.test_size`
+
+```python
+test_size: int = 91
+```
+
+### `Wiki2`
+
+```python
+Wiki2(freq='D', horizon=14, papers_horizon=7, seasonality=7, test_size=91, tags_names=('Views', 'Views/Country', 'Views/Country/Access', 'Views/Country/Access/Agent', 'Views/Country/Access/Agent/Topic'))
+```
+
+#### `Wiki2.freq`
+
+```python
+freq: str = 'D'
+```
+
+#### `Wiki2.horizon`
+
+```python
+horizon: int = 14
+```
+
+#### `Wiki2.papers_horizon`
+
+```python
+papers_horizon: int = 7
+```
+
+#### `Wiki2.seasonality`
+
+```python
+seasonality: int = 7
+```
+
+#### `Wiki2.tags_names`
+
+```python
+tags_names: Tuple[str] = ('Views', 'Views/Country', 'Views/Country/Access', 'Views/Country/Access/Agent', 'Views/Country/Access/Agent/Topic')
+```
+
+#### `Wiki2.test_size`
+
+```python
+test_size: int = 91
+```
+
+### `OldTraffic`
+
+```python
+OldTraffic(freq='D', horizon=1, papers_horizon=1, seasonality=7, test_size=91, tags_names=('Level1', 'Level2', 'Level3', 'Level4'))
+```
+
+#### `OldTraffic.freq`
+
+```python
+freq: str = 'D'
+```
+
+#### `OldTraffic.horizon`
+
+```python
+horizon: int = 1
+```
+
+#### `OldTraffic.papers_horizon`
+
+```python
+papers_horizon: int = 1
+```
+
+#### `OldTraffic.seasonality`
+
+```python
+seasonality: int = 7
+```
+
+#### `OldTraffic.tags_names`
+
+```python
+tags_names: Tuple[str] = ('Level1', 'Level2', 'Level3', 'Level4')
+```
+
+#### `OldTraffic.test_size`
+
+```python
+test_size: int = 91
 ```
 
 
+### `HierarchicalData`
 
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `TourismLarge`
-TourismLarge(freq: str = 'MS', horizon: int = 12, papers_horizon: int = 12, seasonality: int = 12, test_size: int = 57, tags_names: Tuple[str] = ('Country', 'Country/State', 'Country/State/Zone', 'Country/State/Zone/Region', 'Country/Purpose', 'Country/State/Purpose', 'Country/State/Zone/Purpose', 'Country/State/Zone/Region/Purpose')) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `HierarchicalData.download`
 
 ```python
-__init__(
-    freq: str = 'MS',
-    horizon: int = 12,
-    papers_horizon: int = 12,
-    seasonality: int = 12,
-    test_size: int = 57,
-    tags_names: Tuple[str] = ('Country', 'Country/State', 'Country/State/Zone', 'Country/State/Zone/Region', 'Country/Purpose', 'Country/State/Purpose', 'Country/State/Zone/Purpose', 'Country/State/Zone/Region/Purpose')
-) → None
+download(directory)
 ```
 
+Download Hierarchical Datasets.
 
+**Parameters:**
 
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
 
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `TourismSmall`
-TourismSmall(freq: str = 'Q', horizon: int = 4, papers_horizon: int = 4, seasonality: int = 4, test_size: int = 9, tags_names: Tuple[str] = ('Country', 'Country/Purpose', 'Country/Purpose/State', 'Country/Purpose/State/CityNonCity')) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `HierarchicalData.load`
 
 ```python
-__init__(
-    freq: str = 'Q',
-    horizon: int = 4,
-    papers_horizon: int = 4,
-    seasonality: int = 4,
-    test_size: int = 9,
-    tags_names: Tuple[str] = ('Country', 'Country/Purpose', 'Country/Purpose/State', 'Country/Purpose/State/CityNonCity')
-) → None
+load(directory, group, cache=True)
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Traffic`
-Traffic(freq: str = 'D', horizon: int = 14, papers_horizon: int = 7, seasonality: int = 7, test_size: int = 91, tags_names: Tuple[str] = ('Level1', 'Level2', 'Level3', 'Level4')) 
-
-
-
-### <kbd>method</kbd> `__init__`
-
-```python
-__init__(
-    freq: str = 'D',
-    horizon: int = 14,
-    papers_horizon: int = 7,
-    seasonality: int = 7,
-    test_size: int = 91,
-    tags_names: Tuple[str] = ('Level1', 'Level2', 'Level3', 'Level4')
-) → None
-```
-
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Wiki2`
-Wiki2(freq: str = 'D', horizon: int = 14, papers_horizon: int = 7, seasonality: int = 7, test_size: int = 91, tags_names: Tuple[str] = ('Views', 'Views/Country', 'Views/Country/Access', 'Views/Country/Access/Agent', 'Views/Country/Access/Agent/Topic')) 
-
-
-
-### <kbd>method</kbd> `__init__`
-
-```python
-__init__(
-    freq: str = 'D',
-    horizon: int = 14,
-    papers_horizon: int = 7,
-    seasonality: int = 7,
-    test_size: int = 91,
-    tags_names: Tuple[str] = ('Views', 'Views/Country', 'Views/Country/Access', 'Views/Country/Access/Agent', 'Views/Country/Access/Agent/Topic')
-) → None
-```
-
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `OldTraffic`
-OldTraffic(freq: str = 'D', horizon: int = 1, papers_horizon: int = 1, seasonality: int = 7, test_size: int = 91, tags_names: Tuple[str] = ('Level1', 'Level2', 'Level3', 'Level4')) 
-
-
-
-### <kbd>method</kbd> `__init__`
-
-```python
-__init__(
-    freq: str = 'D',
-    horizon: int = 1,
-    papers_horizon: int = 1,
-    seasonality: int = 7,
-    test_size: int = 91,
-    tags_names: Tuple[str] = ('Level1', 'Level2', 'Level3', 'Level4')
-) → None
-```
-
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `OldTourismLarge`
-OldTourismLarge(freq: str = 'MS', horizon: int = 12, papers_horizon: int = 12, seasonality: int = 12, test_size: int = 57, tags_names: Tuple[str] = ('Country', 'Country/State', 'Country/State/Zone', 'Country/State/Zone/Region', 'Country/Purpose', 'Country/State/Purpose', 'Country/State/Zone/Purpose', 'Country/State/Zone/Region/Purpose')) 
-
-
-
-### <kbd>method</kbd> `__init__`
-
-```python
-__init__(
-    freq: str = 'MS',
-    horizon: int = 12,
-    papers_horizon: int = 12,
-    seasonality: int = 12,
-    test_size: int = 57,
-    tags_names: Tuple[str] = ('Country', 'Country/State', 'Country/State/Zone', 'Country/State/Zone/Region', 'Country/Purpose', 'Country/State/Purpose', 'Country/State/Zone/Purpose', 'Country/State/Zone/Region/Purpose')
-) → None
-```
-
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `HierarchicalData`
-
-
-
-
-
-
-
----
-
-
-
-### <kbd>method</kbd> `download`
-
-```python
-download(directory: str) → None
-```
-
-Download Hierarchical Datasets. 
-
-
-
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory path to download dataset. 
-
----
-
-
-
-### <kbd>method</kbd> `load`
-
-```python
-load(
-    directory: str,
-    group: str,
-    cache: bool = True
-) → Tuple[DataFrame, DataFrame]
-```
-
-Downloads hierarchical forecasting benchmark datasets. 
-
-
-
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory where data will be downloaded. 
- - <b>`group`</b> (str):  Group name. 
- - <b>`cache`</b> (bool):  If `True` saves and loads 
-
-
+Downloads hierarchical forecasting benchmark datasets.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name. | *required*
+`cache` | <code>[bool](#bool)</code> | If `True` saves and loads | <code>True</code>
 
 **Returns:**
- Tuple[pd.DataFrame, pd.DataFrame]:  Target time series with columns ['unique_id', 'ds', 'y'].  Containes the base time series,  Summing matrix of size (hierarchies, bottom). 
 
+Type | Description
+---- | -----------
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame)\]</code> | Tuple\[pd.DataFrame, pd.DataFrame\]:
+Target time series with columns ['unique_id', 'ds', 'y'].
+Containes the base time series,
+Summing matrix of size (hierarchies, bottom).
 
+#### `HierarchicalData.source_url`
+
+```python
+source_url: str = 'https://nixtla-public.s3.amazonaws.com/hierarchical-data/datasets.zip'
+```
+
+#### `HierarchicalData.source_url_old_tourisml`
+
+```python
+source_url_old_tourisml: str = 'https://www.dropbox.com/s/ye78jnujhbxyggo/OldTourismLarge.zip?dl=1'
+```
+
+#### `HierarchicalData.source_url_old_traffic`
+
+```python
+source_url_old_traffic: str = 'https://www.dropbox.com/s/4nl5afkdr4djpuy/OldTraffic.zip?dl=1'
+```

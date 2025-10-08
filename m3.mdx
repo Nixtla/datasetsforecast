@@ -1,201 +1,217 @@
+# M3
 
-
-
-
-# <kbd>module</kbd> `datasetsforecast.m3`
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Yearly`
-Yearly(seasonality: int = 1, horizon: int = 6, freq: str = 'Y', sheet_name: str = 'M3Year', name: str = 'Yearly', n_ts: int = 645) 
-
-
-
-### <kbd>method</kbd> `__init__`
+### `Other`
 
 ```python
-__init__(
-    seasonality: int = 1,
-    horizon: int = 6,
-    freq: str = 'Y',
-    sheet_name: str = 'M3Year',
-    name: str = 'Yearly',
-    n_ts: int = 645
-) → None
+Other(seasonality=1, horizon=8, freq='D', sheet_name='M3Other', name='Other', n_ts=174)
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Quarterly`
-Quarterly(seasonality: int = 4, horizon: int = 8, freq: str = 'Q', sheet_name: str = 'M3Quart', name: str = 'Quarterly', n_ts: int = 756) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Other.freq`
 
 ```python
-__init__(
-    seasonality: int = 4,
-    horizon: int = 8,
-    freq: str = 'Q',
-    sheet_name: str = 'M3Quart',
-    name: str = 'Quarterly',
-    n_ts: int = 756
-) → None
+freq: str = 'D'
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Monthly`
-Monthly(seasonality: int = 12, horizon: int = 18, freq: str = 'M', sheet_name: str = 'M3Month', name: str = 'Monthly', n_ts: int = 1428) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Other.horizon`
 
 ```python
-__init__(
-    seasonality: int = 12,
-    horizon: int = 18,
-    freq: str = 'M',
-    sheet_name: str = 'M3Month',
-    name: str = 'Monthly',
-    n_ts: int = 1428
-) → None
+horizon: int = 8
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `Other`
-Other(seasonality: int = 1, horizon: int = 8, freq: str = 'D', sheet_name: str = 'M3Other', name: str = 'Other', n_ts: int = 174) 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Other.n_ts`
 
 ```python
-__init__(
-    seasonality: int = 1,
-    horizon: int = 8,
-    freq: str = 'D',
-    sheet_name: str = 'M3Other',
-    name: str = 'Other',
-    n_ts: int = 174
-) → None
+n_ts: int = 174
 ```
 
-
-
-
-
-
-
-
-
----
-
-
-
-## <kbd>class</kbd> `M3`
-M3() 
-
-
-
-### <kbd>method</kbd> `__init__`
+#### `Other.name`
 
 ```python
-__init__() → None
+name: str = 'Other'
 ```
 
-
-
-
-
-
-
-
----
-
-
-
-### <kbd>method</kbd> `download`
+#### `Other.seasonality`
 
 ```python
-download(directory: str) → None
+seasonality: int = 1
 ```
 
-Download M3 Dataset. 
-
-
-
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory path to download dataset. 
-
----
-
-
-
-### <kbd>method</kbd> `load`
+#### `Other.sheet_name`
 
 ```python
-load(
-    directory: str,
-    group: str
-) → Tuple[DataFrame, Optional[DataFrame], Optional[DataFrame]]
+sheet_name: str = 'M3Other'
 ```
 
-Downloads and loads M3 data. 
+### `Monthly`
 
+```python
+Monthly(seasonality=12, horizon=18, freq='M', sheet_name='M3Month', name='Monthly', n_ts=1428)
+```
 
+#### `Monthly.freq`
 
-**Args:**
- 
- - <b>`directory`</b> (str):  Directory where data will be downloaded. 
- - <b>`group`</b> (str):  Group name. 
- - <b>`Allowed groups`</b>:  'Yearly', 'Quarterly', 'Monthly', 'Other'. 
+```python
+freq: str = 'M'
+```
 
+#### `Monthly.horizon`
 
+```python
+horizon: int = 18
+```
+
+#### `Monthly.n_ts`
+
+```python
+n_ts: int = 1428
+```
+
+#### `Monthly.name`
+
+```python
+name: str = 'Monthly'
+```
+
+#### `Monthly.seasonality`
+
+```python
+seasonality: int = 12
+```
+
+#### `Monthly.sheet_name`
+
+```python
+sheet_name: str = 'M3Month'
+```
+
+### `Quarterly`
+
+```python
+Quarterly(seasonality=4, horizon=8, freq='Q', sheet_name='M3Quart', name='Quarterly', n_ts=756)
+```
+
+#### `Quarterly.freq`
+
+```python
+freq: str = 'Q'
+```
+
+#### `Quarterly.horizon`
+
+```python
+horizon: int = 8
+```
+
+#### `Quarterly.n_ts`
+
+```python
+n_ts: int = 756
+```
+
+#### `Quarterly.name`
+
+```python
+name: str = 'Quarterly'
+```
+
+#### `Quarterly.seasonality`
+
+```python
+seasonality: int = 4
+```
+
+#### `Quarterly.sheet_name`
+
+```python
+sheet_name: str = 'M3Quart'
+```
+
+### `Yearly`
+
+```python
+Yearly(seasonality=1, horizon=6, freq='Y', sheet_name='M3Year', name='Yearly', n_ts=645)
+```
+
+#### `Yearly.freq`
+
+```python
+freq: str = 'Y'
+```
+
+#### `Yearly.horizon`
+
+```python
+horizon: int = 6
+```
+
+#### `Yearly.n_ts`
+
+```python
+n_ts: int = 645
+```
+
+#### `Yearly.name`
+
+```python
+name: str = 'Yearly'
+```
+
+#### `Yearly.seasonality`
+
+```python
+seasonality: int = 1
+```
+
+#### `Yearly.sheet_name`
+
+```python
+sheet_name: str = 'M3Year'
+```
+
+### `M3`
+
+```python
+M3()
+```
+
+#### `M3.download`
+
+```python
+download(directory)
+```
+
+Download M3 Dataset.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+
+#### `M3.load`
+
+```python
+load(directory, group)
+```
+
+Downloads and loads M3 data.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name.
+Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 'Other'. | *required*
 
 **Returns:**
- 
- - <b>`pd.DataFrame`</b>:  Target time series with columns ['unique_id', 'ds', 'y']. 
 
+Type | Description
+---- | -----------
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\], [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\]\]</code> | pd.DataFrame: Target time series with columns ['unique_id', 'ds', 'y'].
 
+#### `M3.source_url`
+
+```python
+source_url = 'https://forecasters.org/data/m3comp/M3C.xls'
+```
