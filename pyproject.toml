@@ -40,6 +40,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "pytest-asyncio",
+    "pip-licenses"
 ]
 
 [project.urls]
