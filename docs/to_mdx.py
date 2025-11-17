@@ -40,7 +40,7 @@ title: "datasetsforecast"
 
     # skip first 4 lines as they contain title and description
     readme_text = header + "\n".join(readme_text.split("\n")[4:])
-    (output_path / "index.mdx").write_text(readme_text)
+    (output_path / "index.html.mdx").write_text(readme_text)
 
 
 if __name__ == "__main__":
