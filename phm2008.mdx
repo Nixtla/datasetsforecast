@@ -1,0 +1,211 @@
+
+
+
+
+# <kbd>module</kbd> `datasetsforecast.phm2008`
+
+
+
+
+
+
+---
+
+
+
+## <kbd>class</kbd> `FD001`
+FD001(seasonality: int = 1, horizon: int = 1, freq: str = 'None', train_file: str = 'train_FD001.txt', test_file: str = 'test_FD001.txt', rul_file: str = 'RUL_FD001.txt', n_ts: int = 100, n_test: int = 100) 
+
+
+
+### <kbd>method</kbd> `__init__`
+
+```python
+__init__(
+    seasonality: int = 1,
+    horizon: int = 1,
+    freq: str = 'None',
+    train_file: str = 'train_FD001.txt',
+    test_file: str = 'test_FD001.txt',
+    rul_file: str = 'RUL_FD001.txt',
+    n_ts: int = 100,
+    n_test: int = 100
+) → None
+```
+
+
+
+
+
+
+
+
+
+---
+
+
+
+## <kbd>class</kbd> `FD002`
+FD002(seasonality: int = 1, horizon: int = 1, freq: str = 'None', train_file: str = 'train_FD002.txt', test_file: str = 'test_FD002.txt', rul_file: str = 'RUL_FD002.txt', n_ts: int = 260, n_test: int = 259) 
+
+
+
+### <kbd>method</kbd> `__init__`
+
+```python
+__init__(
+    seasonality: int = 1,
+    horizon: int = 1,
+    freq: str = 'None',
+    train_file: str = 'train_FD002.txt',
+    test_file: str = 'test_FD002.txt',
+    rul_file: str = 'RUL_FD002.txt',
+    n_ts: int = 260,
+    n_test: int = 259
+) → None
+```
+
+
+
+
+
+
+
+
+
+---
+
+
+
+## <kbd>class</kbd> `FD003`
+FD003(seasonality: int = 1, horizon: int = 1, freq: str = 'None', train_file: str = 'train_FD003.txt', test_file: str = 'test_FD003.txt', rul_file: str = 'RUL_FD003.txt', n_ts: int = 100, n_test: int = 100) 
+
+
+
+### <kbd>method</kbd> `__init__`
+
+```python
+__init__(
+    seasonality: int = 1,
+    horizon: int = 1,
+    freq: str = 'None',
+    train_file: str = 'train_FD003.txt',
+    test_file: str = 'test_FD003.txt',
+    rul_file: str = 'RUL_FD003.txt',
+    n_ts: int = 100,
+    n_test: int = 100
+) → None
+```
+
+
+
+
+
+
+
+
+
+---
+
+
+
+## <kbd>class</kbd> `FD004`
+FD004(seasonality: int = 1, horizon: int = 8, freq: str = 'None', train_file: str = 'train_FD004.txt', test_file: str = 'test_FD004.txt', rul_file: str = 'RUL_FD004.txt', n_ts: int = 249, n_test: int = 248) 
+
+
+
+### <kbd>method</kbd> `__init__`
+
+```python
+__init__(
+    seasonality: int = 1,
+    horizon: int = 8,
+    freq: str = 'None',
+    train_file: str = 'train_FD004.txt',
+    test_file: str = 'test_FD004.txt',
+    rul_file: str = 'RUL_FD004.txt',
+    n_ts: int = 249,
+    n_test: int = 248
+) → None
+```
+
+
+
+
+
+
+
+
+
+---
+
+
+
+## <kbd>class</kbd> `PHM2008`
+PHM2008() 
+
+
+
+### <kbd>method</kbd> `__init__`
+
+```python
+__init__() → None
+```
+
+
+
+
+
+
+
+
+---
+
+
+
+### <kbd>method</kbd> `download`
+
+```python
+download(directory: str) → None
+```
+
+Download PHM2008 Dataset. 
+
+
+
+**Args:**
+ 
+ - <b>`directory`</b> (str):  Directory path to download dataset. 
+
+---
+
+
+
+### <kbd>method</kbd> `load`
+
+```python
+load(
+    directory: str,
+    group: str,
+    clip_rul: bool = True
+) → Tuple[DataFrame, DataFrame]
+```
+
+Downloads and loads M3 data. 
+
+
+
+**Args:**
+ 
+ - <b>`directory`</b> (str):  Directory where data will be downloaded. 
+ - <b>`group`</b> (str):  Group name. 
+ - <b>`Allowed groups`</b>:  'FD001', 'FD002', 'FD003', 'FD004'. 
+ - <b>`clip_rul`</b> (bool):  Wether or not upper bound the remaining useful life to 125. 
+
+
+
+**Returns:**
+ 
+ - <b>`Tuple[pd.DataFrame, pd.DataFrame]`</b>:  Target time series with columns ['unique_id', 'ds', 'y', 'exogenous']. 
+
+
