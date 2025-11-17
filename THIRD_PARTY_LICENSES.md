@@ -1,6 +1,4 @@
-# Third Party Licenses
-
-| Package            | Version     | License                                          | Author            | URL                                                                    |
-|--------------------|-------------|--------------------------------------------------|-------------------|----------------------------------------------------------------------|
-| certifi            | 2025.10.5   | Mozilla Public License 2.0 (MPL 2.0)              | Kenneth Reitz    | https://github.com/certifi/python-certifi                            |
-| tqdm               | 4.67.1      | MIT License; Mozilla Public License 2.0 (MPL 2.0) | UNKNOWN          | https://tqdm.github.io                                               |
+| Name    | Version   | License                                           | Author        | URL                                       |
+|:--------|:----------|:--------------------------------------------------|:--------------|:------------------------------------------|
+| certifi | 2025.10.5 | Mozilla Public License 2.0 (MPL 2.0)              | Kenneth Reitz | https://github.com/certifi/python-certifi |
+| tqdm    | 4.67.1    | MIT License; Mozilla Public License 2.0 (MPL 2.0) | UNKNOWN       | https://tqdm.github.io                    |
