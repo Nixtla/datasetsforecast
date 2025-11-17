@@ -1,6 +1,9 @@
-# Long Horizon
+---
+title: Long Horizon
+description: Download and wrangling utility for long-horizon datasets. 
+---
 
-> Download and wrangling utility for long-horizon datasets.
+##
 
 ::: datasetsforecast.long_horizon.ETTm2
 

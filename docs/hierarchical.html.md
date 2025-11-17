@@ -1,4 +1,9 @@
-# Hierarchical
+---
+title: Hierarchical
+description: Hierarchical dataset
+---
+
+##
 
 ::: datasetsforecast.hierarchical.Labour
 
