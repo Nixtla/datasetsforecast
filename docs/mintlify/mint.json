@@ -22,20 +22,20 @@
   "navigation": [
     {
       "group": "",
-      "pages": ["index"]
+      "pages": ["index.html"]
     },
     {
       "group": "API Reference",
       "pages": [
-        "favorita",
-        "hierarchical",
-        "long_horizon",
-        "long_horizon2",
-        "m3",
-        "m4",
-        "m5",
-        "phm2008",
-        "utils"
+        "favorita.html",
+        "hierarchical.html",
+        "long_horizon.html",
+        "long_horizon2.html",
+        "m3.html",
+        "m4.html",
+        "m5.html",
+        "phm2008.html",
+        "utils.html"
       ]
     }
   ]
