@@ -1,0 +1,221 @@
+---
+title: M3
+description: M3 dataset
+---
+
+##
+
+### `Other`
+
+```python
+Other(seasonality=1, horizon=8, freq='D', sheet_name='M3Other', name='Other', n_ts=174)
+```
+
+#### `Other.freq`
+
+```python
+freq: str = 'D'
+```
+
+#### `Other.horizon`
+
+```python
+horizon: int = 8
+```
+
+#### `Other.n_ts`
+
+```python
+n_ts: int = 174
+```
+
+#### `Other.name`
+
+```python
+name: str = 'Other'
+```
+
+#### `Other.seasonality`
+
+```python
+seasonality: int = 1
+```
+
+#### `Other.sheet_name`
+
+```python
+sheet_name: str = 'M3Other'
+```
+
+### `Monthly`
+
+```python
+Monthly(seasonality=12, horizon=18, freq='M', sheet_name='M3Month', name='Monthly', n_ts=1428)
+```
+
+#### `Monthly.freq`
+
+```python
+freq: str = 'M'
+```
+
+#### `Monthly.horizon`
+
+```python
+horizon: int = 18
+```
+
+#### `Monthly.n_ts`
+
+```python
+n_ts: int = 1428
+```
+
+#### `Monthly.name`
+
+```python
+name: str = 'Monthly'
+```
+
+#### `Monthly.seasonality`
+
+```python
+seasonality: int = 12
+```
+
+#### `Monthly.sheet_name`
+
+```python
+sheet_name: str = 'M3Month'
+```
+
+### `Quarterly`
+
+```python
+Quarterly(seasonality=4, horizon=8, freq='Q', sheet_name='M3Quart', name='Quarterly', n_ts=756)
+```
+
+#### `Quarterly.freq`
+
+```python
+freq: str = 'Q'
+```
+
+#### `Quarterly.horizon`
+
+```python
+horizon: int = 8
+```
+
+#### `Quarterly.n_ts`
+
+```python
+n_ts: int = 756
+```
+
+#### `Quarterly.name`
+
+```python
+name: str = 'Quarterly'
+```
+
+#### `Quarterly.seasonality`
+
+```python
+seasonality: int = 4
+```
+
+#### `Quarterly.sheet_name`
+
+```python
+sheet_name: str = 'M3Quart'
+```
+
+### `Yearly`
+
+```python
+Yearly(seasonality=1, horizon=6, freq='Y', sheet_name='M3Year', name='Yearly', n_ts=645)
+```
+
+#### `Yearly.freq`
+
+```python
+freq: str = 'Y'
+```
+
+#### `Yearly.horizon`
+
+```python
+horizon: int = 6
+```
+
+#### `Yearly.n_ts`
+
+```python
+n_ts: int = 645
+```
+
+#### `Yearly.name`
+
+```python
+name: str = 'Yearly'
+```
+
+#### `Yearly.seasonality`
+
+```python
+seasonality: int = 1
+```
+
+#### `Yearly.sheet_name`
+
+```python
+sheet_name: str = 'M3Year'
+```
+
+### `M3`
+
+```python
+M3()
+```
+
+#### `M3.download`
+
+```python
+download(directory)
+```
+
+Download M3 Dataset.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+
+#### `M3.load`
+
+```python
+load(directory, group)
+```
+
+Downloads and loads M3 data.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name. Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 'Other'. | *required*
+
+**Returns:**
+
+Type | Description
+---- | -----------
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\], [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\]\]</code> | pd.DataFrame: Target time series with columns ['unique_id', 'ds', 'y'].
+
+#### `M3.source_url`
+
+```python
+source_url = 'https://forecasters.org/data/m3comp/M3C.xls'
+```
