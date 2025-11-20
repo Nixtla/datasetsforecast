@@ -3,6 +3,12 @@ title: Favorita
 description: Favorita dataset
 ---
 
+## Auxiliary Functions
+
+This auxiliary functions are used to efficiently create and wrangle
+Favorita’s series.
+
+## Numpy Wrangling
 
 ::: datasetsforecast.favorita.numpy_balance
 
