@@ -27,14 +27,29 @@ Favorita’s series.
 ::: datasetsforecast.favorita.make_holidays_distance_df
 
 ::: datasetsforecast.favorita.CodeTimer
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.favorita.Favorita200
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.favorita.Favorita500
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.favorita.FavoritaComplete
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.favorita.FavoritaRawData
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ```python
 from datasetsforecast.favorita import FavoritaRawData
@@ -57,6 +72,9 @@ print('n_items * n_dates * n_stores: \t', n_items * n_dates * n_stores)
 ::: datasetsforecast.favorita.unzip
 
 ::: datasetsforecast.favorita.FavoritaData
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.favorita.load
 

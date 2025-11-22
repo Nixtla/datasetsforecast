@@ -45,7 +45,7 @@ with tempfile.TemporaryDirectory() as tmp:
     fname = tmp / 'script.py'
     fname.write_text(f"""
 from datasetsforecast.utils import download_files
-    
+
 download_files('{tmp.as_posix()}', {urls})
     """)
     !python {fname}
@@ -55,3 +55,6 @@ download_files('{tmp.as_posix()}', {urls})
 ```
 
 ::: datasetsforecast.utils.Info
+    handler: python
+    options:
+      show_if_no_docstring: false

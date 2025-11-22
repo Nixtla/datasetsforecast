@@ -11,17 +11,41 @@ title: Long-Horizon Original Datasets
 ##
 
 ::: datasetsforecast.long_horizon2.Weather
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.long_horizon2.TrafficL
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.long_horizon2.ECL
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.long_horizon2.ETTm2
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.long_horizon2.ETTm1
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.long_horizon2.ETTh2
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.long_horizon2.ETTh1
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.long_horizon2.LongHorizon2
+    handler: python
+    options:
+      show_if_no_docstring: false

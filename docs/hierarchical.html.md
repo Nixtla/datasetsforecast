@@ -42,17 +42,41 @@ while the remaining datasets follow PROFHIT experimental settings.
 ##
 
 ::: datasetsforecast.hierarchical.Labour
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.hierarchical.TourismLarge
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.hierarchical.TourismSmall
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.hierarchical.Traffic
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.hierarchical.Wiki2
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.hierarchical.OldTraffic
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.hierarchical.Old TourismLarge
+    handler: python
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.hierarchical.HierarchicalData
+    handler: python
+    options:
+      show_if_no_docstring: false
