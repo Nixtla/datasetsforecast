@@ -3,6 +3,127 @@ title: Favorita
 description: Favorita dataset
 ---
 
+##
+
+### `FavoritaData`
+
+Favorita Data.
+
+The processed Favorita dataset of grocery contains item sales daily history with additional
+information on promotions, items, stores, and holidays, containing 371,312 series from
+January 2013 to August 2017, with a geographic hierarchy of states, cities, and stores.
+This wrangling matches that of the DPMN paper.
+
+References:
+
+- [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao,
+  Lee Dicker (2022). "Probabilistic Hierarchical Forecasting with Deep Poisson
+  Mixtures". International Journal Forecasting, special
+  issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)
+
+#### `FavoritaData.load`
+
+```python
+load(directory, group, cache=True, verbose=False)
+```
+
+Load Favorita forecasting benchmark dataset.
+
+In contrast with other hierarchical datasets, this dataset contains a geographic
+hierarchy for each individual grocery item series, identified with 'item_id' column.
+The geographic hierarchy is captured by the 'hier_id' column.
+
+For this reason minor wrangling is needed to adapt it for use with HierarchicalForecast,
+and StatsForecast libraries.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded and saved. | *required*
+`group` | <code>[str](#str)</code> | Dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'. | *required*
+`cache` | <code>[bool](#bool)</code> | If True saves and loads. Defaults to True. | <code>True</code>
+`verbose` | <code>[bool](#bool)</code> | Whether or not print partial outputs. Defaults to False. | <code>False</code>
+
+**Returns:**
+
+Name | Type | Description
+---- | ---- | -----------
+`tuple` | | A tuple containing: - Y_df (pd.DataFrame): Target base time series with columns ['item_id', 'hier_id', 'ds', 'y']. - S_df (pd.DataFrame): Hierarchical constraints dataframe of size (base, bottom). - tags (dict): Dictionary with hierarchical level information.
+
+Example:
+
+```python
+# Qualitative evaluation of hierarchical data
+from datasetsforecast.favorita import FavoritaData
+from hierarchicalforecast.utils import HierarchicalPlot
+
+group = 'Favorita200' # 'Favorita500', 'FavoritaComplete'
+directory = './data/favorita'
+Y_df, S_df, tags = FavoritaData.load(directory=directory, group=group)
+
+Y_item_df = Y_df[Y_df.item_id==1916577] # 112830, 1501570, 1916577
+Y_item_df = Y_item_df.rename(columns={'hier_id': 'unique_id'})
+Y_item_df = Y_item_df.set_index('unique_id')
+del Y_item_df['item_id']
+
+hplots = HierarchicalPlot(S=S_df, tags=tags)
+hplots.plot_hierarchically_linked_series(
+    Y_df=Y_item_df, bottom_series='store_[40]',
+)
+```
+
+#### `FavoritaData.load_preprocessed`
+
+```python
+load_preprocessed(directory, group, cache=True, verbose=False)
+```
+
+Load Favorita group datasets.
+
+For the exploration of more complex models, we make available the entire information
+including data at the bottom level of the items sold in Favorita stores, in addition
+to the aggregate/national level information for the items.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded and saved. | *required*
+`group` | <code>[str](#str)</code> | Dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'. | *required*
+`cache` | <code>[bool](#bool)</code> | If True saves and loads. Defaults to True. | <code>True</code>
+`verbose` | <code>[bool](#bool)</code> | Whether or not print partial outputs. Defaults to False. | <code>False</code>
+
+**Returns:**
+
+Name | Type | Description
+---- | ---- | -----------
+`tuple` | <code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame)\]</code> | A tuple containing: - static_bottom (pd.DataFrame): Static variables of bottom level series. - static_agg (pd.DataFrame): Static variables of aggregate level series. - temporal_bottom (pd.DataFrame): Temporal variables of bottom level series. - temporal_agg (pd.DataFrame): Temporal variables of aggregate level series.
+
+
+#### Example
+
+```python
+# Qualitative evaluation of hierarchical data
+from datasetsforecast.favorita import FavoritaData
+from hierarchicalforecast.utils import HierarchicalPlot
+
+group = 'Favorita200' # 'Favorita500', 'FavoritaComplete'
+directory = './data/favorita'
+Y_df, S_df, tags = FavoritaData.load(directory=directory, group=group)
+
+Y_item_df = Y_df[Y_df.item_id==1916577] # 112830, 1501570, 1916577
+Y_item_df = Y_item_df.rename(columns={'hier_id': 'unique_id'})
+Y_item_df = Y_item_df.set_index('unique_id')
+del Y_item_df['item_id']
+
+hplots = HierarchicalPlot(S=S_df, tags=tags)
+hplots.plot_hierarchically_linked_series(
+    Y_df=Y_item_df, bottom_series='store_[40]',
+)
+```
+
+
 ## Auxiliary Functions
 
 This auxiliary functions are used to efficiently create and wrangle
@@ -275,124 +396,5 @@ print('n_dates: \t', n_dates)
 print('n_items * n_dates: \t\t', n_items * n_dates)
 print('n_items * n_stores: \t\t', n_items * n_stores)
 print('n_items * n_dates * n_stores: \t', n_items * n_dates * n_stores)
-```
-
-
-### `FavoritaData`
-
-Favorita Data.
-
-The processed Favorita dataset of grocery contains item sales daily history with additional
-information on promotions, items, stores, and holidays, containing 371,312 series from
-January 2013 to August 2017, with a geographic hierarchy of states, cities, and stores.
-This wrangling matches that of the DPMN paper.
-
-References:
-
-- [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao,
-  Lee Dicker (2022). "Probabilistic Hierarchical Forecasting with Deep Poisson
-  Mixtures". International Journal Forecasting, special
-  issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)
-
-#### `FavoritaData.load`
-
-```python
-load(directory, group, cache=True, verbose=False)
-```
-
-Load Favorita forecasting benchmark dataset.
-
-In contrast with other hierarchical datasets, this dataset contains a geographic
-hierarchy for each individual grocery item series, identified with 'item_id' column.
-The geographic hierarchy is captured by the 'hier_id' column.
-
-For this reason minor wrangling is needed to adapt it for use with HierarchicalForecast,
-and StatsForecast libraries.
-
-**Parameters:**
-
-Name | Type | Description | Default
----- | ---- | ----------- | -------
-`directory` | <code>[str](#str)</code> | Directory where data will be downloaded and saved. | *required*
-`group` | <code>[str](#str)</code> | Dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'. | *required*
-`cache` | <code>[bool](#bool)</code> | If True saves and loads. Defaults to True. | <code>True</code>
-`verbose` | <code>[bool](#bool)</code> | Whether or not print partial outputs. Defaults to False. | <code>False</code>
-
-**Returns:**
-
-Name | Type | Description
----- | ---- | -----------
-`tuple` | | A tuple containing: - Y_df (pd.DataFrame): Target base time series with columns ['item_id', 'hier_id', 'ds', 'y']. - S_df (pd.DataFrame): Hierarchical constraints dataframe of size (base, bottom). - tags (dict): Dictionary with hierarchical level information.
-
-Example:
-
-```python
-# Qualitative evaluation of hierarchical data
-from datasetsforecast.favorita import FavoritaData
-from hierarchicalforecast.utils import HierarchicalPlot
-
-group = 'Favorita200' # 'Favorita500', 'FavoritaComplete'
-directory = './data/favorita'
-Y_df, S_df, tags = FavoritaData.load(directory=directory, group=group)
-
-Y_item_df = Y_df[Y_df.item_id==1916577] # 112830, 1501570, 1916577
-Y_item_df = Y_item_df.rename(columns={'hier_id': 'unique_id'})
-Y_item_df = Y_item_df.set_index('unique_id')
-del Y_item_df['item_id']
-
-hplots = HierarchicalPlot(S=S_df, tags=tags)
-hplots.plot_hierarchically_linked_series(
-    Y_df=Y_item_df, bottom_series='store_[40]',
-)
-```
-
-#### `FavoritaData.load_preprocessed`
-
-```python
-load_preprocessed(directory, group, cache=True, verbose=False)
-```
-
-Load Favorita group datasets.
-
-For the exploration of more complex models, we make available the entire information
-including data at the bottom level of the items sold in Favorita stores, in addition
-to the aggregate/national level information for the items.
-
-**Parameters:**
-
-Name | Type | Description | Default
----- | ---- | ----------- | -------
-`directory` | <code>[str](#str)</code> | Directory where data will be downloaded and saved. | *required*
-`group` | <code>[str](#str)</code> | Dataset group name in 'Favorita200', 'Favorita500', 'FavoritaComplete'. | *required*
-`cache` | <code>[bool](#bool)</code> | If True saves and loads. Defaults to True. | <code>True</code>
-`verbose` | <code>[bool](#bool)</code> | Whether or not print partial outputs. Defaults to False. | <code>False</code>
-
-**Returns:**
-
-Name | Type | Description
----- | ---- | -----------
-`tuple` | <code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame)\]</code> | A tuple containing: - static_bottom (pd.DataFrame): Static variables of bottom level series. - static_agg (pd.DataFrame): Static variables of aggregate level series. - temporal_bottom (pd.DataFrame): Temporal variables of bottom level series. - temporal_agg (pd.DataFrame): Temporal variables of aggregate level series.
-
-
-**Example:**
-
-```python
-# Qualitative evaluation of hierarchical data
-from datasetsforecast.favorita import FavoritaData
-from hierarchicalforecast.utils import HierarchicalPlot
-
-group = 'Favorita200' # 'Favorita500', 'FavoritaComplete'
-directory = './data/favorita'
-Y_df, S_df, tags = FavoritaData.load(directory=directory, group=group)
-
-Y_item_df = Y_df[Y_df.item_id==1916577] # 112830, 1501570, 1916577
-Y_item_df = Y_item_df.rename(columns={'hier_id': 'unique_id'})
-Y_item_df = Y_item_df.set_index('unique_id')
-del Y_item_df['item_id']
-
-hplots = HierarchicalPlot(S=S_df, tags=tags)
-hplots.plot_hierarchically_linked_series(
-    Y_df=Y_item_df, bottom_series='store_[40]',
-)
 ```
 
