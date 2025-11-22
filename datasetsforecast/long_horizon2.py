@@ -68,10 +68,9 @@ class ETTm2:
     and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at a fifteen minute frequency.
 
-        Reference:
-        Zhou, et al. Informer: Beyond Efficient Transformer
-        for Long Sequence Time-Series Forecasting. AAAI 2021.
-        https://arxiv.org/abs/2012.07436
+    Reference:
+    - [Zhou, et al. Informer: Beyond Efficient Transformer for Long Sequence
+    Time-Series Forecasting. AAAI 2021.](https://arxiv.org/abs/2012.07436)
     """
     freq: str = '15T'
     name: str = 'ETTm2'
@@ -88,10 +87,9 @@ class ECL:
     consumption (KWh) of 321 customers from 2012 to 2014.
     For comparability, we aggregate it hourly.
 
-        Reference:
-        Li, S et al. Enhancing the locality and breaking the memory
-        bottleneck of Transformer on time series forecasting.
-        NeurIPS 2019. http://arxiv.org/abs/1907.00235.
+    Reference:
+    - [Li, S et al. Enhancing the locality and breaking the memory bottleneck of
+    Transformer on time series forecasting. NeurIPS 2019.](https://arxiv.org/abs/1907.00235)
     """
     freq: str = '15T'
     name: str = 'ECL'
@@ -108,15 +106,12 @@ class TrafficL:
     of Transportation, it reports road hourly occupancy rates of 862 sensors,
     from January 2015 to December 2016.
 
-        Reference:
-        Lai, G., Chang, W., Yang, Y., and Liu, H. Modeling Long and
-        Short-Term Temporal Patterns with Deep Neural Networks.
-        SIGIR 2018. http://arxiv.org/abs/1703.07015.
-
-        Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:
-        Decomposition Transformers with auto-correlation for
-        long-term series forecasting. NeurIPS 2021.
-        https://arxiv.org/abs/2106.13008.
+    Reference:
+    - [Lai, G., Chang, W., Yang, Y., and Liu, H. Modeling Long and Short-Term Temporal
+    Patterns with Deep Neural Networks. SIGIR 2018.](http://arxiv.org/abs/1703.07015)
+    - [Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:
+    Decomposition Transformers with auto-correlation for long-term series forecasting.
+    NeurIPS 2021.](https://arxiv.org/abs/2106.13008)
     """
     freq: str = 'H'
     name: str = 'traffic'
@@ -134,11 +129,9 @@ class Weather:
     recorded every 10 minutes from the Weather Station of the Max Planck Biogeochemistry
     Institute in Jena, Germany.
 
-        Reference:
-        Wu, H., Xu, J., Wang, J., and Long, M. Autoformer:
-        Decomposition Transformers with auto-correlation for
-        long-term series forecasting. NeurIPS 2021.
-        https://arxiv.org/abs/2106.13008.
+    Reference:
+    - [Wu, H., Xu, J., Wang, J., and Long, M. Autoformer: Decomposition Transformers
+    with auto-correlation for long-term series forecasting. NeurIPS 2021.](https://arxiv.org/abs/2106.13008.)
     """
     freq: str = '10M'
     name: str = 'weather'
