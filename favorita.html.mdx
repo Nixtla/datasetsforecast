@@ -3,6 +3,12 @@ title: Favorita
 description: Favorita dataset
 ---
 
+## Auxiliary Functions
+
+This auxiliary functions are used to efficiently create and wrangle
+Favorita’s series.
+
+## Numpy Wrangling
 
 ### `numpy_balance`
 
@@ -25,7 +31,7 @@ Name | Type | Description | Default
 
 Type | Description
 ---- | -----------
-| np.ndarray: NumPy array with balanced combinations.
+<code>[ndarray](#numpy.ndarray)</code> | NumPy array with balanced combinations.
 
 ### `numpy_ffill`
 
@@ -38,12 +44,18 @@ Fast NumPy implementation of `ffill` that fills missing values.
 Fills missing values in an array by propagating the last non-missing value forward.
 
 For example, if the array has the following values:
-0 1 2 3
-1 2 NaN 4
+
+```
+0  1  2    3
+1  2  NaN  4
+```
 
 The `ffill` method would fill the missing values as follows:
-0 1 2 3
-1 2 2 4
+
+```
+0  1  2  3
+1  2  2  4
+```
 
 **Parameters:**
 
@@ -55,7 +67,7 @@ Name | Type | Description | Default
 
 Type | Description
 ---- | -----------
-| np.ndarray: NumPy array with forward-filled values.
+<code>[ndarray](#numpy.ndarray)</code> | NumPy array with forward-filled values.
 
 ### `numpy_bfill`
 
@@ -68,12 +80,18 @@ Fast NumPy implementation of `bfill` that fills missing values.
 Fills missing values in an array by propagating the last non-missing value backwards.
 
 For example, if the array has the following values:
-0 1 2 3
-1 2 NaN 4
+
+```
+0  1  2    3
+1  2  NaN  4
+```
 
 The `bfill` method would fill the missing values as follows:
-0 1 2 3
-1 2 4 4
+
+```
+0  1  2  3
+1  2  4  4
+```
 
 **Parameters:**
 
@@ -85,7 +103,7 @@ Name | Type | Description | Default
 
 Type | Description
 ---- | -----------
-| np.ndarray: NumPy array with backward-filled values.
+<code>[ndarray](#numpy.ndarray)</code> | NumPy array with backward-filled values.
 
 ### `one_hot_encoding`
 
@@ -106,7 +124,7 @@ Name | Type | Description | Default
 
 Type | Description
 ---- | -----------
-| pd.DataFrame: DataFrame with one hot encoded categorical columns.
+<code>[DataFrame](#pandas.DataFrame)</code> | DataFrame with one hot encoded categorical columns.
 
 ### `nested_one_hot_encoding`
 
@@ -131,7 +149,7 @@ Name | Type | Description | Default
 
 Type | Description
 ---- | -----------
-| pd.DataFrame: DataFrame with one hot encoded hierarchically-nested categorical columns.
+<code>[DataFrame](#pandas.DataFrame)</code> | DataFrame with one hot encoded hierarchically-nested categorical columns.
 
 ### `get_levels_from_S_df`
 
@@ -155,7 +173,7 @@ Name | Type | Description | Default
 
 Name | Type | Description
 ---- | ---- | -----------
-`list` | | Hierarchical aggregation indexes, where each entry is a level.
+`levels` | <code>[list](#list)</code> | Hierarchical aggregation indexes, where each entry is a level.
 
 ### `distance_to_holiday`
 
@@ -175,52 +193,10 @@ make_holidays_distance_df(holidays_df, dates)
 CodeTimer(name=None, verbose=True)
 ```
 
-#### `CodeTimer.name`
-
-```python
-name = " '" + name + "'" if name else ''
-```
-
-#### `CodeTimer.verbose`
-
-```python
-verbose = verbose
-```
-
 ### `Favorita200`
 
 ```python
 Favorita200(freq='D', horizon=34, seasonality=7, test_size=34, tags_names=('Country', 'Country/State', 'Country/State/City', 'Country/State/City/Store'))
-```
-
-#### `Favorita200.freq`
-
-```python
-freq: str = 'D'
-```
-
-#### `Favorita200.horizon`
-
-```python
-horizon: int = 34
-```
-
-#### `Favorita200.seasonality`
-
-```python
-seasonality: int = 7
-```
-
-#### `Favorita200.tags_names`
-
-```python
-tags_names: Tuple[str] = ('Country', 'Country/State', 'Country/State/City', 'Country/State/City/Store')
-```
-
-#### `Favorita200.test_size`
-
-```python
-test_size: int = 34
 ```
 
 ### `Favorita500`
@@ -229,67 +205,7 @@ test_size: int = 34
 Favorita500(freq='D', horizon=34, seasonality=7, test_size=34, tags_names=('Country', 'Country/State', 'Country/State/City', 'Country/State/City/Store'))
 ```
 
-#### `Favorita500.freq`
-
-```python
-freq: str = 'D'
-```
-
-#### `Favorita500.horizon`
-
-```python
-horizon: int = 34
-```
-
-#### `Favorita500.seasonality`
-
-```python
-seasonality: int = 7
-```
-
-#### `Favorita500.tags_names`
-
-```python
-tags_names: Tuple[str] = ('Country', 'Country/State', 'Country/State/City', 'Country/State/City/Store')
-```
-
-#### `Favorita500.test_size`
-
-```python
-test_size: int = 34
-```
-
 ### `FavoritaComplete`
-
-#### `FavoritaComplete.freq`
-
-```python
-freq: str = 'D'
-```
-
-#### `FavoritaComplete.horizon`
-
-```python
-horizon: int = 34
-```
-
-#### `FavoritaComplete.seasonality`
-
-```python
-seasonality: int = 7
-```
-
-#### `FavoritaComplete.tags_names`
-
-```python
-tags_names: Tuple[str] = ('Country', 'Country/State', 'Country/State/City', 'Country/State/City/Store')
-```
-
-#### `FavoritaComplete.test_size`
-
-```python
-test_size: int = 34
-```
 
 ### `FavoritaRawData`
 
@@ -343,24 +259,6 @@ print('n_items * n_stores: \t\t', n_items * n_stores)
 print('n_items * n_dates * n_stores: \t', n_items * n_dates * n_stores)
 ```
 
-#### `FavoritaRawData.files`
-
-```python
-files = ['holidays_events.csv.zip', 'items.csv.zip', 'oil.csv.zip', 'sample_submission.csv.zip', 'stores.csv.zip', 'test.csv.zip', 'train.csv.zip', 'transactions.csv.zip']
-```
-
-#### `FavoritaRawData.source_url`
-
-```python
-source_url = 'https://www.dropbox.com/s/xi019gtvdtmsj9j/favorita-grocery-sales-forecasting2.zip?dl=1'
-```
-
-#### `FavoritaRawData.unzip`
-
-```python
-unzip(path)
-```
-
 ```python
 from datasetsforecast.favorita import FavoritaRawData
 verbose = True
@@ -389,12 +287,12 @@ information on promotions, items, stores, and holidays, containing 371,312 serie
 January 2013 to August 2017, with a geographic hierarchy of states, cities, and stores.
 This wrangling matches that of the DPMN paper.
 
-<details class="references" open markdown="1">
-<summary>References</summary>
+References:
 
-- [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao, Lee Dicker (2022). "Probabilistic Hierarchical Forecasting with Deep Poisson Mixtures". International Journal Forecasting, special issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)
-
-</details>
+- [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao,
+  Lee Dicker (2022). "Probabilistic Hierarchical Forecasting with Deep Poisson
+  Mixtures". International Journal Forecasting, special
+  issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)
 
 #### `FavoritaData.load`
 

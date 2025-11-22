@@ -113,7 +113,7 @@ with tempfile.TemporaryDirectory() as tmp:
     fname = tmp / 'script.py'
     fname.write_text(f"""
 from datasetsforecast.utils import download_files
-    
+
 download_files('{tmp.as_posix()}', {urls})
     """)
     !python {fname}
@@ -133,12 +133,6 @@ Args:
 groups (Tuple): Tuple of str groups
 class_groups (Tuple): Tuple of dataclasses.
 
-#### `Info.class_groups`
-
-```python
-class_groups: Tuple[dataclass]
-```
-
 #### `Info.get_group`
 
 ```python
@@ -146,9 +140,3 @@ get_group(group)
 ```
 
 Gets dataclass of group.
-
-#### `Info.groups`
-
-```python
-groups: Tuple[str] = field(init=False)
-```
