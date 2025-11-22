@@ -380,21 +380,3 @@ print('n_items * n_stores: \t\t', n_items * n_stores)
 print('n_items * n_dates * n_stores: \t', n_items * n_dates * n_stores)
 ```
 
-```python
-from datasetsforecast.favorita import FavoritaRawData
-verbose = True
-group = 'Favorita200'  # 'Favorita500', 'FavoritaComplete'
-directory = './data/favorita'  # directory = f's3://favorita'
-filter_items, filter_stores, filter_dates, raw_group_data = FavoritaRawData._load_raw_group_data(directory=directory, group=group, verbose=verbose)
-n_items = len(filter_items)
-n_stores = len(filter_stores)
-n_dates = len(filter_dates)
-print('\n')
-print('n_stores: \t', n_stores)
-print('n_items: \t', n_items)
-print('n_dates: \t', n_dates)
-print('n_items * n_dates: \t\t', n_items * n_dates)
-print('n_items * n_stores: \t\t', n_items * n_stores)
-print('n_items * n_dates * n_stores: \t', n_items * n_dates * n_stores)
-```
-
