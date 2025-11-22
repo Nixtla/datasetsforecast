@@ -42,8 +42,8 @@ description: Download and wrangling utility for long-horizon datasets.
 
 ::: datasetsforecast.long_horizon.ILI
     handler: python
-        options:
-        show_if_no_docstring: false
+    options:
+      show_if_no_docstring: false
 
 ::: datasetsforecast.long_horizon.Weather
     handler: python
