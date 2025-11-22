@@ -47,7 +47,7 @@ def numpy_balance(*arrs):
         *arrs: NumPy arrays.
 
     Returns:
-        np.ndarray: NumPy array with balanced combinations.
+        (np.ndarray): NumPy array with balanced combinations.
     """
     N = len(arrs)
     out =  np.transpose(np.meshgrid(*arrs, indexing='ij'),
@@ -60,18 +60,22 @@ def numpy_ffill(arr):
     Fills missing values in an array by propagating the last non-missing value forward.
 
     For example, if the array has the following values:
+    ```
     0  1  2    3
     1  2  NaN  4
+    ```
 
     The `ffill` method would fill the missing values as follows:
+    ```
     0  1  2  3
     1  2  2  4
+    ```
 
     Args:
         arr (np.ndarray): NumPy array.
 
     Returns:
-        np.ndarray: NumPy array with forward-filled values.
+        (np.ndarray): NumPy array with forward-filled values.
     """
     # (n_series, n_dates) = arr.shape
     mask = np.isnan(arr)
@@ -86,18 +90,22 @@ def numpy_bfill(arr):
     Fills missing values in an array by propagating the last non-missing value backwards.
 
     For example, if the array has the following values:
+    ```
     0  1  2    3
     1  2  NaN  4
+    ```
 
     The `bfill` method would fill the missing values as follows:
+    ```
     0  1  2  3
     1  2  4  4
+    ```
 
     Args:
         arr (np.ndarray): NumPy array.
 
     Returns:
-        np.ndarray: NumPy array with backward-filled values.
+        (np.ndarray): NumPy array with backward-filled values.
     """
     mask = np.isnan(arr)
     idx = np.where(~mask, np.arange(mask.shape[1]), mask.shape[1] - 1)
@@ -114,7 +122,7 @@ def one_hot_encoding(df, index_col):
         index_col (str): The index column to avoid encoding.
 
     Returns:
-        pd.DataFrame: DataFrame with one hot encoded categorical columns.
+        (pd.DataFrame): DataFrame with one hot encoded categorical columns.
     """
     encoder = OneHotEncoder()
     columns = list(df.columns)
@@ -139,7 +147,7 @@ def nested_one_hot_encoding(df, index_col):
         index_col (str): The index column to avoid encoding.
 
     Returns:
-        pd.DataFrame: DataFrame with one hot encoded hierarchically-nested categorical columns.
+        (pd.DataFrame): DataFrame with one hot encoded hierarchically-nested categorical columns.
     """
     bottom_ids = list(df[index_col])
     del df[index_col]
@@ -162,7 +170,7 @@ def get_levels_from_S_df(S_df):
         S_df (pd.DataFrame): Summing matrix of size (base, bottom), see aggregate method.
 
     Returns:
-        list: Hierarchical aggregation indexes, where each entry is a level.
+        levels (list): Hierarchical aggregation indexes, where each entry is a level.
     """
     cut_idxs, = np.where(S_df.sum(axis=1).cumsum() % S_df.shape[1] == 0.)
     levels = [S_df.iloc[(cut_idxs[i] + 1):(cut_idxs[i+1] + 1)].index.values for i in range(cut_idxs.size-1)]
@@ -488,7 +496,10 @@ class FavoritaData:
     This wrangling matches that of the DPMN paper.
 
     References:
-        - [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao, Lee Dicker (2022). "Probabilistic Hierarchical Forecasting with Deep Poisson Mixtures". International Journal Forecasting, special issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007) 
+    - [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei Cao,
+        Lee Dicker (2022). "Probabilistic Hierarchical Forecasting with Deep Poisson
+        Mixtures". International Journal Forecasting, special
+        issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)
     """
     @staticmethod
     def _get_static_data(filter_items, filter_stores, items, store_info, temporal, verbose=False):
