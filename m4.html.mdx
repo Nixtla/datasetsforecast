@@ -189,16 +189,14 @@ The results compared to the on-the-fly evaluation were obtained from the
 evaluation](https://github.com/Mcompetitions/M4-methods/blob/master/Evaluation%20and%20Ranks.xlsx).
 
 ```python
-from fastcore.test import test_close
-```
+import numpy as np
 
-```python
 esrnn_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-118.zip'
 esrnn_evaluation = M4Evaluation.evaluate('data', 'Hourly', esrnn_url)
 # Test of the same evaluation as the original one
-test_close(esrnn_evaluation['SMAPE'].item(), 9.328, eps=1e-3)
-test_close(esrnn_evaluation['MASE'].item(), 0.893, eps=1e-3)
-test_close(esrnn_evaluation['OWA'].item(), 0.440, eps=1e-3)
+assert np.isclose(esrnn_evaluation['SMAPE'].item(), 9.328, atol=1e-3)
+assert np.isclose(esrnn_evaluation['MASE'].item(), 0.893, atol=1e-3)
+assert np.isclose(esrnn_evaluation['OWA'].item(), 0.440, atol=1e-3)
 esrnn_evaluation
 ```
 
@@ -207,12 +205,14 @@ esrnn_evaluation
 Also the method `evaluate` can recevie a numpy array of forecasts.
 
 ```python
+import numpy as np
+
 fforma_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-245.zip'
 fforma_forecasts = M4Evaluation.load_benchmark('data', 'Hourly', fforma_url)
 fforma_evaluation = M4Evaluation.evaluate('data', 'Hourly', fforma_forecasts)
 # Test of the same evaluation as the original one
-test_close(fforma_evaluation['SMAPE'].item(), 11.506, eps=1e-3)
-test_close(fforma_evaluation['MASE'].item(), 0.819, eps=1e-3)
-test_close(fforma_evaluation['OWA'].item(), 0.484, eps=1e-3)
+assert np.isclose(fforma_evaluation['SMAPE'].item(), 11.506, atol=1e-3)
+assert np.isclose(fforma_evaluation['MASE'].item(), 0.819, atol=1e-3)
+assert np.isclose(fforma_evaluation['OWA'].item(), 0.484, atol=1e-3)
 fforma_evaluation
 ```
