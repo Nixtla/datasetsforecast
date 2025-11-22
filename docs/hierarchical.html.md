@@ -6,18 +6,13 @@ description: Hierarchical dataset
 Here we host a collection of datasets used in previous hierarchical
 research by Rangapuram et al. \[2021\], Olivares et al. \[2023\], and
 Kamarthi et al. \[2022\]. The benchmark datasets utilized include
-Australian Monthly Labour
-([`Labour`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#labour)),
-SF Bay Area daily Traffic
-([`Traffic`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#traffic),
-[`OldTraffic`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#oldtraffic)),
-Quarterly Australian Tourism Visits
-([`TourismSmall`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#tourismsmall)),
-Monthly Australian Tourism visits
-([`TourismLarge`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#tourismlarge),
-[`OldTourismLarge`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#oldtourismlarge)),
-and daily Wikipedia article views
-([`Wiki2`](https://Nixtla.github.io/datasetsforecast/hierarchical.html#wiki2)).
+
+1. Australian Monthly Labour: [Labour](#labour),
+2. SF Bay Area daily Traffic: [Traffic](#traffic), [OldTraffic](#oldtraffic),
+3. Quarterly Australian Tourism Visits: ([TourismSmall](#tourismsmall)),
+4. Monthly Australian Tourism visits: [TourismLarge](#tourismlarge), [OldTourismLarge](#oldtourismlarge),
+5. daily Wikipedia article views: [Wiki2](#wiki2).
+
 Old datasets favor the original datasets with minimal target variable
 preprocessing (Rangapuram et al. \[2021\], Olivares et al. \[2023\]),
 while the remaining datasets follow PROFHIT experimental settings.
