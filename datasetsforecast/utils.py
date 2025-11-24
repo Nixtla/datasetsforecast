@@ -82,6 +82,12 @@ async def _async_download_file(session: aiohttp.ClientSession, path: Path, sourc
 
 async def async_download_files(path: Union[str, Path], urls: Iterable[str]):
     """
+    Asynchronously download files from urls inside path.
+
+    Args:
+        path (str, Path): Directory where files will be downloaded.
+        urls (Iterable[str]): Iterable of URLs to download.
+
     Example:
     ```python
     import os
@@ -119,6 +125,12 @@ async def async_download_files(path: Union[str, Path], urls: Iterable[str]):
 
 def download_files(directory: Union[str, Path], urls: Iterable[str]):
     """
+    Download files from urls inside directory.
+
+    Args:
+        directory (str, Path): Directory where files will be downloaded.
+        urls (Iterable[str]): Iterable of URLs to download.
+
     Example:
 
     ```python
