@@ -1,0 +1,218 @@
+---
+title: M4
+description: M4 dataset
+---
+
+##
+
+### `Other`
+
+```python
+Other(seasonality=1, horizon=8, freq='D', name='Other', n_ts=5000, included_groups=('Weekly', 'Daily', 'Hourly'))
+```
+
+### `Hourly`
+
+```python
+Hourly(seasonality=24, horizon=48, freq='H', name='Hourly', n_ts=414)
+```
+
+### `Daily`
+
+```python
+Daily(seasonality=1, horizon=14, freq='D', name='Daily', n_ts=4227)
+```
+
+### `Weekly`
+
+```python
+Weekly(seasonality=1, horizon=13, freq='W', name='Weekly', n_ts=359)
+```
+
+### `Monthly`
+
+```python
+Monthly(seasonality=12, horizon=18, freq='M', name='Monthly', n_ts=48000)
+```
+
+### `Quarterly`
+
+```python
+Quarterly(seasonality=4, horizon=8, freq='Q', name='Quarterly', n_ts=24000)
+```
+
+### `Yearly`
+
+```python
+Yearly(seasonality=1, horizon=6, freq='Y', name='Yearly', n_ts=23000)
+```
+
+## Download data class
+
+### `M4`
+
+```python
+M4(source_url='https://raw.githubusercontent.com/Mcompetitions/M4-methods/master/Dataset/', naive2_forecast_url='https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-Naive2.zip')
+```
+
+#### `M4.async_download`
+
+```python
+async_download(directory, group=None)
+```
+
+Download M4 Dataset.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+
+Example:
+
+```python
+group = 'Hourly'
+await M4.async_download('data', group=group)
+df, *_ = M4.load(directory='data', group=group)
+n_series = len(np.unique(df.unique_id.values))
+display_str  = f'Group: {group} '
+display_str += f'n_series: {n_series}'
+print(display_str)
+```
+
+#### `M4.download`
+
+```python
+download(directory, group=None)
+```
+
+Download M4 Dataset.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+`group` | <code>[str](#str)</code> | Name of the group to download. If None, downloads all. Defaults to None. | <code>None</code>
+
+#### `M4.load`
+
+```python
+load(directory, group, cache=True)
+```
+
+Downloads and loads M4 data.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name. Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 'Weekly', 'Daily', 'Hourly'. | *required*
+`cache` | <code>[bool](#bool)</code> | If `True` saves and loads | <code>True</code>
+
+**Returns:**
+
+Type | Description
+---- | -----------
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\], [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\]\]</code> | Tuple\[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]\]: Target time series with columns ['unique_id', 'ds', 'y'], Static exogenous variables with columns ['unique_id', 'ds'], and static variables.
+
+## Evaluation class
+
+### `M4Evaluation`
+
+#### `M4Evaluation.evaluate`
+
+```python
+evaluate(directory, group, y_hat)
+```
+
+Evaluates y_hat according to M4 methodology.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name. Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 'Weekly', 'Daily', 'Hourly'. | *required*
+`y_hat` | <code>[Union](#typing.Union)\[[ndarray](#numpy.ndarray), [str](#str)\]</code> | Group forecasts as numpy array or benchmark url from https://github.com/Nixtla/m4-forecasts/tree/master/forecasts. | *required*
+
+**Returns:**
+
+Type | Description
+---- | -----------
+<code>[DataFrame](#pandas.DataFrame)</code> | pd.DataFrame: DataFrame with columns OWA, SMAPE, MASE and group as index.
+
+Examples:
+
+```python
+esrnn_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-118.zip'
+esrnn_evaluation = M4Evaluation.evaluate('data', 'Hourly', esrnn_url)
+
+fforma_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-245.zip'
+fforma_forecasts = M4Evaluation.load_benchmark('data', 'Hourly', fforma_url)
+fforma_evaluation = M4Evaluation.evaluate('data', 'Hourly', fforma_forecasts)
+```
+
+#### `M4Evaluation.load_benchmark`
+
+```python
+load_benchmark(directory, group, source_url=None)
+```
+
+Downloads and loads a bechmark forecasts.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name. Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 'Weekly', 'Daily', 'Hourly'. | *required*
+`source_url` | <code>[str](#str)</code> | Optional benchmark url obtained from https://github.com/Nixtla/m4-forecasts/tree/master/forecasts. If `None` returns Naive2. | <code>None</code>
+
+**Returns:**
+
+Type | Description
+---- | -----------
+<code>[ndarray](#numpy.ndarray)</code> | np.ndarray: Numpy array of shape (n_series, horizon).
+
+### URL-based evaluation
+
+The method `evaluate` from the class
+[`M4Evaluation`](https://Nixtla.github.io/datasetsforecast/m4.html#m4evaluation)
+can receive a url of a [benchmark uploaded to the M4
+competiton](https://github.com/Mcompetitions/M4-methods/tree/master/Point%20Forecasts).
+
+The results compared to the on-the-fly evaluation were obtained from the
+[official
+evaluation](https://github.com/Mcompetitions/M4-methods/blob/master/Evaluation%20and%20Ranks.xlsx).
+
+```python
+import numpy as np
+
+esrnn_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-118.zip'
+esrnn_evaluation = M4Evaluation.evaluate('data', 'Hourly', esrnn_url)
+# Test of the same evaluation as the original one
+assert np.isclose(esrnn_evaluation['SMAPE'].item(), 9.328, atol=1e-3)
+assert np.isclose(esrnn_evaluation['MASE'].item(), 0.893, atol=1e-3)
+assert np.isclose(esrnn_evaluation['OWA'].item(), 0.440, atol=1e-3)
+esrnn_evaluation
+```
+
+### Numpy-based evaluation
+
+Also the method `evaluate` can recevie a numpy array of forecasts.
+
+```python
+import numpy as np
+
+fforma_url = 'https://github.com/Nixtla/m4-forecasts/raw/master/forecasts/submission-245.zip'
+fforma_forecasts = M4Evaluation.load_benchmark('data', 'Hourly', fforma_url)
+fforma_evaluation = M4Evaluation.evaluate('data', 'Hourly', fforma_forecasts)
+# Test of the same evaluation as the original one
+assert np.isclose(fforma_evaluation['SMAPE'].item(), 11.506, atol=1e-3)
+assert np.isclose(fforma_evaluation['MASE'].item(), 0.819, atol=1e-3)
+assert np.isclose(fforma_evaluation['OWA'].item(), 0.484, atol=1e-3)
+fforma_evaluation
+```

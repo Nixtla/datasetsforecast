@@ -1,0 +1,72 @@
+---
+title: PHM2008
+description: PHM2008 dataset
+---
+
+##
+
+### `FD004`
+
+```python
+FD004(seasonality=1, horizon=8, freq='None', train_file='train_FD004.txt', test_file='test_FD004.txt', rul_file='RUL_FD004.txt', n_ts=249, n_test=248)
+```
+
+### `FD003`
+
+```python
+FD003(seasonality=1, horizon=1, freq='None', train_file='train_FD003.txt', test_file='test_FD003.txt', rul_file='RUL_FD003.txt', n_ts=100, n_test=100)
+```
+
+### `FD002`
+
+```python
+FD002(seasonality=1, horizon=1, freq='None', train_file='train_FD002.txt', test_file='test_FD002.txt', rul_file='RUL_FD002.txt', n_ts=260, n_test=259)
+```
+
+### `FD001`
+
+```python
+FD001(seasonality=1, horizon=1, freq='None', train_file='train_FD001.txt', test_file='test_FD001.txt', rul_file='RUL_FD001.txt', n_ts=100, n_test=100)
+```
+
+### `PHM2008`
+
+```python
+PHM2008()
+```
+
+#### `PHM2008.download`
+
+```python
+download(directory)
+```
+
+Download PHM2008 Dataset.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+
+#### `PHM2008.load`
+
+```python
+load(directory, group, clip_rul=True)
+```
+
+Downloads and loads M3 data.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name. Allowed groups: 'FD001', 'FD002', 'FD003', 'FD004'. | *required*
+`clip_rul` | <code>[bool](#bool)</code> | Wether or not upper bound the remaining useful life to 125. | <code>True</code>
+
+**Returns:**
+
+Type | Description
+---- | -----------
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame)\]</code> | Tuple\[pd.DataFrame, pd.DataFrame\]: Target time series with columns ['unique_id', 'ds', 'y', 'exogenous'].

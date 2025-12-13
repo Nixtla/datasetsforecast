@@ -1,0 +1,71 @@
+---
+title: M3
+description: M3 dataset
+---
+
+##
+
+### `Other`
+
+```python
+Other(seasonality=1, horizon=8, freq='D', sheet_name='M3Other', name='Other', n_ts=174)
+```
+
+### `Monthly`
+
+```python
+Monthly(seasonality=12, horizon=18, freq='M', sheet_name='M3Month', name='Monthly', n_ts=1428)
+```
+
+### `Quarterly`
+
+```python
+Quarterly(seasonality=4, horizon=8, freq='Q', sheet_name='M3Quart', name='Quarterly', n_ts=756)
+```
+
+### `Yearly`
+
+```python
+Yearly(seasonality=1, horizon=6, freq='Y', sheet_name='M3Year', name='Yearly', n_ts=645)
+```
+
+### `M3`
+
+```python
+M3()
+```
+
+#### `M3.download`
+
+```python
+download(directory)
+```
+
+Download M3 Dataset.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+
+#### `M3.load`
+
+```python
+load(directory, group)
+```
+
+Downloads and loads M3 data.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name. Allowed groups: 'Yearly', 'Quarterly', 'Monthly', 'Other'. | *required*
+
+**Returns:**
+
+Type | Description
+---- | -----------
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\], [Optional](#typing.Optional)\[[DataFrame](#pandas.DataFrame)\]\]</code> | pd.DataFrame: Target time series with columns ['unique_id', 'ds', 'y'].

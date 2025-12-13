@@ -1,0 +1,112 @@
+---
+title: Hierarchical
+description: Hierarchical dataset
+---
+
+Here we host a collection of datasets used in previous hierarchical
+research by Rangapuram et al. \[2021\], Olivares et al. \[2023\], and
+Kamarthi et al. \[2022\]. The benchmark datasets utilized include
+
+1. Australian Monthly Labour: [Labour](#labour),
+2. SF Bay Area daily Traffic: [Traffic](#traffic), [OldTraffic](#oldtraffic),
+3. Quarterly Australian Tourism Visits: ([TourismSmall](#tourismsmall)),
+4. Monthly Australian Tourism visits: [TourismLarge](#tourismlarge), [OldTourismLarge](#oldtourismlarge),
+5. daily Wikipedia article views: [Wiki2](#wiki2).
+
+Old datasets favor the original datasets with minimal target variable
+preprocessing (Rangapuram et al. \[2021\], Olivares et al. \[2023\]),
+while the remaining datasets follow PROFHIT experimental settings.
+
+## References
+
+- [Syama Sundar Rangapuram, Lucien D Werner, Konstantinos Benidis,
+    Pedro Mercado, Jan Gasthaus, Tim Januschowski. (2021). “End-to-End
+    Learning of Coherent Probabilistic Forecasts for Hierarchical Time
+    Series”. Proceedings of the 38th International Conference on Machine
+    Learning
+    (ICML).](https://proceedings.mlr.press/v139/rangapuram21a.html)
+- [Kin G. Olivares, O. Nganba Meetei, Ruijun Ma, Rohan Reddy, Mengfei
+    Cao, Lee Dicker (2022).”Probabilistic Hierarchical Forecasting with
+    Deep Poisson Mixtures”. International Journal Forecasting, special
+    issue.](https://doi.org/10.1016/j.ijforecast.2023.04.007)
+- [Harshavardhan Kamarthi, Lingkai Kong, Alexander Rodriguez, Chao
+    Zhang, and B. Prakash. PROFHIT: Probabilistic robust forecasting for
+    hierarchical time-series. Computing Research Repository.URL
+    https://arxiv.org/abs/2206.07940.](https://arxiv.org/abs/2206.07940)
+
+##
+
+### `Labour`
+
+```python
+Labour(freq='MS', horizon=8, papers_horizon=12, seasonality=12, test_size=125, tags_names=('Country', 'Country/Region', 'Country/Gender/Region', 'Country/Employment/Gender/Region'))
+```
+
+### `TourismLarge`
+
+```python
+TourismLarge(freq='MS', horizon=12, papers_horizon=12, seasonality=12, test_size=57, tags_names=('Country', 'Country/State', 'Country/State/Zone', 'Country/State/Zone/Region', 'Country/Purpose', 'Country/State/Purpose', 'Country/State/Zone/Purpose', 'Country/State/Zone/Region/Purpose'))
+```
+
+### `TourismSmall`
+
+```python
+TourismSmall(freq='Q', horizon=4, papers_horizon=4, seasonality=4, test_size=9, tags_names=('Country', 'Country/Purpose', 'Country/Purpose/State', 'Country/Purpose/State/CityNonCity'))
+```
+
+### `Traffic`
+
+```python
+Traffic(freq='D', horizon=14, papers_horizon=7, seasonality=7, test_size=91, tags_names=('Level1', 'Level2', 'Level3', 'Level4'))
+```
+
+### `Wiki2`
+
+```python
+Wiki2(freq='D', horizon=14, papers_horizon=7, seasonality=7, test_size=91, tags_names=('Views', 'Views/Country', 'Views/Country/Access', 'Views/Country/Access/Agent', 'Views/Country/Access/Agent/Topic'))
+```
+
+### `OldTraffic`
+
+```python
+OldTraffic(freq='D', horizon=1, papers_horizon=1, seasonality=7, test_size=91, tags_names=('Level1', 'Level2', 'Level3', 'Level4'))
+```
+
+
+### `HierarchicalData`
+
+#### `HierarchicalData.download`
+
+```python
+download(directory)
+```
+
+Download Hierarchical Datasets.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+
+#### `HierarchicalData.load`
+
+```python
+load(directory, group, cache=True)
+```
+
+Downloads hierarchical forecasting benchmark datasets.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
+`group` | <code>[str](#str)</code> | Group name. | *required*
+`cache` | <code>[bool](#bool)</code> | If `True` saves and loads | <code>True</code>
+
+**Returns:**
+
+Type | Description
+---- | -----------
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame)\]</code> | Tuple\[pd.DataFrame, pd.DataFrame\]: Target time series with columns ['unique_id', 'ds', 'y']. Containes the base time series, Summing matrix of size (hierarchies, bottom).

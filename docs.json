@@ -1,0 +1,45 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Nixtla",
+  "colors": {
+    "primary": "#0E0E0E",
+    "light": "#FAFAFA",
+    "dark": "#0E0E0E"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "groups": [
+      {
+        "group": " ",
+        "pages": [
+          "index.html"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "favorita.html",
+          "hierarchical.html",
+          "long_horizon.html",
+          "long_horizon2.html",
+          "m3.html",
+          "m4.html",
+          "m5.html",
+          "phm2008.html",
+          "utils.html"
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/light.png",
+    "dark": "/dark.png"
+  },
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/Nixtla/datasetsforecast"
+    }
+  }
+}

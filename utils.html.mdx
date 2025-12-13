@@ -1,0 +1,100 @@
+---
+title: Utils
+description: Utility functions for datasetsforecast
+---
+
+##
+
+### `download_file`
+
+```python
+download_file(directory, source_url, decompress=False)
+```
+
+Download data from source_ulr inside directory.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>([str](#str), [Path](#pathlib.Path))</code> | Custom directory where data will be downloaded. | *required*
+`source_url` | <code>[str](#str)</code> | URL where data is hosted. | *required*
+`decompress` | <code>[bool](#bool)</code> | Wheter decompress downloaded file. Default False. | <code>False</code>
+
+### `extract_file`
+
+```python
+extract_file(filepath, directory)
+```
+
+### `async_download_files`
+
+```python
+async_download_files(path, urls)
+```
+
+Asynchronously download files from urls inside path.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`path` | <code>([str](#str), [Path](#pathlib.Path))</code> | Directory where files will be downloaded. | *required*
+`urls` | <code>[Iterable](#typing.Iterable)\[[str](#str)\]</code> | Iterable of URLs to download. | *required*
+
+Example:
+
+```python
+import os
+import tempfile
+
+import requests
+gh_url = 'https://api.github.com/repos/Nixtla/datasetsforecast/contents/'
+base_url = 'https://raw.githubusercontent.com/Nixtla/datasetsforecast/main'
+
+headers = {}
+gh_token = os.getenv('GITHUB_TOKEN')
+if gh_token is not None:
+    headers = {'Authorization': f'Bearer: {gh_token}'}
+resp = requests.get(gh_url, headers=headers)
+if resp.status_code != 200:
+    raise Exception(resp.text)
+urls = [f'{base_url}/{e["path"]}' for e in resp.json() if e['type'] == 'file']
+with tempfile.TemporaryDirectory() as tmp:
+    tmp = Path(tmp)
+    await async_download_files(tmp, urls)
+    files = list(tmp.iterdir())
+    assert len(files) == len(urls)
+```
+
+### `download_files`
+
+```python
+download_files(directory, urls)
+```
+
+Download files from urls inside directory.
+
+**Parameters:**
+
+Name | Type | Description | Default
+---- | ---- | ----------- | -------
+`directory` | <code>([str](#str), [Path](#pathlib.Path))</code> | Directory where files will be downloaded. | *required*
+`urls` | <code>[Iterable](#typing.Iterable)\[[str](#str)\]</code> | Iterable of URLs to download. | *required*
+
+Example:
+
+```python
+with tempfile.TemporaryDirectory() as tmp:
+    tmp = Path(tmp)
+    fname = tmp / 'script.py'
+    fname.write_text(f'''
+from datasetsforecast.utils import download_files
+
+download_files('{tmp.as_posix()}', {urls})
+    ''')
+    !python {fname}
+    fname.unlink()
+    files = list(tmp.iterdir())
+    assert len(files) == len(urls)
+```
