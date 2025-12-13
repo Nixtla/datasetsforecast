@@ -40,7 +40,8 @@ dev = [
     "pytest",
     "pytest-cov",
     "pytest-asyncio",
-    "pip-licenses"
+    "pip-licenses",
+    "mkdocstrings-parser@git+https://github.com/Nixtla/mkdocstrings-parser.git"
 ]
 
 [project.urls]
