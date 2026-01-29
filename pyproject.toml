@@ -33,7 +33,7 @@ dependencies = [
     "xlrd>=1.0.0",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pre-commit",
     "setuptools",
