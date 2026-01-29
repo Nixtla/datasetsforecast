@@ -9,31 +9,31 @@ description = "Datasets for Time series forecasting"
 authors = [{name = "Nixtla", email = "business@nixtla.io"}]
 license = {text = "MIT License"}
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["time-series", "forecasting", "datasets"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
     "Natural Language :: English",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
     "aiohttp",
     "numpy",
     "scikit-learn",
-    "pandas[plot]",
+    "pandas[plot]<3.0.0",
     "requests",
     "tqdm",
     "utilsforecast>=0.0.8",
     "xlrd>=1.0.0",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pre-commit",
     "setuptools",
