@@ -148,12 +148,15 @@ def download_files(directory: Union[str, Path], urls: Iterable[str]):
         assert len(files) == len(urls)
     ```
     """
-    loop = asyncio.get_event_loop()
-    if loop.is_running():
+    try:
+        asyncio.get_running_loop()
         raise Exception(
             "Can't use this function when there's already a running loop. "
             "Use `await async_download_files(...) instead.`"
         )
+    except RuntimeError:
+        # No running loop, safe to use asyncio.run()
+        pass
     asyncio.run(async_download_files(directory, urls))
 
 
