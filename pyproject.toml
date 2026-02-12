@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=36.2", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.7.19,<1.0.0"]
+build-backend = "uv_build"
 
 [project]
 name = "datasetsforecast"
-dynamic = ["version"]
+version = "1.0.2"
 description = "Datasets for Time series forecasting"
 authors = [{name = "Nixtla", email = "business@nixtla.io"}]
 license = {text = "MIT License"}
@@ -36,7 +36,6 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pre-commit",
-    "setuptools",
     "pytest",
     "pytest-cov",
     "pytest-asyncio",
@@ -50,13 +49,8 @@ Homepage = "https://github.com/Nixtla/datasetsforecast"
 Repository = "https://github.com/Nixtla/datasetsforecast"
 Documentation = "https://nixtlaverse.nixtla.io/datasetsforecast/"
 
-[tool.setuptools]
-packages = ["datasetsforecast"]
-include-package-data = true
-zip-safe = false
-
-[tool.setuptools.dynamic]
-version = {attr = "datasetsforecast.__version__"}
+[tool.uv.build-backend]
+module-root = "."
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
