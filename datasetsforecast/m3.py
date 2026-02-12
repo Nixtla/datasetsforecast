@@ -7,60 +7,55 @@ from typing import Optional, Tuple
 
 import pandas as pd
 
-from .utils import Info, download_file
+from .utils import Info, convert_tsf_to_dataframe, download_file
 
 
 @dataclass
 class Yearly:
     seasonality: int = 1
     horizon: int = 6
-    freq: str = 'Y'
-    sheet_name: str = 'M3Year'
+    freq: str = 'YE'
     name: str = 'Yearly'
     n_ts: int = 645
+    source_url: str = 'https://zenodo.org/api/records/4656222/files/m3_yearly_dataset.zip/content'
+    file_name: str = 'm3_yearly_dataset'
 
 @dataclass
 class Quarterly:
     seasonality: int = 4
     horizon: int = 8
-    freq: str = 'Q'
-    sheet_name: str = 'M3Quart'
+    freq: str = 'QE'
     name: str = 'Quarterly'
     n_ts: int = 756
+    source_url: str = 'https://zenodo.org/api/records/4656262/files/m3_quarterly_dataset.zip/content'
+    file_name: str = 'm3_quarterly_dataset'
 
 @dataclass
 class Monthly:
     seasonality: int = 12
     horizon: int = 18
-    freq: str = 'M'
-    sheet_name: str = 'M3Month'
+    freq: str = 'ME'
     name: str = 'Monthly'
     n_ts: int = 1428
+    source_url: str = 'https://zenodo.org/api/records/4656298/files/m3_monthly_dataset.zip/content'
+    file_name: str = 'm3_monthly_dataset'
 
 @dataclass
 class Other:
     seasonality: int = 1
     horizon: int = 8
     freq: str = 'D'
-    sheet_name: str = 'M3Other'
     name: str = 'Other'
     n_ts: int = 174
+    source_url: str = 'https://zenodo.org/api/records/4656335/files/m3_other_dataset.zip/content'
+    file_name: str = 'm3_other_dataset'
 
 
 M3Info = Info((Yearly, Quarterly, Monthly, Other))
 
 
-def _return_year(ts: pd.DataFrame) -> int:
-    year = ts.iloc[0]
-    year = year if year != 0 else 1970
-
-    return year
-
-
 @dataclass
 class M3:
-
-    source_url = 'https://forecasters.org/data/m3comp/M3C.xls'
 
     @staticmethod
     def load(directory: str,
@@ -78,46 +73,49 @@ class M3:
         Returns:
             pd.DataFrame: Target time series with columns ['unique_id', 'ds', 'y'].
         """
-        M3.download(directory)
+        class_group = M3Info.get_group(group)
+        M3.download(directory, class_group)
 
         path = f'{directory}/m3/datasets/'
-        file = f'{path}/M3C.xls'
+        tsf_file = f'{path}/{class_group.file_name}.tsf'
 
-        class_group = M3Info.get_group(group)
-
-        df = pd.read_excel(file, sheet_name=class_group.sheet_name)
-        df = df.rename(columns={'Series': 'unique_id',
-                                'Category': 'category',
-                                'Starting Year': 'year',
-                                'Starting Month': 'month'})
-        df['unique_id'] = [class_group.name[0] + str(i + 1) for i in range(len(df))]
-        S = df.filter(items=['unique_id', 'category'])
-
-        id_vars = list(df.columns[:6])
-        df = pd.melt(df, id_vars=id_vars, var_name='ds', value_name='y')
-        df = df.dropna().sort_values(['unique_id', 'ds']).reset_index(drop=True)
+        loaded_data, *_ = convert_tsf_to_dataframe(tsf_file)
 
         freq = pd.tseries.frequencies.to_offset(class_group.freq)
 
-        if group == 'Other':
-            df['year'] = 1970
+        rows = []
+        for i, (_, row) in enumerate(loaded_data.iterrows()):
+            unique_id = class_group.name[0] + str(i + 1)
+            start_timestamp = row.get('start_timestamp', pd.Timestamp('1970-01-01'))
+            values = row['series_value']
+            dates = pd.date_range(
+                start=start_timestamp,
+                periods=len(values),
+                freq=freq,
+            )
+            for ds, y in zip(dates, values):
+                rows.append({'unique_id': unique_id, 'ds': ds, 'y': float(y)})
 
-        df['ds'] = df.groupby('unique_id')['year'] \
-                     .transform(lambda df: pd.date_range(f'{_return_year(df)}-01-01',
-                                                         periods=df.shape[0],
-                                                         freq=freq))
-        df = df.filter(items=['unique_id', 'ds', 'y'])
+        df = pd.DataFrame(rows)
+        df = df.sort_values(['unique_id', 'ds']).reset_index(drop=True)
 
         return df, None, None
 
     @staticmethod
-    def download(directory: str) -> None:
+    def download(directory: str, class_group) -> None:
         """
         Download M3 Dataset.
 
         Args:
             directory (str): Directory path to download dataset.
+            class_group: Dataclass with source_url and file_name.
         """
         path = f'{directory}/m3/datasets/'
-        if not os.path.exists(path):
-            download_file(path, M3.source_url)
+        tsf_file = f'{path}/{class_group.file_name}.tsf'
+        if not os.path.exists(tsf_file):
+            download_file(
+                path,
+                class_group.source_url,
+                decompress=True,
+                filename=f'{class_group.file_name}.zip',
+            )
