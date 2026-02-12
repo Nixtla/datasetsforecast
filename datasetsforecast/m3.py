@@ -14,7 +14,7 @@ from .utils import Info, convert_tsf_to_dataframe, download_file
 class Yearly:
     seasonality: int = 1
     horizon: int = 6
-    freq: str = 'Y'
+    freq: str = 'YE'
     name: str = 'Yearly'
     n_ts: int = 645
     source_url: str = 'https://zenodo.org/api/records/4656222/files/m3_yearly_dataset.zip/content'
@@ -24,7 +24,7 @@ class Yearly:
 class Quarterly:
     seasonality: int = 4
     horizon: int = 8
-    freq: str = 'Q'
+    freq: str = 'QE'
     name: str = 'Quarterly'
     n_ts: int = 756
     source_url: str = 'https://zenodo.org/api/records/4656262/files/m3_quarterly_dataset.zip/content'
@@ -34,7 +34,7 @@ class Quarterly:
 class Monthly:
     seasonality: int = 12
     horizon: int = 18
-    freq: str = 'M'
+    freq: str = 'ME'
     name: str = 'Monthly'
     n_ts: int = 1428
     source_url: str = 'https://zenodo.org/api/records/4656298/files/m3_monthly_dataset.zip/content'
