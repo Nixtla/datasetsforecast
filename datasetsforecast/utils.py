@@ -51,8 +51,11 @@ def download_file(directory: Union[str, Path], source_url: str, decompress: bool
     filepath = directory / filename
 
     # Streaming, so we can iterate over the response.
-    headers = {'User-Agent': 'Mozilla/5.0'}
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (compatible; datasetsforecast/1.0; +https://github.com/Nixtla/datasetsforecast)',
+    }
     r = requests.get(source_url, stream=True, headers=headers)
+    r.raise_for_status()
     # Total size in bytes.
     total_size = int(r.headers.get('content-length', 0))
     block_size = 1024 #1 Kibibyte
