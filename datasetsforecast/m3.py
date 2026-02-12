@@ -7,7 +7,7 @@ from typing import Optional, Tuple
 
 import pandas as pd
 
-from .utils import Info, convert_tsf_to_dataframe, download_file, extract_file
+from .utils import Info, convert_tsf_to_dataframe, download_file
 
 
 @dataclass
@@ -113,10 +113,9 @@ class M3:
         path = f'{directory}/m3/datasets/'
         tsf_file = f'{path}/{class_group.file_name}.tsf'
         if not os.path.exists(tsf_file):
-            download_file(path, class_group.source_url)
-            # Zenodo API URLs end with /content, so the downloaded file
-            # is named "content" instead of the actual zip filename.
-            downloaded = f'{path}/content'
-            zip_file = f'{path}/{class_group.file_name}.zip'
-            os.rename(downloaded, zip_file)
-            extract_file(zip_file, path)
+            download_file(
+                path,
+                class_group.source_url,
+                decompress=True,
+                filename=f'{class_group.file_name}.zip',
+            )

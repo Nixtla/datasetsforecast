@@ -3,10 +3,11 @@ __all__ = ['logger', 'extract_file', 'download_file', 'async_download_files', 'd
 
 import asyncio
 import logging
+import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterable, Tuple, Union
+from typing import Any, Iterable, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -31,51 +32,80 @@ def extract_file(filepath, directory):
         extract_archive(filepath, outdir=directory)
     logger.info(f'Successfully decompressed {filepath}')
 
-def download_file(directory: Union[str, Path], source_url: str, decompress: bool = False) -> None:
-    """Download data from source_ulr inside directory.
+def download_file(
+    directory: Union[str, Path],
+    source_url: str,
+    decompress: bool = False,
+    filename: Optional[str] = None,
+    max_retries: int = 3,
+) -> None:
+    """Download data from source_url inside directory.
 
     Args:
         directory (str, Path): Custom directory where data will be downloaded.
         source_url (str): URL where data is hosted.
-        decompress (bool): Wheter decompress downloaded file. Default False.
+        decompress (bool): Whether to decompress downloaded file. Default False.
+        filename (str, optional): Override filename for the downloaded file.
+            If None, the filename is derived from the URL.
+        max_retries (int): Maximum number of retry attempts on transient errors.
     """
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
 
-    filename = source_url.split('/')[-1]
-
-    # On windows file must have only zip in suffix
-    if '.zip' in filename:
-        filename = Path(filename).stem + ".zip"
+    if filename is None:
+        filename = source_url.split('/')[-1]
+        # On windows file must have only zip in suffix
+        if '.zip' in filename:
+            filename = Path(filename).stem + ".zip"
 
     filepath = directory / filename
 
-    # Streaming, so we can iterate over the response.
     headers = {
         'User-Agent': 'Mozilla/5.0 (compatible; datasetsforecast/1.0; +https://github.com/Nixtla/datasetsforecast)',
     }
-    r = requests.get(source_url, stream=True, headers=headers)
-    r.raise_for_status()
-    # Total size in bytes.
-    total_size = int(r.headers.get('content-length', 0))
-    block_size = 1024 #1 Kibibyte
 
-    t = tqdm(total=total_size, unit='iB', unit_scale=True)
-    with open(filepath, 'wb') as f:
-        for data in r.iter_content(block_size):
-            t.update(len(data))
-            f.write(data)
-            f.flush()
-    t.close()
+    for attempt in range(max_retries):
+        try:
+            # Streaming, so we can iterate over the response.
+            r = requests.get(source_url, stream=True, headers=headers)
+            r.raise_for_status()
+            # Total size in bytes.
+            total_size = int(r.headers.get('content-length', 0))
+            block_size = 1024  # 1 Kibibyte
 
-    if total_size != 0 and t.n != total_size:
-        logger.error('ERROR, something went wrong downloading data')
+            t = tqdm(total=total_size, unit='iB', unit_scale=True)
+            with open(filepath, 'wb') as f:
+                for data in r.iter_content(block_size):
+                    t.update(len(data))
+                    f.write(data)
+                    f.flush()
+            t.close()
 
-    size = filepath.stat().st_size
-    logger.info(f'Successfully downloaded {filename}, {size}, bytes.')
+            if total_size != 0 and t.n != total_size:
+                raise IOError(
+                    f'Download incomplete: expected {total_size} bytes, '
+                    f'got {t.n} bytes.'
+                )
 
-    if decompress:
-        extract_file(filepath, directory)
+            size = filepath.stat().st_size
+            logger.info(f'Successfully downloaded {filename}, {size}, bytes.')
+
+            if decompress:
+                extract_file(filepath, directory)
+
+            return
+        except (requests.exceptions.RequestException, IOError) as e:
+            if filepath.exists():
+                filepath.unlink()
+            if attempt < max_retries - 1:
+                wait = 2 ** (attempt + 1)
+                logger.warning(
+                    f'Download failed (attempt {attempt + 1}/{max_retries}): {e}. '
+                    f'Retrying in {wait}s...'
+                )
+                time.sleep(wait)
+            else:
+                raise
 
 
 async def _async_download_file(session: aiohttp.ClientSession, path: Path, source_url: str):
