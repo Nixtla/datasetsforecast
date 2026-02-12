@@ -8,25 +8,25 @@ description: M3 dataset
 ### `Other`
 
 ```python
-Other(seasonality=1, horizon=8, freq='D', sheet_name='M3Other', name='Other', n_ts=174)
+Other(seasonality=1, horizon=8, freq='D', name='Other', n_ts=174, source_url='https://zenodo.org/api/records/4656335/files/m3_other_dataset.zip/content', file_name='m3_other_dataset')
 ```
 
 ### `Monthly`
 
 ```python
-Monthly(seasonality=12, horizon=18, freq='M', sheet_name='M3Month', name='Monthly', n_ts=1428)
+Monthly(seasonality=12, horizon=18, freq='ME', name='Monthly', n_ts=1428, source_url='https://zenodo.org/api/records/4656298/files/m3_monthly_dataset.zip/content', file_name='m3_monthly_dataset')
 ```
 
 ### `Quarterly`
 
 ```python
-Quarterly(seasonality=4, horizon=8, freq='Q', sheet_name='M3Quart', name='Quarterly', n_ts=756)
+Quarterly(seasonality=4, horizon=8, freq='QE', name='Quarterly', n_ts=756, source_url='https://zenodo.org/api/records/4656262/files/m3_quarterly_dataset.zip/content', file_name='m3_quarterly_dataset')
 ```
 
 ### `Yearly`
 
 ```python
-Yearly(seasonality=1, horizon=6, freq='Y', sheet_name='M3Year', name='Yearly', n_ts=645)
+Yearly(seasonality=1, horizon=6, freq='YE', name='Yearly', n_ts=645, source_url='https://zenodo.org/api/records/4656222/files/m3_yearly_dataset.zip/content', file_name='m3_yearly_dataset')
 ```
 
 ### `M3`
@@ -38,7 +38,7 @@ M3()
 #### `M3.download`
 
 ```python
-download(directory)
+download(directory, class_group)
 ```
 
 Download M3 Dataset.
@@ -48,6 +48,7 @@ Download M3 Dataset.
 Name | Type | Description | Default
 ---- | ---- | ----------- | -------
 `directory` | <code>[str](#str)</code> | Directory path to download dataset. | *required*
+`class_group` | | Dataclass with source_url and file_name. | *required*
 
 #### `M3.load`
 
