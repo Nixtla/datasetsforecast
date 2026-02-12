@@ -81,7 +81,7 @@ def download_file(
                     f.flush()
             t.close()
 
-            if total_size != 0 and t.n != total_size:
+            if total_size != 0 and t.n < total_size:
                 raise IOError(
                     f'Download incomplete: expected {total_size} bytes, '
                     f'got {t.n} bytes.'
