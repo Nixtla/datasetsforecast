@@ -1,11 +1,15 @@
-__all__ = ['logger', 'extract_file', 'download_file', 'async_download_files', 'download_files', 'Info']
+__all__ = ['logger', 'extract_file', 'download_file', 'async_download_files', 'download_files', 'convert_tsf_to_dataframe', 'Info']
 
 
 import asyncio
 import logging
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
-from typing import Iterable, Tuple, Union
+from typing import Any, Iterable, Tuple, Union
+
+import numpy as np
+import pandas as pd
 
 import aiohttp
 import requests
@@ -27,7 +31,7 @@ def extract_file(filepath, directory):
         extract_archive(filepath, outdir=directory)
     logger.info(f'Successfully decompressed {filepath}')
 
-def download_file(directory: str, source_url: str, decompress: bool = False) -> None:
+def download_file(directory: Union[str, Path], source_url: str, decompress: bool = False) -> None:
     """Download data from source_ulr inside directory.
 
     Args:
@@ -35,17 +39,16 @@ def download_file(directory: str, source_url: str, decompress: bool = False) -> 
         source_url (str): URL where data is hosted.
         decompress (bool): Wheter decompress downloaded file. Default False.
     """
-    if isinstance(directory, str):
-        directory = Path(directory)
+    directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
 
-    filename = Path(source_url.split('/')[-1])
+    filename = source_url.split('/')[-1]
 
     # On windows file must have only zip in suffix
-    if '.zip' in filename.suffix:
+    if '.zip' in filename:
         filename = Path(filename).stem + ".zip"
 
-    filepath = Path(f'{directory}/{filename}')
+    filepath = directory / filename
 
     # Streaming, so we can iterate over the response.
     headers = {'User-Agent': 'Mozilla/5.0'}
@@ -160,6 +163,134 @@ def download_files(directory: Union[str, Path], urls: Iterable[str]):
     asyncio.run(async_download_files(directory, urls))
 
 
+def convert_tsf_to_dataframe(
+    full_file_path_and_name,
+    replace_missing_vals_with="NaN",
+    value_column_name="series_value",
+):
+    col_names = []
+    col_types = []
+    all_data = {}
+    has_lines = False
+    frequency = None
+    forecast_horizon = None
+    contain_missing_values = None
+    contain_equal_length = None
+    found_data_tag = False
+    found_data_section = False
+
+    with open(full_file_path_and_name, "r", encoding="cp1252") as file:
+        for line in file:
+            line = line.strip()
+
+            if line:
+                if line.startswith("@"):
+                    if not line.startswith("@data"):
+                        line_content = line.split(" ")
+                        if line.startswith("@attribute"):
+                            if len(line_content) != 3:
+                                raise ValueError("Invalid meta-data specification.")
+
+                            col_names.append(line_content[1])
+                            col_types.append(line_content[2])
+                        else:
+                            if len(line_content) != 2:
+                                raise ValueError("Invalid meta-data specification.")
+
+                            if line.startswith("@frequency"):
+                                frequency = line_content[1]
+                            elif line.startswith("@horizon"):
+                                forecast_horizon = int(line_content[1])
+                            elif line.startswith("@missing"):
+                                contain_missing_values = bool(
+                                    line_content[1].lower() in ("yes", "true", "t", "1")
+                                )
+                            elif line.startswith("@equallength"):
+                                contain_equal_length = bool(
+                                    line_content[1].lower() in ("yes", "true", "t", "1")
+                                )
+
+                    else:
+                        if len(col_names) == 0:
+                            raise ValueError(
+                                "Missing attribute section. "
+                                "Attribute section must come before data."
+                            )
+
+                        found_data_tag = True
+                elif not line.startswith("#"):
+                    if len(col_names) == 0:
+                        raise ValueError(
+                            "Missing attribute section. "
+                            "Attribute section must come before data."
+                        )
+                    elif not found_data_tag:
+                        raise ValueError("Missing @data tag.")
+                    else:
+                        if not found_data_section:
+                            found_data_section = True
+                            all_series = []
+
+                            for col in col_names:
+                                all_data[col] = []
+
+                        full_info = line.split(":")
+
+                        if len(full_info) != (len(col_names) + 1):
+                            raise ValueError("Missing attributes/values in series.")
+
+                        series_str = full_info[-1]
+
+                        if "?" in series_str:
+                            series = series_str.split(",")
+                            numeric_series = [
+                                replace_missing_vals_with if val == "?" else float(val)
+                                for val in series
+                            ]
+                            if all(v == replace_missing_vals_with for v in numeric_series):
+                                raise ValueError(
+                                    "All series values are missing. A given series "
+                                    "should contain a set of comma separated numeric "
+                                    "values. At least one numeric value should be "
+                                    "there in a series."
+                                )
+                            all_series.append(np.array(numeric_series, dtype=np.float32))
+                        else:
+                            all_series.append(np.fromstring(series_str, sep=",", dtype=np.float32))
+
+                        for name, col_type, value in zip(col_names, col_types, full_info):
+                            if col_type == "numeric":
+                                all_data[name].append(int(value))
+                            elif col_type == "string":
+                                all_data[name].append(value)
+                            elif col_type == "date":
+                                all_data[name].append(
+                                    datetime.strptime(value, "%Y-%m-%d %H-%M-%S")
+                                )
+                            else:
+                                raise ValueError("Invalid attribute type.")
+
+                has_lines = True
+
+        if not has_lines:
+            raise ValueError("Empty file.")
+        if len(col_names) == 0:
+            raise ValueError("Missing attribute section.")
+        if not found_data_section:
+            raise ValueError("Missing series information under data section.")
+
+        all_data[value_column_name] = all_series
+        loaded_data = pd.DataFrame(all_data)
+
+        return (
+            loaded_data,
+            frequency,
+            forecast_horizon,
+            contain_missing_values,
+            contain_equal_length,
+        )
+
+
 @dataclass
 class Info:
     """
@@ -168,8 +299,8 @@ class Info:
         groups (Tuple): Tuple of str groups
         class_groups (Tuple): Tuple of dataclasses.
     """
-    class_groups: Tuple[dataclass]
-    groups: Tuple[str] = field(init=False)
+    class_groups: Tuple[Any, ...]
+    groups: Tuple[str, ...] = field(init=False)
 
     def __post_init__(self):
         self.groups = tuple(cls_.__name__ for cls_ in self.class_groups)
