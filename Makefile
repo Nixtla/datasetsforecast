@@ -33,3 +33,12 @@ licenses:
 	python scripts/filter_licenses.py
 	rm -f third_party_licenses.csv
 	@echo "✓ THIRD_PARTY_LICENSES.md updated"
+
+devenv:
+	uv sync --quiet --all-groups --all-extras --frozen
+	uv run --no-sync pre-commit install
+
+init_codespace:
+	curl -fsSL https://claude.ai/install.sh | bash
+	git pull || true
+	uv sync --quiet --dev --all-extras --frozen
