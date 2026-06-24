@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "aiohttp",
+    "aiohttp>=3.14.1",
     "numpy",
     "scikit-learn",
     "pandas[plot]<3.0.0",
