@@ -62,7 +62,6 @@ PHM2008Info = Info((FD001, FD002, FD003, FD004))
 @dataclass
 class PHM2008:
 
-    #source_url = 'https://forecasters.org/data/m3comp/M3C.xls'
     source_url = 'https://www.dropbox.com/s/1od45uh37tplxt7/CMAPSSData.zip?dl=1'
 
     @staticmethod
@@ -82,7 +81,7 @@ class PHM2008:
     @staticmethod
     def load(directory: str, group: str, clip_rul: bool=True) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
-        Downloads and loads M3 data.
+        Downloads and loads PHM2008 data.
 
         Args:
             directory (str): Directory where data will be downloaded.
