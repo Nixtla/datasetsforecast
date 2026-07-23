@@ -124,6 +124,28 @@ hplots.plot_hierarchically_linked_series(
 ```
 
 
+## Kaggle-Competition References
+
+The evaluation metric of the Favorita Kaggle competition was the
+normalized weighted root mean squared logarithmic error (NWRMSLE).
+Perishable items have a score weight of 1.25; otherwise, the weight is
+1.0.
+
+$$ NWRMSLE = \sqrt{\frac{\sum^{n}_{i=1} w_{i}\left(log(\hat{y}_{i}+1)  - log(y_{i}+1)\right)^{2}}{\sum^{n}_{i=1} w_{i}}}$$
+
+| Kaggle Competition Forecasting Methods | 16D ahead NWRMSLE |
+|:---------------------------------------------------------------:|:-----:|
+| [LGBM](https://www.kaggle.com/shixw125/1st-place-lgb-model-public-0-506-private-0-511/comments) \[1\] | 0.5091 |
+| [Seq2Seq WaveNet](https://arxiv.org/abs/1803.04037) \[2\] | 0.5129 |
+
+1. [Corporación Favorita. Corporación favorita grocery sales
+    forecasting. Kaggle Competition Leaderboard,
+    2018.](https://www.kaggle.com/c/favorita-grocery-sales-forecasting/leaderboard)
+2. [Glib Kechyn, Lucius Yu, Yangguang Zang, and Svyatoslav Kechyn.
+    Sales forecasting using wavenet within the framework of the Favorita
+    Kaggle competition. Computing Research Repository, abs/1803.04037,
+    2018](https://arxiv.org/abs/1803.04037).
+
 ## Auxiliary Functions
 
 This auxiliary functions are used to efficiently create and wrangle
