@@ -159,14 +159,14 @@ class M5Evaluation:
     def load_benchmark(directory: str,
                        source_url: Optional[str] = None,
                        validation: bool = False) -> np.ndarray:
-        """Downloads and loads a bechmark forecasts.
+        """Downloads and loads benchmark forecasts.
 
         Args:
             directory (str): Directory where data will be downloaded.
             source_url (str, optional): Optional benchmark url obtained from
                 https://github.com/Nixtla/m5-forecasts/tree/master/forecasts.
                 If `None` returns the M5 winner.
-            validation (bool): Wheter return validation forecasts.
+            validation (bool): Whether return validation forecasts.
                 Default False, return test forecasts.
 
         Returns:
@@ -211,7 +211,7 @@ class M5Evaluation:
     def aggregate_levels(y_hat: pd.DataFrame,
                          categories: pd.DataFrame = None) -> pd.DataFrame:
         """
-        Aggregates the 30_480 series to get 42_840.
+        Aggregates the 30_490 series to get 42_840.
 
         Args:
             y_hat (pd.DataFrame): Forecasts as wide pandas dataframe with columns ['unique_id'].
@@ -241,11 +241,11 @@ class M5Evaluation:
     def evaluate(directory: str,
                  y_hat: Union[pd.DataFrame, str],
                  validation: bool = False) -> pd.DataFrame:
-        """Evaluates y_hat according to M4 methodology.
+        """Evaluates y_hat according to M5 methodology.
 
         Args:
             directory (str): Directory where data will be downloaded.
-            validation (bool): Wheter perform validation evaluation.
+            validation (bool): Whether perform validation evaluation.
                 Default False, return test evaluation.
             y_hat (Union[pd.DataFrame, str]): Forecasts as wide pandas dataframe with columns
                 ['unique_id'] and forecasts or
@@ -253,8 +253,8 @@ class M5Evaluation:
                 https://github.com/Nixtla/m5-forecasts/tree/main/forecasts.
 
         Returns:
-            pd.DataFrame: DataFrame with columns OWA, SMAPE, MASE
-                and group as index.
+            pd.DataFrame: DataFrame with column wrmsse and Level_id
+                (plus a 'Total' row) as index.
 
         Examples:
 
