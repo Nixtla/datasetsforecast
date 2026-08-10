@@ -231,7 +231,7 @@ class M4Evaluation:
     @staticmethod
     def load_benchmark(directory: str, group: str,
                        source_url: Optional[str] = None) -> np.ndarray:
-        """Downloads and loads a bechmark forecasts.
+        """Downloads and loads benchmark forecasts.
 
         Args:
             directory (str): Directory where data will be downloaded.
