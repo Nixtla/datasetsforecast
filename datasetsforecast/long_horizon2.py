@@ -131,7 +131,7 @@ class Weather:
 
     Reference:
     - [Wu, H., Xu, J., Wang, J., and Long, M. Autoformer: Decomposition Transformers
-    with auto-correlation for long-term series forecasting. NeurIPS 2021.](https://arxiv.org/abs/2106.13008.)
+    with auto-correlation for long-term series forecasting. NeurIPS 2021.](https://arxiv.org/abs/2106.13008)
     """
     freq: str = '10M'
     name: str = 'weather'
