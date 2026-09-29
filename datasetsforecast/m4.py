@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from utilsforecast.losses import mase, smape
 
-from .utils import Info, async_download_files, download_file, extract_file
+from .utils import Info, _cache_dir, async_download_files, download_file, extract_file, load_cache, save_cache
 
 
 @dataclass
@@ -93,7 +93,7 @@ class M4:
             group (str): Group name.
                 Allowed groups: 'Yearly', 'Quarterly', 'Monthly',
                                 'Weekly', 'Daily', 'Hourly'.
-            cache (bool): If `True` saves and loads
+            cache (bool): If `True`, saves and loads a parquet cache under `{directory}/.cache`.
 
         Returns:
             Tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]:
@@ -101,20 +101,19 @@ class M4:
                 Static exogenous variables with columns ['unique_id', 'ds'],
                 and static variables.
         """
-        path = f'{directory}/m4/datasets'
-        file_cache = f'{path}/{group}.p'
-
-        if os.path.exists(file_cache) and cache:
-            df, X_df, S_df = pd.read_pickle(file_cache)
-
-            return df, X_df, S_df
+        cache_dir = _cache_dir(directory, 'm4', group)
+        if cache:
+            cached = load_cache(cache_dir, ['Y_df', 'X_df', 'S_df'])
+            if cached is not None:
+                frames, _ = cached
+                return frames['Y_df'], frames['X_df'], frames['S_df']
 
         if group == 'Other':
             #Special case.
             included_dfs = [M4.load(directory, gr) \
                             for gr in M4Info['Other'].included_groups]
-            df, *_ = zip(*included_dfs)
-            df = pd.concat(df)
+            dfs, *_ = zip(*included_dfs)
+            df = pd.concat(dfs)
         else:
             M4.download(directory, group)
             path = f'{directory}/m4/datasets'
@@ -149,9 +148,9 @@ class M4:
 
         X_df = None
         if cache:
-            pd.to_pickle((df, X_df, S_df), file_cache)
+            save_cache(cache_dir, {'Y_df': df, 'X_df': X_df, 'S_df': S_df}, root=directory)
 
-        return df, None, S_df
+        return df, X_df, S_df
 
 
     @staticmethod
@@ -245,15 +244,16 @@ class M4Evaluation:
         Returns:
             np.ndarray: Numpy array of shape (n_series, horizon).
         """
-        path = f'{directory}/m4/datasets'
+        # user-supplied archives are kept apart from the dataset files
+        benchmarks_path = f'{directory}/m4/benchmarks'
         initial = group[0]
         if source_url is not None:
             filename = source_url.split('/')[-1].replace('.rar', '.csv')
-            filepath = f'{path}/{filename}'
+            filepath = f'{benchmarks_path}/{filename}'
             if not os.path.exists(filepath):
-                download_file(path, source_url, decompress=True)
+                download_file(benchmarks_path, source_url, decompress=True)
         else:
-            filepath = f'{path}/submission-Naive2.csv'
+            filepath = f'{directory}/m4/datasets/submission-Naive2.csv'
 
         benchmark = pd.read_csv(filepath)
         benchmark = benchmark[benchmark['id'].str.startswith(initial)]
@@ -294,11 +294,9 @@ class M4Evaluation:
         if isinstance(y_hat, str):
             y_hat = M4Evaluation.load_benchmark(directory, group, y_hat)
 
-        initial = group[0]
         class_group = M4Info[group]
         horizon = class_group.horizon
         seasonality = class_group.seasonality
-        path = f'{directory}/m4/datasets'
         y_df, *_ = M4.load(directory, group)
 
         naive2 = M4Evaluation.load_benchmark(directory, group)

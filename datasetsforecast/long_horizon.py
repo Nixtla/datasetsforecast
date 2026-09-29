@@ -5,10 +5,9 @@ import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
-import numpy as np
 import pandas as pd
 
-from .utils import Info, download_file
+from .utils import Info, _cache_dir, download_file, load_cache, save_cache
 
 
 @dataclass
@@ -24,7 +23,7 @@ class ETTh1:
     n_ts: int = 1
     test_size: int = 11_520
     val_size: int = 11_520
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 @dataclass
 class ETTh2:
@@ -39,7 +38,7 @@ class ETTh2:
     n_ts: int = 1
     test_size: int = 11_520
     val_size: int = 11_520
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 @dataclass
 class ETTm1:
@@ -54,7 +53,7 @@ class ETTm1:
     n_ts: int = 7
     test_size: int = 11_520
     val_size: int = 11_520
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 @dataclass
 class ETTm2:
@@ -73,7 +72,7 @@ class ETTm2:
     n_ts: int = 7
     test_size: int = 11_520
     val_size: int = 11_520
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 
 @dataclass
@@ -92,7 +91,7 @@ class ECL:
     n_ts: int = 321
     test_size: int = 5_260
     val_size: int = 2_632
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 
 @dataclass
@@ -112,7 +111,7 @@ class Exchange:
     n_ts: int = 8
     test_size: int = 1_517
     val_size: int = 760
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 
 @dataclass
@@ -135,7 +134,7 @@ class TrafficL:
     n_ts: int = 862
     test_size: int = 3_508
     val_size: int = 1_756
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 
 @dataclass
@@ -155,7 +154,7 @@ class ILI:
     n_ts: int = 7
     test_size: int = 193
     val_size: int = 97
-    horizons: Tuple[int] = (24, 36, 48, 60)
+    horizons: Tuple[int, ...] = (24, 36, 48, 60)
 
 
 @dataclass
@@ -175,7 +174,7 @@ class Weather:
     n_ts: int = 21
     test_size: int = 10_539
     val_size: int = 5_270
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 
 LongHorizonInfo = Info((
@@ -215,7 +214,7 @@ class LongHorizon:
                                 'ETTm1', 'ETTm2',
                                 'ECL', 'Exchange',
                                 'Traffic', 'Weather', 'ILI'.
-            cache (bool): If `True` saves and loads
+            cache (bool): If `True`, saves and loads a parquet cache under `{directory}/.cache`.
 
         Returns:
             Tuple[pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]:
@@ -227,13 +226,12 @@ class LongHorizon:
         if group not in LongHorizonInfo.groups:
             raise Exception(f'group not found {group}')
 
-        path = f'{directory}/longhorizon/datasets'
-        file_cache = f'{path}/{group}.p'
-
-        if os.path.exists(file_cache) and cache:
-            df, X_df, S_df = pd.read_pickle(file_cache)
-
-            return df, X_df, S_df
+        cache_dir = _cache_dir(directory, 'longhorizon', group)
+        if cache:
+            cached = load_cache(cache_dir, ['Y_df', 'X_df', 'S_df'])
+            if cached is not None:
+                frames, _ = cached
+                return frames['Y_df'], frames['X_df'], frames['S_df']
 
         LongHorizon.download(directory)
         path = f'{directory}/longhorizon/datasets'
@@ -248,7 +246,7 @@ class LongHorizon:
 
         S_df = None
         if cache:
-            pd.to_pickle((y_df, X_df, S_df), file_cache)
+            save_cache(cache_dir, {'Y_df': y_df, 'X_df': X_df, 'S_df': S_df}, root=directory)
 
         return y_df, X_df, S_df
 

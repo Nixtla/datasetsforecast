@@ -2,12 +2,17 @@ __all__ = ['logger', 'extract_file', 'download_file', 'async_download_files', 'd
 
 
 import asyncio
+import json
 import logging
+import os
+import shutil
+import tempfile
 import time
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterable, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -20,17 +25,98 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def extract_file(filepath, directory):
+def _check_member_path(name: str, directory: Path) -> None:
+    """Raises if an archive member would be written outside `directory`."""
+    normalized = name.replace('\\', '/')
+    parts = normalized.split('/')
+    if (
+        normalized.startswith('/')
+        or (len(normalized) > 1 and normalized[1] == ':')
+        or '..' in parts
+        or not (directory / normalized).resolve().is_relative_to(directory)
+    ):
+        raise ValueError(f'Unsafe path in archive: {name!r}')
+
+
+def safe_extract(filepath, directory):
+    """Extracts an archive, refusing members that would land outside `directory`.
+
+    Every member is validated before anything is written.
+    """
     filepath = Path(filepath)
-    if '.zip' in filepath.suffix:
-        import zipfile
-        logger.info('Decompressing zip file...')
-        with zipfile.ZipFile(filepath, 'r') as zip_ref:
-            zip_ref.extractall(directory)
-    else:
-        from patoolib import extract_archive
-        extract_archive(filepath, outdir=directory)
+    directory = Path(directory).resolve()
+    # Every dataset we ship is a zip; other formats (e.g. tar) are refused rather than extracted unchecked.
+    if '.zip' not in filepath.suffix:
+        raise ValueError(f'Unsupported archive format: {filepath}')
+    import zipfile
+    logger.info('Decompressing zip file...')
+    with zipfile.ZipFile(filepath, 'r') as zip_ref:
+        for name in zip_ref.namelist():
+            _check_member_path(name, directory)
+        zip_ref.extractall(directory)
     logger.info(f'Successfully decompressed {filepath}')
+
+
+def extract_file(filepath, directory):
+    _extract_staged(Path(filepath), Path(directory))
+
+
+def _refuse_symlinks(root: Path, path: Path) -> None:
+    """Raises if any existing component of `path` below `root` is a symlink.
+
+    `root` itself may be a symlink: it is the directory the caller chose.
+    """
+    current = Path(root)
+    for part in Path(path).relative_to(root).parts:
+        current = current / part
+        if current.is_symlink():
+            raise ValueError(f'Refusing to write through symlink: {current}')
+
+
+def _open_for_write(path: Path):
+    """Opens `path` for binary writing without following a symlink at `path`."""
+    if path.is_symlink():
+        raise ValueError(f'Refusing to write through symlink: {path}')
+    # O_NOFOLLOW also covers a symlink planted between the check and the open
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_BINARY', 0)
+    return os.fdopen(os.open(path, flags, 0o666), 'wb')
+
+
+def _merge_into(src: Path, dst: Path, skip: Optional[Path] = None) -> None:
+    """Moves the contents of `src` into `dst`, merging existing directories.
+
+    Symlinks already in `dst` are refused, since following one would write outside `dst`.
+    `skip` is a path inside `dst` that is never merged into (the staging directory itself).
+    """
+    dst.mkdir(parents=True, exist_ok=True)
+    for item in src.iterdir():
+        target = dst / item.name
+        if skip is not None and target == skip:
+            continue
+        if target.is_symlink():
+            raise ValueError(f'Refusing to extract through symlink: {target}')
+        if item.is_dir() and target.is_dir():
+            _merge_into(item, target)
+        else:
+            if target.is_dir():
+                shutil.rmtree(target)
+            shutil.move(str(item), str(target))
+
+
+def _extract_staged(filepath: Path, directory: Path) -> None:
+    """Extracts into a staging directory and only moves the result into `directory` on success.
+
+    Staging lives inside `directory`, so it needs no access beyond the caller's directory
+    and the final moves stay on the same filesystem.
+    """
+    # extract_file is public and used to create `directory`, like zipfile.extractall does
+    directory.mkdir(parents=True, exist_ok=True)
+    staging = Path(tempfile.mkdtemp(prefix='.extract-', dir=directory))
+    try:
+        safe_extract(filepath, staging)
+        _merge_into(staging, directory, skip=staging)
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
 
 def download_file(
     directory: Union[str, Path],
@@ -74,7 +160,7 @@ def download_file(
             block_size = 1024  # 1 Kibibyte
 
             t = tqdm(total=total_size, unit='iB', unit_scale=True)
-            with open(filepath, 'wb') as f:
+            with _open_for_write(filepath) as f:
                 for data in r.iter_content(block_size):
                     t.update(len(data))
                     f.write(data)
@@ -91,7 +177,7 @@ def download_file(
             logger.info(f'Successfully downloaded {filename}, {size}, bytes.')
 
             if decompress:
-                extract_file(filepath, directory)
+                _extract_staged(filepath, directory)
 
             return
         except (requests.exceptions.RequestException, IOError) as e:
@@ -112,7 +198,8 @@ async def _async_download_file(session: aiohttp.ClientSession, path: Path, sourc
     async with session.get(source_url) as response:
         content = await response.read()
     fname = source_url.split('/')[-1]
-    (path / fname).write_bytes(content)
+    with _open_for_write(path / fname) as f:
+        f.write(content)
     return fname
 
 
@@ -353,3 +440,88 @@ class Info:
     def __iter__(self):
         for group in self.groups:
             yield group, self.get_group(group)
+
+
+_CACHE_VERSION = 1
+
+
+def _cache_dir(directory: Union[str, Path], dataset: str, group: str) -> Path:
+    """Cache location, kept outside every directory archives are extracted into."""
+    return Path(directory) / '.cache' / dataset / group
+
+
+def save_cache(
+    cache_dir: Path,
+    frames: Dict[str, Optional[pd.DataFrame]],
+    extra: Optional[dict] = None,
+    *,
+    root: Union[str, Path],
+) -> None:
+    """Saves `frames` as parquet files (and `extra` as JSON) in `cache_dir`.
+
+    Writes to a temporary directory first and swaps it into place, so a partial cache is never visible.
+    Refuses symlinks between `root` (the user's directory) and `cache_dir`, since the swap deletes
+    the previous `cache_dir` and a symlink would point that delete outside `root`.
+    A failure is logged and ignored: caching must never break loading.
+    """
+    # plain mkdir (unlike mkdtemp, which forces 0700) follows the umask, so a shared data dir stays readable
+    tmp = cache_dir.parent / f'.{cache_dir.name}-{uuid.uuid4().hex}'
+    try:
+        _refuse_symlinks(Path(root), cache_dir)
+        cache_dir.parent.mkdir(parents=True, exist_ok=True)
+        tmp.mkdir()
+        none_frames: List[str] = []
+        # parquet infers a concrete type for object columns (e.g. ints), so we record them to restore the dtype
+        object_columns: Dict[str, List[str]] = {}
+        for name, frame in frames.items():
+            if frame is None:
+                none_frames.append(name)
+            else:
+                object_columns[name] = [str(c) for c in frame.columns[frame.dtypes == object]]
+                frame.to_parquet(tmp / f'{name}.parquet')
+        meta = {
+            'version': _CACHE_VERSION,
+            'none_frames': none_frames,
+            'object_columns': object_columns,
+            'extra': extra,
+        }
+        (tmp / 'meta.json').write_text(json.dumps(meta))
+        _refuse_symlinks(Path(root), cache_dir)
+        if cache_dir.exists():
+            shutil.rmtree(cache_dir)
+        os.replace(tmp, cache_dir)
+    except Exception as e:
+        logger.warning(f'Could not write cache to {cache_dir}: {e}')
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def load_cache(
+    cache_dir: Path,
+    names: Sequence[str],
+) -> Optional[Tuple[Dict[str, Optional[pd.DataFrame]], Optional[dict]]]:
+    """Loads a cache written by `save_cache`.
+
+    Only parquet and JSON are read, never pickle. Returns None when the cache is missing,
+    from another version or unreadable, so the caller rebuilds it.
+    """
+    meta_file = cache_dir / 'meta.json'
+    try:
+        if not meta_file.is_file():
+            return None
+        meta = json.loads(meta_file.read_text())
+        if meta.get('version') != _CACHE_VERSION:
+            return None
+        frames: Dict[str, Optional[pd.DataFrame]] = {}
+        for name in names:
+            if name in meta['none_frames']:
+                frames[name] = None
+            else:
+                frame = pd.read_parquet(cache_dir / f'{name}.parquet')
+                for col in meta['object_columns'].get(name, []):
+                    if frame[col].dtype != object:
+                        frame[col] = frame[col].astype(object)
+                frames[name] = frame
+        return frames, meta.get('extra')
+    except Exception as e:
+        logger.warning(f'Ignoring unreadable cache at {cache_dir}: {e}')
+        return None

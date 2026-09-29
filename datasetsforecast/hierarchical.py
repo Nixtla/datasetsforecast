@@ -4,12 +4,12 @@ __all__ = ['HierarchicalInfo', 'Labour', 'TourismLarge', 'TourismSmall', 'Traffi
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Tuple
+from typing import Dict, Tuple
 
 import numpy as np
 import pandas as pd
 
-from .utils import Info, download_file
+from .utils import Info, _cache_dir, download_file, load_cache, save_cache
 
 
 @dataclass
@@ -19,7 +19,7 @@ class Labour:
     papers_horizon: int = 12
     seasonality: int = 12
     test_size: int = 125
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Country',
         'Country/Region',
         'Country/Gender/Region',
@@ -34,7 +34,7 @@ class TourismLarge:
     papers_horizon: int = 12
     seasonality: int = 12
     test_size: int = 57
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Country',
         'Country/State',
         'Country/State/Zone',
@@ -53,7 +53,7 @@ class TourismSmall:
     papers_horizon: int = 4
     seasonality: int = 4
     test_size: int = 9
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Country',
         'Country/Purpose',
         'Country/Purpose/State',
@@ -68,7 +68,7 @@ class Traffic:
     papers_horizon: int = 7
     seasonality: int = 7
     test_size: int = 91
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Level1',
         'Level2',
         'Level3',
@@ -83,7 +83,7 @@ class Wiki2:
     papers_horizon: int = 7
     seasonality: int = 7
     test_size: int = 91
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Views',
         'Views/Country',
         'Views/Country/Access',
@@ -99,7 +99,7 @@ class OldTraffic:
     papers_horizon: int = 1
     seasonality: int = 7
     test_size: int = 91
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Level1',
         'Level2',
         'Level3',
@@ -114,7 +114,7 @@ class OldTourismLarge:
     papers_horizon: int = 12
     seasonality: int = 12
     test_size: int = 57
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Country',
         'Country/State',
         'Country/State/Zone',
@@ -145,36 +145,39 @@ class HierarchicalData:
     @staticmethod
     def load(directory: str,
              group: str,
-             cache: bool = True) -> Tuple[pd.DataFrame, pd.DataFrame]:
+             cache: bool = True) -> Tuple[pd.DataFrame, pd.DataFrame, Dict[str, np.ndarray]]:
         """
         Downloads hierarchical forecasting benchmark datasets.
 
         Args:
             directory (str): Directory where data will be downloaded.
             group (str): Group name.
-            cache (bool): If `True` saves and loads
+            cache (bool): If `True`, saves and loads a parquet cache under `{directory}/.cache`.
 
         Returns:
-            Tuple[pd.DataFrame, pd.DataFrame]:
+            Tuple[pd.DataFrame, pd.DataFrame, Dict[str, np.ndarray]]:
                 Target time series with columns ['unique_id', 'ds', 'y'].
                 Containes the base time series,
-                Summing matrix of size (hierarchies, bottom).
+                Summing matrix of size (hierarchies, bottom),
+                Mapping of each hierarchy level to its `unique_id` values.
         """
         if group not in HierarchicalInfo.groups:
             raise Exception(f'group not found {group}')
 
         path = f'{directory}/hierarchical/'
-        file_cache = Path(f'{path}/{group}.p')
-
-        if file_cache.is_file() and cache:
-            Y_df, S_df, tags = pd.read_pickle(file_cache)
-
-            return Y_df, S_df, tags
+        cache_dir = _cache_dir(directory, 'hierarchical', group)
+        if cache:
+            cached = load_cache(cache_dir, ['Y_df', 'S_df'])
+            if cached is not None:
+                frames, extra = cached
+                if extra is not None and 'tags' in extra:
+                    tags = {k: np.array(v, dtype=object) for k, v in extra['tags'].items()}
+                    return frames['Y_df'], frames['S_df'], tags
 
         HierarchicalData.download(directory)
-        path = Path(f'{path}/{group}')
-        S_df = pd.read_csv(path / 'agg_mat.csv', index_col=0)
-        Y_df = pd.read_csv(path / 'data.csv', index_col=0).T
+        group_path = Path(f'{path}/{group}')
+        S_df = pd.read_csv(group_path / 'agg_mat.csv', index_col=0)
+        Y_df = pd.read_csv(group_path / 'data.csv', index_col=0).T
         Y_df = Y_df.stack()
         Y_df.name = 'y'
         Y_df.index = Y_df.index.set_names(['unique_id', 'ds'])
@@ -198,7 +201,8 @@ class HierarchicalData:
         tags = dict(zip(cls_group.tags_names, get_levels_from_S(S_df)))
 
         if cache:
-            pd.to_pickle((Y_df, S_df, tags), file_cache)
+            save_cache(cache_dir, {'Y_df': Y_df, 'S_df': S_df},
+                       extra={'tags': {k: v.tolist() for k, v in tags.items()}}, root=directory)
 
         return Y_df, S_df, tags
 
