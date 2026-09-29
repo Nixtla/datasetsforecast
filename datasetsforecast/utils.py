@@ -44,17 +44,15 @@ def safe_extract(filepath, directory):
     """
     filepath = Path(filepath)
     directory = Path(directory).resolve()
-    if '.zip' in filepath.suffix:
-        import zipfile
-        logger.info('Decompressing zip file...')
-        with zipfile.ZipFile(filepath, 'r') as zip_ref:
-            for name in zip_ref.namelist():
-                _check_member_path(name, directory)
-            zip_ref.extractall(directory)
-    else:
-        # Unsupported: every dataset we ship is a zip, and patoolib is not a declared dependency.
-        from patoolib import extract_archive
-        extract_archive(filepath, outdir=directory)
+    # Every dataset we ship is a zip; other formats (e.g. tar) are refused rather than extracted unchecked.
+    if '.zip' not in filepath.suffix:
+        raise ValueError(f'Unsupported archive format: {filepath}')
+    import zipfile
+    logger.info('Decompressing zip file...')
+    with zipfile.ZipFile(filepath, 'r') as zip_ref:
+        for name in zip_ref.namelist():
+            _check_member_path(name, directory)
+        zip_ref.extractall(directory)
     logger.info(f'Successfully decompressed {filepath}')
 
 
@@ -63,10 +61,15 @@ def extract_file(filepath, directory):
 
 
 def _merge_into(src: Path, dst: Path) -> None:
-    """Moves the contents of `src` into `dst`, merging existing directories."""
+    """Moves the contents of `src` into `dst`, merging existing directories.
+
+    Symlinks already in `dst` are refused, since following one would write outside `dst`.
+    """
     dst.mkdir(parents=True, exist_ok=True)
     for item in src.iterdir():
         target = dst / item.name
+        if target.is_symlink():
+            raise ValueError(f'Refusing to extract through symlink: {target}')
         if item.is_dir() and target.is_dir():
             _merge_into(item, target)
         else:

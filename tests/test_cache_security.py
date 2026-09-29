@@ -45,6 +45,27 @@ def test_safe_extract_extracts_valid_archive(tmp_path):
     assert (target / 'nested' / 'b.csv').read_text() == 'y'
 
 
+def test_safe_extract_rejects_non_zip(tmp_path):
+    import tarfile
+    member = tmp_path / 'evil.txt'
+    member.write_text('evil')
+    archive = tmp_path / 'bad.tar'
+    with tarfile.open(archive, 'w') as tf:
+        tf.add(member, arcname='../evil.txt')
+    target = tmp_path / 'target'
+    target.mkdir()
+    with pytest.raises(ValueError, match='Unsupported archive format'):
+        safe_extract(archive, target)
+    assert list(target.iterdir()) == []
+
+
+def _symlink_or_skip(link, target, target_is_directory):
+    try:
+        os.symlink(target, link, target_is_directory=target_is_directory)
+    except (OSError, NotImplementedError):
+        pytest.skip('symlinks not supported on this platform')
+
+
 class _FakeResponse:
     def __init__(self, content):
         self.content = content
@@ -391,3 +412,28 @@ def test_m5_benchmark_archive_cannot_plant_cache(tmp_path, monkeypatch, serve_zi
     monkeypatch.setattr(M5, 'download', lambda directory: None)
     M5.load(str(tmp_path))
     assert not marker.exists()
+
+
+@pytest.mark.parametrize('member', ['nested/pwn.txt', 'nested'])
+def test_download_file_refuses_symlinked_directory(tmp_path, serve_zip, member):
+    outside = tmp_path / 'outside'
+    outside.mkdir()
+    target = tmp_path / 'ds'
+    target.mkdir()
+    _symlink_or_skip(target / 'nested', outside, target_is_directory=True)
+    serve_zip({'nested/pwn.txt': 'pwn'} if member == 'nested/pwn.txt' else {'nested': 'file replacing the link'})
+    with pytest.raises(ValueError, match='symlink'):
+        download_file(target, 'https://example.com/data.zip', decompress=True)
+    assert list(outside.iterdir()) == []
+
+
+def test_download_file_refuses_symlinked_file(tmp_path, serve_zip):
+    outside = tmp_path / 'outside.txt'
+    outside.write_text('original')
+    target = tmp_path / 'ds'
+    target.mkdir()
+    _symlink_or_skip(target / 'a.csv', outside, target_is_directory=False)
+    serve_zip({'a.csv': 'pwn'})
+    with pytest.raises(ValueError, match='symlink'):
+        download_file(target, 'https://example.com/data.zip', decompress=True)
+    assert outside.read_text() == 'original'
