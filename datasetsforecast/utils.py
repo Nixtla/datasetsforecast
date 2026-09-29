@@ -8,6 +8,7 @@ import os
 import shutil
 import tempfile
 import time
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -60,14 +61,17 @@ def extract_file(filepath, directory):
     safe_extract(filepath, directory)
 
 
-def _merge_into(src: Path, dst: Path) -> None:
+def _merge_into(src: Path, dst: Path, skip: Optional[Path] = None) -> None:
     """Moves the contents of `src` into `dst`, merging existing directories.
 
     Symlinks already in `dst` are refused, since following one would write outside `dst`.
+    `skip` is a path inside `dst` that is never merged into (the staging directory itself).
     """
     dst.mkdir(parents=True, exist_ok=True)
     for item in src.iterdir():
         target = dst / item.name
+        if skip is not None and target == skip:
+            continue
         if target.is_symlink():
             raise ValueError(f'Refusing to extract through symlink: {target}')
         if item.is_dir() and target.is_dir():
@@ -79,11 +83,15 @@ def _merge_into(src: Path, dst: Path) -> None:
 
 
 def _extract_staged(filepath: Path, directory: Path) -> None:
-    """Extracts into a staging directory and only moves the result into `directory` on success."""
-    staging = Path(tempfile.mkdtemp(prefix='.extract-', dir=directory.parent))
+    """Extracts into a staging directory and only moves the result into `directory` on success.
+
+    Staging lives inside `directory`, so it needs no access beyond the caller's directory
+    and the final moves stay on the same filesystem.
+    """
+    staging = Path(tempfile.mkdtemp(prefix='.extract-', dir=directory))
     try:
         safe_extract(filepath, staging)
-        _merge_into(staging, directory)
+        _merge_into(staging, directory, skip=staging)
     finally:
         shutil.rmtree(staging, ignore_errors=True)
 
@@ -429,8 +437,10 @@ def save_cache(
     A failure is logged and ignored: caching must never break loading.
     """
     cache_dir.parent.mkdir(parents=True, exist_ok=True)
-    tmp = Path(tempfile.mkdtemp(prefix=f'.{cache_dir.name}-', dir=cache_dir.parent))
+    # plain mkdir (unlike mkdtemp, which forces 0700) follows the umask, so a shared data dir stays readable
+    tmp = cache_dir.parent / f'.{cache_dir.name}-{uuid.uuid4().hex}'
     try:
+        tmp.mkdir()
         none_frames: List[str] = []
         # parquet infers a concrete type for object columns (e.g. ints), so we record them to restore the dtype
         object_columns: Dict[str, List[str]] = {}
@@ -465,9 +475,9 @@ def load_cache(
     from another version or unreadable, so the caller rebuilds it.
     """
     meta_file = cache_dir / 'meta.json'
-    if not meta_file.is_file():
-        return None
     try:
+        if not meta_file.is_file():
+            return None
         meta = json.loads(meta_file.read_text())
         if meta.get('version') != _CACHE_VERSION:
             return None

@@ -4,7 +4,10 @@ import logging
 import os
 import pickle
 import shutil
+import stat
+import sys
 import zipfile
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -437,3 +440,76 @@ def test_download_file_refuses_symlinked_file(tmp_path, serve_zip):
     with pytest.raises(ValueError, match='symlink'):
         download_file(target, 'https://example.com/data.zip', decompress=True)
     assert outside.read_text() == 'original'
+
+
+posix_permissions = pytest.mark.skipif(
+    sys.platform == 'win32' or (hasattr(os, 'geteuid') and os.geteuid() == 0),
+    reason='needs POSIX permissions enforced for a non-root user',
+)
+
+
+@pytest.fixture
+def umask_022():
+    old = os.umask(0o022)
+    yield
+    os.umask(old)
+
+
+@posix_permissions
+def test_cache_dir_follows_umask(tmp_path, umask_022):
+    cache_dir = tmp_path / '.cache' / 'ds' / 'g'
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})})
+    assert stat.S_IMODE(cache_dir.stat().st_mode) == 0o755
+    assert stat.S_IMODE((cache_dir / 'meta.json').stat().st_mode) == 0o644
+
+
+def test_cache_permission_error_falls_back(tmp_path, monkeypatch, caplog):
+    cache_dir = tmp_path / 'g'
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})})
+    original = Path.is_file
+
+    def denied(self):
+        if self.name == 'meta.json':
+            raise PermissionError(13, 'Permission denied', str(self))
+        return original(self)
+
+    # on Python 3.10-3.13 pathlib re-raises PermissionError from is_file
+    monkeypatch.setattr(Path, 'is_file', denied)
+    with caplog.at_level(logging.WARNING):
+        assert load_cache(cache_dir, ['Y_df']) is None
+    assert 'Ignoring unreadable cache' in caplog.text
+
+
+@posix_permissions
+def test_cache_unreadable_dir_falls_back(tmp_path):
+    cache_dir = tmp_path / 'g'
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})})
+    cache_dir.chmod(0)
+    try:
+        assert load_cache(cache_dir, ['Y_df']) is None
+    finally:
+        cache_dir.chmod(0o755)
+
+
+@posix_permissions
+def test_download_file_does_not_write_to_parent(tmp_path, monkeypatch):
+    parent = tmp_path / 'readonly'
+    target = parent / 'data'
+    target.mkdir(parents=True)
+    parent.chmod(0o555)
+    calls = []
+    content = _zip_bytes({'a.csv': 'x', 'nested/b.csv': 'y'})
+
+    def fake_get(*args, **kwargs):
+        calls.append(1)
+        return _FakeResponse(content)
+
+    monkeypatch.setattr(utils.requests, 'get', fake_get)
+    try:
+        download_file(target, 'https://example.com/data.zip', decompress=True)
+    finally:
+        parent.chmod(0o755)
+    assert len(calls) == 1
+    assert (target / 'a.csv').read_text() == 'x'
+    assert (target / 'nested' / 'b.csv').read_text() == 'y'
+    assert not any(p.name.startswith('.extract-') for p in target.iterdir())
