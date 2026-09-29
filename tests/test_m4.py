@@ -1,6 +1,7 @@
 import numpy as np
+import pandas as pd
 
-from datasetsforecast.m4 import M4Evaluation
+from datasetsforecast.m4 import M4, M4Evaluation
 
 
 def test_esrnn_url():
@@ -21,3 +22,14 @@ def test_fforma_url():
     assert np.isclose(fforma_evaluation['MASE'].item(), 0.819, atol=1e-3)
     assert np.isclose(fforma_evaluation['OWA'].item(), 0.484, atol=1e-3)
 
+
+
+def test_m4_cache_matches_fresh():
+    fresh = M4.load('./data', 'Hourly', cache=False)
+    M4.load('./data', 'Hourly')  # writes the cache
+    cached = M4.load('./data', 'Hourly')
+    for fresh_df, cached_df in zip(fresh, cached):
+        if fresh_df is None:
+            assert cached_df is None
+        else:
+            pd.testing.assert_frame_equal(fresh_df, cached_df)

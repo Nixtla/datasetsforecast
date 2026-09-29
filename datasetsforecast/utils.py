@@ -2,12 +2,16 @@ __all__ = ['logger', 'extract_file', 'download_file', 'async_download_files', 'd
 
 
 import asyncio
+import json
 import logging
+import os
+import shutil
+import tempfile
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterable, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -20,17 +24,65 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def extract_file(filepath, directory):
+def _check_member_path(name: str, directory: Path) -> None:
+    """Raises if an archive member would be written outside `directory`."""
+    normalized = name.replace('\\', '/')
+    parts = normalized.split('/')
+    if (
+        normalized.startswith('/')
+        or (len(normalized) > 1 and normalized[1] == ':')
+        or '..' in parts
+        or not (directory / normalized).resolve().is_relative_to(directory)
+    ):
+        raise ValueError(f'Unsafe path in archive: {name!r}')
+
+
+def safe_extract(filepath, directory):
+    """Extracts an archive, refusing members that would land outside `directory`.
+
+    Every member is validated before anything is written.
+    """
     filepath = Path(filepath)
+    directory = Path(directory).resolve()
     if '.zip' in filepath.suffix:
         import zipfile
         logger.info('Decompressing zip file...')
         with zipfile.ZipFile(filepath, 'r') as zip_ref:
+            for name in zip_ref.namelist():
+                _check_member_path(name, directory)
             zip_ref.extractall(directory)
     else:
+        # Unsupported: every dataset we ship is a zip, and patoolib is not a declared dependency.
         from patoolib import extract_archive
         extract_archive(filepath, outdir=directory)
     logger.info(f'Successfully decompressed {filepath}')
+
+
+def extract_file(filepath, directory):
+    safe_extract(filepath, directory)
+
+
+def _merge_into(src: Path, dst: Path) -> None:
+    """Moves the contents of `src` into `dst`, merging existing directories."""
+    dst.mkdir(parents=True, exist_ok=True)
+    for item in src.iterdir():
+        target = dst / item.name
+        if item.is_dir() and target.is_dir():
+            _merge_into(item, target)
+        else:
+            if target.is_dir():
+                shutil.rmtree(target)
+            shutil.move(str(item), str(target))
+
+
+def _extract_staged(filepath: Path, directory: Path) -> None:
+    """Extracts into a staging directory and only moves the result into `directory` on success."""
+    staging = Path(tempfile.mkdtemp(prefix='.extract-', dir=directory.parent))
+    try:
+        safe_extract(filepath, staging)
+        _merge_into(staging, directory)
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
 
 def download_file(
     directory: Union[str, Path],
@@ -91,7 +143,7 @@ def download_file(
             logger.info(f'Successfully downloaded {filename}, {size}, bytes.')
 
             if decompress:
-                extract_file(filepath, directory)
+                _extract_staged(filepath, directory)
 
             return
         except (requests.exceptions.RequestException, IOError) as e:
@@ -353,3 +405,80 @@ class Info:
     def __iter__(self):
         for group in self.groups:
             yield group, self.get_group(group)
+
+
+_CACHE_VERSION = 1
+
+
+def _cache_dir(directory: Union[str, Path], dataset: str, group: str) -> Path:
+    """Cache location, kept outside every directory archives are extracted into."""
+    return Path(directory) / '.cache' / dataset / group
+
+
+def save_cache(
+    cache_dir: Path,
+    frames: Dict[str, Optional[pd.DataFrame]],
+    extra: Optional[dict] = None,
+) -> None:
+    """Saves `frames` as parquet files (and `extra` as JSON) in `cache_dir`.
+
+    Writes to a temporary directory first and swaps it into place, so a partial cache is never visible.
+    A failure is logged and ignored: caching must never break loading.
+    """
+    cache_dir.parent.mkdir(parents=True, exist_ok=True)
+    tmp = Path(tempfile.mkdtemp(prefix=f'.{cache_dir.name}-', dir=cache_dir.parent))
+    try:
+        none_frames: List[str] = []
+        # parquet infers a concrete type for object columns (e.g. ints), so we record them to restore the dtype
+        object_columns: Dict[str, List[str]] = {}
+        for name, frame in frames.items():
+            if frame is None:
+                none_frames.append(name)
+            else:
+                object_columns[name] = [str(c) for c in frame.columns[frame.dtypes == object]]
+                frame.to_parquet(tmp / f'{name}.parquet')
+        meta = {
+            'version': _CACHE_VERSION,
+            'none_frames': none_frames,
+            'object_columns': object_columns,
+            'extra': extra,
+        }
+        (tmp / 'meta.json').write_text(json.dumps(meta))
+        if cache_dir.exists():
+            shutil.rmtree(cache_dir)
+        os.replace(tmp, cache_dir)
+    except Exception as e:
+        logger.warning(f'Could not write cache to {cache_dir}: {e}')
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def load_cache(
+    cache_dir: Path,
+    names: Sequence[str],
+) -> Optional[Tuple[Dict[str, Optional[pd.DataFrame]], Optional[dict]]]:
+    """Loads a cache written by `save_cache`.
+
+    Only parquet and JSON are read, never pickle. Returns None when the cache is missing,
+    from another version or unreadable, so the caller rebuilds it.
+    """
+    meta_file = cache_dir / 'meta.json'
+    if not meta_file.is_file():
+        return None
+    try:
+        meta = json.loads(meta_file.read_text())
+        if meta.get('version') != _CACHE_VERSION:
+            return None
+        frames: Dict[str, Optional[pd.DataFrame]] = {}
+        for name in names:
+            if name in meta['none_frames']:
+                frames[name] = None
+            else:
+                frame = pd.read_parquet(cache_dir / f'{name}.parquet')
+                for col in meta['object_columns'].get(name, []):
+                    if frame[col].dtype != object:
+                        frame[col] = frame[col].astype(object)
+                frames[name] = frame
+        return frames, meta.get('extra')
+    except Exception as e:
+        logger.warning(f'Ignoring unreadable cache at {cache_dir}: {e}')
+        return None
