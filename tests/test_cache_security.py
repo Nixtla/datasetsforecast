@@ -615,3 +615,12 @@ def test_extract_file_refuses_symlinked_member(tmp_path):
         extract_file(archive, target)
     assert victim.read_text() == 'secret'
     assert not any(p.name.startswith('.extract-') for p in target.iterdir())
+
+
+def test_extract_file_creates_missing_directory(tmp_path):
+    archive = _make_zip(tmp_path / 'good.zip', {'a.csv': 'x', 'nested/b.csv': 'y'})
+    target = tmp_path / 'new' / 'dir'
+    extract_file(archive, target)
+    assert (target / 'a.csv').read_text() == 'x'
+    assert (target / 'nested' / 'b.csv').read_text() == 'y'
+    assert not any(p.name.startswith('.extract-') for p in target.iterdir())

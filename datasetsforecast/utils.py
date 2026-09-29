@@ -109,6 +109,8 @@ def _extract_staged(filepath: Path, directory: Path) -> None:
     Staging lives inside `directory`, so it needs no access beyond the caller's directory
     and the final moves stay on the same filesystem.
     """
+    # extract_file is public and used to create `directory`, like zipfile.extractall does
+    directory.mkdir(parents=True, exist_ok=True)
     staging = Path(tempfile.mkdtemp(prefix='.extract-', dir=directory))
     try:
         safe_extract(filepath, staging)
