@@ -246,7 +246,7 @@ class LongHorizon:
 
         S_df = None
         if cache:
-            save_cache(cache_dir, {'Y_df': y_df, 'X_df': X_df, 'S_df': S_df})
+            save_cache(cache_dir, {'Y_df': y_df, 'X_df': X_df, 'S_df': S_df}, root=directory)
 
         return y_df, X_df, S_df
 

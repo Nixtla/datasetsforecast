@@ -58,7 +58,28 @@ def safe_extract(filepath, directory):
 
 
 def extract_file(filepath, directory):
-    safe_extract(filepath, directory)
+    _extract_staged(Path(filepath), Path(directory))
+
+
+def _refuse_symlinks(root: Path, path: Path) -> None:
+    """Raises if any existing component of `path` below `root` is a symlink.
+
+    `root` itself may be a symlink: it is the directory the caller chose.
+    """
+    current = Path(root)
+    for part in Path(path).relative_to(root).parts:
+        current = current / part
+        if current.is_symlink():
+            raise ValueError(f'Refusing to write through symlink: {current}')
+
+
+def _open_for_write(path: Path):
+    """Opens `path` for binary writing without following a symlink at `path`."""
+    if path.is_symlink():
+        raise ValueError(f'Refusing to write through symlink: {path}')
+    # O_NOFOLLOW also covers a symlink planted between the check and the open
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_BINARY', 0)
+    return os.fdopen(os.open(path, flags, 0o666), 'wb')
 
 
 def _merge_into(src: Path, dst: Path, skip: Optional[Path] = None) -> None:
@@ -137,7 +158,7 @@ def download_file(
             block_size = 1024  # 1 Kibibyte
 
             t = tqdm(total=total_size, unit='iB', unit_scale=True)
-            with open(filepath, 'wb') as f:
+            with _open_for_write(filepath) as f:
                 for data in r.iter_content(block_size):
                     t.update(len(data))
                     f.write(data)
@@ -175,7 +196,8 @@ async def _async_download_file(session: aiohttp.ClientSession, path: Path, sourc
     async with session.get(source_url) as response:
         content = await response.read()
     fname = source_url.split('/')[-1]
-    (path / fname).write_bytes(content)
+    with _open_for_write(path / fname) as f:
+        f.write(content)
     return fname
 
 
@@ -430,16 +452,21 @@ def save_cache(
     cache_dir: Path,
     frames: Dict[str, Optional[pd.DataFrame]],
     extra: Optional[dict] = None,
+    *,
+    root: Union[str, Path],
 ) -> None:
     """Saves `frames` as parquet files (and `extra` as JSON) in `cache_dir`.
 
     Writes to a temporary directory first and swaps it into place, so a partial cache is never visible.
+    Refuses symlinks between `root` (the user's directory) and `cache_dir`, since the swap deletes
+    the previous `cache_dir` and a symlink would point that delete outside `root`.
     A failure is logged and ignored: caching must never break loading.
     """
-    cache_dir.parent.mkdir(parents=True, exist_ok=True)
     # plain mkdir (unlike mkdtemp, which forces 0700) follows the umask, so a shared data dir stays readable
     tmp = cache_dir.parent / f'.{cache_dir.name}-{uuid.uuid4().hex}'
     try:
+        _refuse_symlinks(Path(root), cache_dir)
+        cache_dir.parent.mkdir(parents=True, exist_ok=True)
         tmp.mkdir()
         none_frames: List[str] = []
         # parquet infers a concrete type for object columns (e.g. ints), so we record them to restore the dtype
@@ -457,6 +484,7 @@ def save_cache(
             'extra': extra,
         }
         (tmp / 'meta.json').write_text(json.dumps(meta))
+        _refuse_symlinks(Path(root), cache_dir)
         if cache_dir.exists():
             shutil.rmtree(cache_dir)
         os.replace(tmp, cache_dir)

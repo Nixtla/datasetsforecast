@@ -133,7 +133,7 @@ class M5:
         X_df = long[x_cols]
 
         if cache:
-            save_cache(cache_dir, {'Y_df': Y_df, 'X_df': X_df, 'S_df': S_df})
+            save_cache(cache_dir, {'Y_df': Y_df, 'X_df': X_df, 'S_df': S_df}, root=directory)
 
         return Y_df, X_df, S_df
 

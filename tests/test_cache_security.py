@@ -18,7 +18,15 @@ from datasetsforecast.hierarchical import HierarchicalData, HierarchicalInfo
 from datasetsforecast.long_horizon import LongHorizon, LongHorizonInfo
 from datasetsforecast.m4 import M4, M4Evaluation
 from datasetsforecast.m5 import M5, M5Evaluation
-from datasetsforecast.utils import download_file, load_cache, safe_extract, save_cache
+from datasetsforecast.utils import (
+    _cache_dir,
+    async_download_files,
+    download_file,
+    extract_file,
+    load_cache,
+    safe_extract,
+    save_cache,
+)
 
 
 def _make_zip(path, members):
@@ -150,7 +158,7 @@ def test_cache_round_trip(tmp_path):
     S_df = pd.DataFrame({'x': [1.0, 0.0]}, index=pd.Index(['t1', 't2'], name='unique_id'))
     tags = {'Level2': ['t1', 't2'], 'Level1': ['t0']}
     cache_dir = tmp_path / '.cache' / 'ds' / 'g'
-    save_cache(cache_dir, {'Y_df': Y_df, 'X_df': None, 'S_df': S_df}, extra={'tags': tags})
+    save_cache(cache_dir, {'Y_df': Y_df, 'X_df': None, 'S_df': S_df}, extra={'tags': tags}, root=tmp_path)
 
     cached = load_cache(cache_dir, ['Y_df', 'X_df', 'S_df'])
     assert cached is not None
@@ -166,8 +174,8 @@ def test_cache_round_trip(tmp_path):
 
 def test_cache_overwrite(tmp_path):
     cache_dir = tmp_path / 'g'
-    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})})
-    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [2]})})
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [2]})}, root=tmp_path)
     frames, _ = load_cache(cache_dir, ['Y_df'])
     assert frames['Y_df']['y'].tolist() == [2]
 
@@ -178,7 +186,7 @@ def test_cache_missing_returns_none(tmp_path):
 
 def test_cache_version_mismatch_returns_none(tmp_path):
     cache_dir = tmp_path / 'g'
-    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})})
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
     meta = json.loads((cache_dir / 'meta.json').read_text())
     meta['version'] = 0
     (cache_dir / 'meta.json').write_text(json.dumps(meta))
@@ -198,7 +206,7 @@ def test_cache_failed_write_is_not_visible(tmp_path, monkeypatch, caplog):
     monkeypatch.setattr(pd.DataFrame, 'to_parquet', failing_to_parquet)
     cache_dir = tmp_path / 'g'
     with caplog.at_level(logging.WARNING):
-        save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]}), 'X_df': pd.DataFrame({'x': [1]})})
+        save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]}), 'X_df': pd.DataFrame({'x': [1]})}, root=tmp_path)
     assert 'Could not write cache' in caplog.text
     assert not cache_dir.exists()
     assert list(tmp_path.iterdir()) == []
@@ -208,7 +216,7 @@ def test_cache_failed_write_is_not_visible(tmp_path, monkeypatch, caplog):
 def test_cache_planted_pickle_is_not_executed(tmp_path, caplog):
     marker = tmp_path / 'pwned'
     cache_dir = tmp_path / 'g'
-    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})})
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
     (cache_dir / 'Y_df.parquet').write_bytes(pickle.dumps(_Payload(marker)))
     with caplog.at_level(logging.WARNING):
         assert load_cache(cache_dir, ['Y_df']) is None
@@ -458,14 +466,14 @@ def umask_022():
 @posix_permissions
 def test_cache_dir_follows_umask(tmp_path, umask_022):
     cache_dir = tmp_path / '.cache' / 'ds' / 'g'
-    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})})
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
     assert stat.S_IMODE(cache_dir.stat().st_mode) == 0o755
     assert stat.S_IMODE((cache_dir / 'meta.json').stat().st_mode) == 0o644
 
 
 def test_cache_permission_error_falls_back(tmp_path, monkeypatch, caplog):
     cache_dir = tmp_path / 'g'
-    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})})
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
     original = Path.is_file
 
     def denied(self):
@@ -483,7 +491,7 @@ def test_cache_permission_error_falls_back(tmp_path, monkeypatch, caplog):
 @posix_permissions
 def test_cache_unreadable_dir_falls_back(tmp_path):
     cache_dir = tmp_path / 'g'
-    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})})
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
     cache_dir.chmod(0)
     try:
         assert load_cache(cache_dir, ['Y_df']) is None
@@ -512,4 +520,98 @@ def test_download_file_does_not_write_to_parent(tmp_path, monkeypatch):
     assert len(calls) == 1
     assert (target / 'a.csv').read_text() == 'x'
     assert (target / 'nested' / 'b.csv').read_text() == 'y'
+    assert not any(p.name.startswith('.extract-') for p in target.iterdir())
+
+
+@pytest.mark.parametrize('link', ['.cache', '.cache/m4', '.cache/m4/Hourly'])
+def test_save_cache_refuses_symlinked_cache_path(tmp_path, caplog, link):
+    victim = tmp_path / 'victim'
+    (victim / 'Hourly').mkdir(parents=True)
+    (victim / 'Hourly' / 'keep.txt').write_text('important')
+    (victim / 'm4' / 'Hourly').mkdir(parents=True)
+    (victim / 'm4' / 'Hourly' / 'keep.txt').write_text('important')
+    data = tmp_path / 'data'
+    link_path = data / link
+    link_path.parent.mkdir(parents=True, exist_ok=True)
+    link_target = {'.cache': victim, '.cache/m4': victim, '.cache/m4/Hourly': victim / 'Hourly'}[link]
+    _symlink_or_skip(link_path, link_target, target_is_directory=True)
+
+    with caplog.at_level(logging.WARNING):
+        save_cache(_cache_dir(data, 'm4', 'Hourly'), {'Y_df': pd.DataFrame({'y': [1]})}, root=data)
+    assert 'Refusing to write through symlink' in caplog.text
+    assert (victim / 'Hourly' / 'keep.txt').read_text() == 'important'
+    assert (victim / 'm4' / 'Hourly' / 'keep.txt').read_text() == 'important'
+    assert sorted(p.name for p in victim.rglob('*')) == ['Hourly', 'Hourly', 'keep.txt', 'keep.txt', 'm4']
+
+
+def test_save_cache_allows_symlinked_root(tmp_path):
+    # a user pointing their data dir at another disk is legitimate
+    real = tmp_path / 'real'
+    real.mkdir()
+    data = tmp_path / 'data'
+    _symlink_or_skip(data, real, target_is_directory=True)
+    cache_dir = _cache_dir(data, 'm4', 'Hourly')
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=data)
+    frames, _ = load_cache(cache_dir, ['Y_df'])
+    assert frames['Y_df']['y'].tolist() == [1]
+    assert (real / '.cache' / 'm4' / 'Hourly' / 'meta.json').is_file()
+
+
+def test_download_file_refuses_symlinked_download_path(tmp_path, serve_zip):
+    victim = tmp_path / 'victim_file'
+    victim.write_text('secret')
+    target = tmp_path / 'ds'
+    target.mkdir()
+    _symlink_or_skip(target / 'data.zip', victim, target_is_directory=False)
+    serve_zip({'a.csv': 'x'})
+    with pytest.raises(ValueError, match='Refusing to write through symlink'):
+        download_file(target, 'https://example.com/data.zip', decompress=True)
+    assert victim.read_text() == 'secret'
+
+
+@pytest.mark.asyncio
+async def test_async_download_refuses_symlinked_file(tmp_path, monkeypatch):
+    victim = tmp_path / 'victim_file'
+    victim.write_text('secret')
+    target = tmp_path / 'ds'
+    target.mkdir()
+    _symlink_or_skip(target / 'Hourly-train.csv', victim, target_is_directory=False)
+
+    class _Resp:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *exc):
+            return False
+
+        async def read(self):
+            return b'pwn'
+
+    class _Session:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *exc):
+            return False
+
+        def get(self, url):
+            return _Resp()
+
+    monkeypatch.setattr(utils.aiohttp, 'ClientSession', _Session)
+    with pytest.raises(ValueError, match='Refusing to write through symlink'):
+        await async_download_files(target, ['https://example.com/Hourly-train.csv'])
+    assert victim.read_text() == 'secret'
+
+
+def test_extract_file_refuses_symlinked_member(tmp_path):
+    # M4, PHM2008 and Favorita call extract_file directly, bypassing download_file
+    victim = tmp_path / 'victim_file'
+    victim.write_text('secret')
+    target = tmp_path / 'ds'
+    target.mkdir()
+    archive = _make_zip(target / 'submission-Naive2.zip', {'submission-Naive2.csv': 'pwn'})
+    _symlink_or_skip(target / 'submission-Naive2.csv', victim, target_is_directory=False)
+    with pytest.raises(ValueError, match='symlink'):
+        extract_file(archive, target)
+    assert victim.read_text() == 'secret'
     assert not any(p.name.startswith('.extract-') for p in target.iterdir())

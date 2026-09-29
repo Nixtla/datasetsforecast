@@ -148,7 +148,7 @@ class M4:
 
         X_df = None
         if cache:
-            save_cache(cache_dir, {'Y_df': df, 'X_df': X_df, 'S_df': S_df})
+            save_cache(cache_dir, {'Y_df': df, 'X_df': X_df, 'S_df': S_df}, root=directory)
 
         return df, X_df, S_df
 

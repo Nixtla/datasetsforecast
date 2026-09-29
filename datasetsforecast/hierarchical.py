@@ -202,7 +202,7 @@ class HierarchicalData:
 
         if cache:
             save_cache(cache_dir, {'Y_df': Y_df, 'S_df': S_df},
-                       extra={'tags': {k: v.tolist() for k, v in tags.items()}})
+                       extra={'tags': {k: v.tolist() for k, v in tags.items()}}, root=directory)
 
         return Y_df, S_df, tags
 
