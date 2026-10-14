@@ -3,7 +3,6 @@ import pytest
 from datasetsforecast.long_horizon2 import LongHorizon2, LongHorizon2Info
 
 
-@pytest.mark.skip(reason="dropbox download restriction")
 @pytest.mark.parametrize("group,meta", LongHorizon2Info)
 def test_longhorizon2(group, meta):
     Y_df = LongHorizon2.load(directory='./data', group=group)
