@@ -163,7 +163,7 @@ class PHM2008:
         assert np.array_equal(last_rul, y_test.RUL.values)
 
         if clip_rul:
-            Y_train_df['y'].clip(upper=125, inplace=True)
-            Y_test_df['y'].clip(upper=125, inplace=True)
+            Y_train_df['y'] = Y_train_df['y'].clip(upper=125)
+            Y_test_df['y'] = Y_test_df['y'].clip(upper=125)
 
         return Y_train_df, Y_test_df
