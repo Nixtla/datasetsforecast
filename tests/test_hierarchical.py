@@ -4,7 +4,6 @@ import pytest
 from datasetsforecast.hierarchical import HierarchicalData, HierarchicalInfo
 
 
-@pytest.mark.skip(reason="dropbox download restriction")
 @pytest.mark.parametrize("group,meta", HierarchicalInfo)
 def test_hierarchicalinfo(group, meta):  # noqa: ARG001
     Y_df, S_df, tags = HierarchicalData.load('./data', group)

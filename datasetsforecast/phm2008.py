@@ -62,7 +62,7 @@ PHM2008Info = Info((FD001, FD002, FD003, FD004))
 @dataclass
 class PHM2008:
 
-    source_url = 'https://www.dropbox.com/s/1od45uh37tplxt7/CMAPSSData.zip?dl=1'
+    source_url = 'https://nixtla-public.s3.amazonaws.com/datasetsforecast/CMAPSSData.zip'
 
     @staticmethod
     def download(directory: str) -> None:
