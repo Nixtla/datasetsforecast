@@ -139,8 +139,8 @@ HierarchicalInfo = Info(
 class HierarchicalData:
 
     source_url: str = 'https://nixtla-public.s3.amazonaws.com/hierarchical-data/datasets.zip'
-    source_url_old_traffic: str ='https://www.dropbox.com/s/4nl5afkdr4djpuy/OldTraffic.zip?dl=1'
-    source_url_old_tourisml: str = 'https://www.dropbox.com/s/ye78jnujhbxyggo/OldTourismLarge.zip?dl=1'
+    source_url_old_traffic: str ='https://nixtla-public.s3.amazonaws.com/datasetsforecast/OldTraffic.zip'
+    source_url_old_tourisml: str = 'https://nixtla-public.s3.amazonaws.com/datasetsforecast/OldTourismLarge.zip'
 
     @staticmethod
     def load(directory: str,

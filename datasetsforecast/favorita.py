@@ -282,7 +282,7 @@ class FavoritaRawData:
     kaggle competitions download -c favorita-grocery-sales-forecasting
     ```
     """
-    source_url = 'https://www.dropbox.com/s/xi019gtvdtmsj9j/favorita-grocery-sales-forecasting2.zip?dl=1'
+    source_url = 'https://nixtla-public.s3.amazonaws.com/datasetsforecast/favorita-grocery-sales-forecasting2.zip'
     files = ['holidays_events.csv.zip', 'items.csv.zip', 'oil.csv.zip', 'sample_submission.csv.zip',
              'stores.csv.zip', 'test.csv.zip', 'train.csv.zip', 'transactions.csv.zip']
 

@@ -161,7 +161,7 @@ class LongHorizon2:
       except ETT that uses 20% validation.
     """
 
-    source_url: str = 'https://www.dropbox.com/s/rlc1qmprpvuqrsv/all_six_datasets.zip?dl=1'
+    source_url: str = 'https://nixtla-public.s3.amazonaws.com/datasetsforecast/all_six_datasets.zip'
     #source_url: str = 'https://drive.google.com/file/d/1alE33S1GmP5wACMXaLu50rDIoVzBM4ik/view?usp=share_link'
     # See https://github.com/google-research/google-research/blob/master/tide/
 

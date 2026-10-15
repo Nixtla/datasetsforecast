@@ -3,7 +3,6 @@ import pytest
 from datasetsforecast.phm2008 import PHM2008, PHM2008Info
 
 
-@pytest.mark.skip(reason="dropbox download restriction")
 @pytest.mark.parametrize("group,meta", PHM2008Info)
 def test_phm2008(group, meta):
     # Checking that load works
@@ -26,3 +25,7 @@ def test_phm2008(group, meta):
     # Assert no nans
     assert not Y_train_df.isnull().values.any()
     assert not Y_test_df.isnull().values.any()
+
+    # Checking that RUL is clipped to 125 by default
+    assert Y_train_df["y"].max() <= 125
+    assert Y_test_df["y"].max() <= 125
