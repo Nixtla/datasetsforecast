@@ -10,7 +10,7 @@ description: Favorita dataset
     options:
       show_if_no_docstring: false
 
-::: datasetsforecast.favorita.load
+::: datasetsforecast.favorita.FavoritaData.load
 
 #### Example
 
@@ -34,7 +34,7 @@ hplots.plot_hierarchically_linked_series(
 )
 ```
 
-::: datasetsforecast.favorita.load_preprocessed
+::: datasetsforecast.favorita.FavoritaData.load_preprocessed
 
 ## Kaggle-Competition References
 
@@ -106,4 +106,4 @@ Favorita’s series.
     options:
       show_if_no_docstring: false
 
-::: datasetsforecast.favorita.unzip
+::: datasetsforecast.favorita.FavoritaRawData.unzip
