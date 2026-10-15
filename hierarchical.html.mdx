@@ -72,6 +72,11 @@ Wiki2(freq='D', horizon=14, papers_horizon=7, seasonality=7, test_size=91, tags_
 OldTraffic(freq='D', horizon=1, papers_horizon=1, seasonality=7, test_size=91, tags_names=('Level1', 'Level2', 'Level3', 'Level4'))
 ```
 
+### `OldTourismLarge`
+
+```python
+OldTourismLarge(freq='MS', horizon=12, papers_horizon=12, seasonality=12, test_size=57, tags_names=('Country', 'Country/State', 'Country/State/Zone', 'Country/State/Zone/Region', 'Country/Purpose', 'Country/State/Purpose', 'Country/State/Zone/Purpose', 'Country/State/Zone/Region/Purpose'))
+```
 
 ### `HierarchicalData`
 
@@ -103,10 +108,10 @@ Name | Type | Description | Default
 ---- | ---- | ----------- | -------
 `directory` | <code>[str](#str)</code> | Directory where data will be downloaded. | *required*
 `group` | <code>[str](#str)</code> | Group name. | *required*
-`cache` | <code>[bool](#bool)</code> | If `True` saves and loads | <code>True</code>
+`cache` | <code>[bool](#bool)</code> | If `True`, saves and loads a parquet cache under `{directory}/.cache`. | <code>True</code>
 
 **Returns:**
 
 Type | Description
 ---- | -----------
-<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame)\]</code> | Tuple\[pd.DataFrame, pd.DataFrame\]: Target time series with columns ['unique_id', 'ds', 'y']. Containes the base time series, Summing matrix of size (hierarchies, bottom).
+<code>[Tuple](#typing.Tuple)\[[DataFrame](#pandas.DataFrame), [DataFrame](#pandas.DataFrame), [Dict](#typing.Dict)\[[str](#str), [ndarray](#numpy.ndarray)\]\]</code> | Tuple\[pd.DataFrame, pd.DataFrame, Dict[str, np.ndarray]\]: Target time series with columns ['unique_id', 'ds', 'y']. Containes the base time series, Summing matrix of size (hierarchies, bottom), Mapping of each hierarchy level to its `unique_id` values.
