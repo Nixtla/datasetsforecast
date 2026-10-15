@@ -66,7 +66,7 @@ while the remaining datasets follow PROFHIT experimental settings.
     options:
       show_if_no_docstring: false
 
-::: datasetsforecast.hierarchical.Old TourismLarge
+::: datasetsforecast.hierarchical.OldTourismLarge
     handler: python
     options:
       show_if_no_docstring: false
