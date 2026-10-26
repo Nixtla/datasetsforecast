@@ -48,7 +48,7 @@ class TourismLarge:
 
 @dataclass
 class TourismSmall:
-    freq: str = 'Q'
+    freq: str = 'QE'
     horizon: int = 4
     papers_horizon: int = 4
     seasonality: int = 4
@@ -192,8 +192,8 @@ class HierarchicalData:
 
         def get_levels_from_S(S_df):
             cut_idxs, = np.where(S_df.sum(axis=1).cumsum() % S_df.shape[1] == 0.)
-            levels = [S_df.iloc[(cut_idxs[i] + 1):(cut_idxs[i+1] + 1)].index.values for i in range(cut_idxs.size-1)]
-            levels = [S_df.iloc[[0]].index.values] + levels
+            levels = [S_df.iloc[(cut_idxs[i] + 1):(cut_idxs[i+1] + 1)].index.to_numpy(dtype=object) for i in range(cut_idxs.size-1)]
+            levels = [S_df.iloc[[0]].index.to_numpy(dtype=object)] + levels
             assert sum([len(lv) for lv in levels]) == S_df.shape[0]
             return levels
 

@@ -16,7 +16,7 @@ from .utils import Info, _cache_dir, async_download_files, download_file, extrac
 class Yearly:
     seasonality: int = 1
     horizon: int = 6
-    freq: str = 'Y'
+    freq: str = 'YE'
     name: str = 'Yearly'
     n_ts: int = 23_000
 
@@ -24,7 +24,7 @@ class Yearly:
 class Quarterly:
     seasonality: int = 4
     horizon: int = 8
-    freq: str = 'Q'
+    freq: str = 'QE'
     name: str = 'Quarterly'
     n_ts: int = 24_000
 
@@ -32,7 +32,7 @@ class Quarterly:
 class Monthly:
     seasonality: int = 12
     horizon: int = 18
-    freq: str = 'M'
+    freq: str = 'ME'
     name: str = 'Monthly'
     n_ts: int = 48_000
 
@@ -56,7 +56,7 @@ class Daily:
 class Hourly:
     seasonality: int = 24
     horizon: int = 48
-    freq: str = 'H'
+    freq: str = 'h'
     name: str = 'Hourly'
     n_ts: int = 414
 

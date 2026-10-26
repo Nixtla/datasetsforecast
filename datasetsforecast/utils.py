@@ -445,6 +445,10 @@ class Info:
 _CACHE_VERSION = 1
 
 
+def _pandas_major() -> int:
+    return int(pd.__version__.split('.')[0])
+
+
 def _cache_dir(directory: Union[str, Path], dataset: str, group: str) -> Path:
     """Cache location, kept outside every directory archives are extracted into."""
     return Path(directory) / '.cache' / dataset / group
@@ -481,6 +485,7 @@ def save_cache(
                 frame.to_parquet(tmp / f'{name}.parquet')
         meta = {
             'version': _CACHE_VERSION,
+            'pandas': _pandas_major(),
             'none_frames': none_frames,
             'object_columns': object_columns,
             'extra': extra,
@@ -510,6 +515,9 @@ def load_cache(
             return None
         meta = json.loads(meta_file.read_text())
         if meta.get('version') != _CACHE_VERSION:
+            return None
+        # pandas majors infer different dtypes (e.g. pandas 3 reads strings as `str`, not object)
+        if meta.get('pandas') != _pandas_major():
             return None
         frames: Dict[str, Optional[pd.DataFrame]] = {}
         for name in names:

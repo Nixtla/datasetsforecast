@@ -6,7 +6,6 @@ import os
 import timeit
 from dataclasses import dataclass
 from itertools import chain
-from pathlib import Path
 from typing import Tuple
 
 import matplotlib.pyplot as plt
@@ -173,8 +172,8 @@ def get_levels_from_S_df(S_df):
         levels (list): Hierarchical aggregation indexes, where each entry is a level.
     """
     cut_idxs, = np.where(S_df.sum(axis=1).cumsum() % S_df.shape[1] == 0.)
-    levels = [S_df.iloc[(cut_idxs[i] + 1):(cut_idxs[i+1] + 1)].index.values for i in range(cut_idxs.size-1)]
-    levels = [S_df.iloc[[0]].index.values] + levels
+    levels = [S_df.iloc[(cut_idxs[i] + 1):(cut_idxs[i+1] + 1)].index.to_numpy(dtype=object) for i in range(cut_idxs.size-1)]
+    levels = [S_df.iloc[[0]].index.to_numpy(dtype=object)] + levels
     assert sum([len(lv) for lv in levels]) == S_df.shape[0]
     return levels
 
@@ -234,7 +233,7 @@ class Favorita200:
     horizon: int = 34
     seasonality: int = 7
     test_size: int = 34
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Country',
         'Country/State',
         'Country/State/City',
@@ -247,7 +246,7 @@ class Favorita500:
     horizon: int = 34
     seasonality: int = 7
     test_size: int = 34
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Country',
         'Country/State',
         'Country/State/City',
@@ -259,7 +258,7 @@ class FavoritaComplete:
     horizon: int = 34
     seasonality: int = 7
     test_size: int = 34
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Country',
         'Country/State',
         'Country/State/City',
@@ -669,8 +668,8 @@ class FavoritaData:
             balanced_df = balanced_df.merge(oil, on='date', how='left')
             #check_nans(balanced_df)
 
-            balanced_df['dcoilwtico'] = balanced_df['dcoilwtico'].fillna(method='ffill')
-            balanced_df['dcoilwtico'] = balanced_df['dcoilwtico'].fillna(method='bfill')
+            balanced_df['dcoilwtico'] = balanced_df['dcoilwtico'].ffill()
+            balanced_df['dcoilwtico'] = balanced_df['dcoilwtico'].bfill()
 
             #check_nans(balanced_df)
             oil_agg = balanced_df
@@ -713,7 +712,7 @@ class FavoritaData:
                 plt.close()
 
             # Holiday variables
-            hdays = holidays[holidays['transferred']==False].copy()
+            hdays = holidays[holidays['transferred'].eq(False)].copy()
             hdays.rename(columns={'type': 'holiday_type'}, inplace=True)
 
             national_hdays = hdays[hdays['locale']=='National']
@@ -815,7 +814,7 @@ class FavoritaData:
 
     @staticmethod
     def load_preprocessed(directory: str, group: str, cache: bool=True, verbose: bool=False) -> \
-        Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Load Favorita group datasets.
 
         For the exploration of more complex models, we make available the entire information
@@ -830,15 +829,17 @@ class FavoritaData:
 
         Returns:
             tuple: A tuple containing:
-                - static_bottom (pd.DataFrame): Static variables of bottom level series.
                 - static_agg (pd.DataFrame): Static variables of aggregate level series.
-                - temporal_bottom (pd.DataFrame): Temporal variables of bottom level series.
+                - static_bottom (pd.DataFrame): Static variables of bottom level series.
                 - temporal_agg (pd.DataFrame): Temporal variables of aggregate level series.
+                - temporal_bottom (pd.DataFrame): Temporal variables of bottom level series.
+                - S_df (pd.DataFrame): Hierarchical constraints (summing matrix).
         """
         group_path = f'{directory}/{group}'
 
         if os.path.exists(group_path) and cache:
-            if verbose: print('Read preprocessed data to avoid unnecesary computation')
+            if verbose:
+                print('Read preprocessed data to avoid unnecesary computation')
             S_df = pd.read_csv(f'{group_path}/hier_constraints.csv', index_col=0)
             static_agg = pd.read_csv(f'{group_path}/static_agg.csv')
             static_bottom = pd.read_csv(f'{group_path}/static_bottom.feather')

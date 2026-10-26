@@ -112,7 +112,7 @@ class PHM2008:
         PHM2008.download(directory)
 
         path = f'{directory}/phm2008/CMAPSSData'
-        group = PHM2008Info.get_group(group)
+        class_group = PHM2008Info.get_group(group)
 
         # define column names for easy indexing
         index_names = ['unit_nr', 'time_cycles']
@@ -121,12 +121,12 @@ class PHM2008:
         col_names = index_names + setting_names + sensor_names
 
         # read data
-        train = pd.read_csv((f'{path}/{group.train_file}'),
-                            sep='\s+', header=None, names=col_names)
-        test = pd.read_csv((f'{path}/{group.test_file}'),
-                        sep='\s+', header=None, names=col_names)
-        y_test = pd.read_csv((f'{path}/{group.rul_file}'),
-                            sep='\s+', header=None, names=['RUL'])
+        train = pd.read_csv((f'{path}/{class_group.train_file}'),
+                            sep=r'\s+', header=None, names=col_names)
+        test = pd.read_csv((f'{path}/{class_group.test_file}'),
+                        sep=r'\s+', header=None, names=col_names)
+        y_test = pd.read_csv((f'{path}/{class_group.rul_file}'),
+                            sep=r'\s+', header=None, names=['RUL'])
 
 
         # drop non-informative features in training set

@@ -193,6 +193,34 @@ def test_cache_version_mismatch_returns_none(tmp_path):
     assert load_cache(cache_dir, ['Y_df']) is None
 
 
+def test_cache_from_other_pandas_major_returns_none(tmp_path):
+    cache_dir = tmp_path / 'g'
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
+    assert load_cache(cache_dir, ['Y_df']) is not None
+    meta = json.loads((cache_dir / 'meta.json').read_text())
+    meta['pandas'] -= 1
+    (cache_dir / 'meta.json').write_text(json.dumps(meta))
+    assert load_cache(cache_dir, ['Y_df']) is None
+
+
+def test_cache_without_pandas_major_returns_none(tmp_path):
+    # caches written before the pandas major was recorded
+    cache_dir = tmp_path / 'g'
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
+    meta = json.loads((cache_dir / 'meta.json').read_text())
+    del meta['pandas']
+    (cache_dir / 'meta.json').write_text(json.dumps(meta))
+    assert load_cache(cache_dir, ['Y_df']) is None
+
+
+def test_cache_preserves_string_dtype(tmp_path):
+    cache_dir = tmp_path / 'g'
+    df = pd.DataFrame({'unique_id': ['a', 'b'], 'y': [1.0, 2.0]})
+    save_cache(cache_dir, {'Y_df': df}, root=tmp_path)
+    frames, _ = load_cache(cache_dir, ['Y_df'])
+    pd.testing.assert_frame_equal(frames['Y_df'], df)
+
+
 def test_cache_failed_write_is_not_visible(tmp_path, monkeypatch, caplog):
     calls = []
     original = pd.DataFrame.to_parquet
