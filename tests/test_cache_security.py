@@ -193,24 +193,43 @@ def test_cache_version_mismatch_returns_none(tmp_path):
     assert load_cache(cache_dir, ['Y_df']) is None
 
 
-def test_cache_from_other_pandas_major_returns_none(tmp_path):
+@pytest.mark.parametrize('key, value', [('pandas', -1), ('infer_string', None)])
+def test_cache_from_other_dtype_env_returns_none(tmp_path, key, value):
     cache_dir = tmp_path / 'g'
     save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
     assert load_cache(cache_dir, ['Y_df']) is not None
     meta = json.loads((cache_dir / 'meta.json').read_text())
-    meta['pandas'] -= 1
+    env = meta['dtype_env']
+    env[key] = env[key] + value if key == 'pandas' else not env[key]
     (cache_dir / 'meta.json').write_text(json.dumps(meta))
     assert load_cache(cache_dir, ['Y_df']) is None
 
 
-def test_cache_without_pandas_major_returns_none(tmp_path):
-    # caches written before the pandas major was recorded
+@pytest.mark.parametrize('current_env, reused', [
+    ({'pandas': 2, 'infer_string': False}, True),
+    ({'pandas': 2, 'infer_string': True}, False),
+    ({'pandas': 3, 'infer_string': True}, False),
+])
+def test_cache_without_dtype_env_is_from_pandas2(tmp_path, monkeypatch, current_env, reused):
+    # caches written before the dtype env was recorded
     cache_dir = tmp_path / 'g'
     save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
     meta = json.loads((cache_dir / 'meta.json').read_text())
-    del meta['pandas']
+    del meta['dtype_env']
     (cache_dir / 'meta.json').write_text(json.dumps(meta))
-    assert load_cache(cache_dir, ['Y_df']) is None
+    monkeypatch.setattr(utils, '_dtype_env', lambda: current_env)
+    assert (load_cache(cache_dir, ['Y_df']) is not None) == reused
+
+
+@pytest.mark.filterwarnings('ignore::DeprecationWarning')
+@pytest.mark.filterwarnings('ignore::FutureWarning')
+def test_cache_rebuilt_when_string_inference_changes(tmp_path):
+    cache_dir = tmp_path / 'g'
+    infer = utils._dtype_env()['infer_string']
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'unique_id': ['a']})}, root=tmp_path)
+    with pd.option_context('future.infer_string', not infer):
+        assert load_cache(cache_dir, ['Y_df']) is None
+    assert load_cache(cache_dir, ['Y_df']) is not None
 
 
 def test_cache_preserves_string_dtype(tmp_path):

@@ -739,7 +739,7 @@ class FavoritaData:
             # Fast numpy balance
             balanced_prod = numpy_balance(filter_stores, filter_dates)
             balanced_df   = pd.DataFrame(balanced_prod, columns=['store_nbr', 'date'])
-            balanced_df['date'] = balanced_df['date'].astype('datetime64[ns]')
+            balanced_df['date'] = balanced_df['date'].astype(transactions['date'].dtype)
 
             # 'Transactions Merge'
             # Merge with balanced data

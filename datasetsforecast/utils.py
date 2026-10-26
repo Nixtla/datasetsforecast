@@ -445,8 +445,18 @@ class Info:
 _CACHE_VERSION = 1
 
 
-def _pandas_major() -> int:
-    return int(pd.__version__.split('.')[0])
+def _dtype_env() -> dict:
+    """Settings that change the dtypes pandas infers, so a cache is only reused under the same ones."""
+    return {
+        'pandas': int(pd.__version__.split('.')[0]),
+        # True on pandas 3 by default and on pandas 2 with `future.infer_string`; checked by
+        # behavior because reading the option warns on pandas 3 and it is removed in pandas 4
+        'infer_string': bool(pd.Series(['']).dtype != object),
+    }
+
+
+# caches written before the dtype env was recorded all come from pandas 2 defaults (pandas was capped below 3)
+_LEGACY_DTYPE_ENV = {'pandas': 2, 'infer_string': False}
 
 
 def _cache_dir(directory: Union[str, Path], dataset: str, group: str) -> Path:
@@ -485,7 +495,7 @@ def save_cache(
                 frame.to_parquet(tmp / f'{name}.parquet')
         meta = {
             'version': _CACHE_VERSION,
-            'pandas': _pandas_major(),
+            'dtype_env': _dtype_env(),
             'none_frames': none_frames,
             'object_columns': object_columns,
             'extra': extra,
@@ -516,8 +526,8 @@ def load_cache(
         meta = json.loads(meta_file.read_text())
         if meta.get('version') != _CACHE_VERSION:
             return None
-        # pandas majors infer different dtypes (e.g. pandas 3 reads strings as `str`, not object)
-        if meta.get('pandas') != _pandas_major():
+        # e.g. pandas 3 reads strings as `str`, while a cache from pandas 2 restores them as object
+        if meta.get('dtype_env', _LEGACY_DTYPE_ENV) != _dtype_env():
             return None
         frames: Dict[str, Optional[pd.DataFrame]] = {}
         for name in names:
