@@ -128,8 +128,8 @@ def one_hot_encoding(df, index_col):
     columns.remove(index_col)
     one_hot_concat_df = pd.DataFrame(df[index_col].values, columns=[index_col])
     for col in columns:
-        dummy_columns = [f'{col}_[{x}]' for x in list(df[col].unique())]
-        dummy_values  = encoder.fit_transform(df[col].values.reshape(-1,1)).toarray()
+        dummy_values  = encoder.fit_transform(df[col].to_numpy().reshape(-1,1)).toarray()
+        dummy_columns = [f'{col}_[{x}]' for x in encoder.categories_[0]]
         one_hot_df    = pd.DataFrame(dummy_values, columns=dummy_columns)
         one_hot_concat_df = pd.concat([one_hot_concat_df, one_hot_df], axis=1)
     return one_hot_concat_df

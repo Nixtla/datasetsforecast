@@ -72,8 +72,8 @@ jobs:
       - name: Install dependencies
         run: uv sync --group dev
 
-      - name: Check pandas 2 is used
-        run: uv run --with "${{ matrix.pandas }}" python -c "import pandas; print(pandas.__version__); assert pandas.__version__.startswith('2.'), pandas.__version__"
+      - name: Check Python and pandas versions
+        run: uv run --with "${{ matrix.pandas }}" python -c "import sys, pandas; v = '%d.%d' % sys.version_info[:2]; print(v, pandas.__version__); assert v == '${{ matrix.python-version }}', v; assert pandas.__version__.startswith('2.'), pandas.__version__"
 
       - name: Run pytest with pandas 2
         run: uv run --with "${{ matrix.pandas }}" pytest

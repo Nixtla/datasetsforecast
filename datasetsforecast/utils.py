@@ -506,6 +506,11 @@ def save_cache(
         if cache_dir.exists():
             shutil.rmtree(cache_dir)
         os.replace(tmp, cache_dir)
+    except Warning:
+        # only raised when warnings are turned into errors (`-W error` or the test suite's filterwarnings),
+        # in which case the caller asked to see them, so don't hide them
+        shutil.rmtree(tmp, ignore_errors=True)
+        raise
     except Exception as e:
         logger.warning(f'Could not write cache to {cache_dir}: {e}')
         shutil.rmtree(tmp, ignore_errors=True)
@@ -541,6 +546,10 @@ def load_cache(
                         frame[col] = frame[col].astype(object)
                 frames[name] = frame
         return frames, meta.get('extra')
+    except Warning:
+        # only raised when warnings are turned into errors (`-W error` or the test suite's filterwarnings),
+        # in which case the caller asked to see them, so don't hide them
+        raise
     except Exception as e:
         logger.warning(f'Ignoring unreadable cache at {cache_dir}: {e}')
         return None

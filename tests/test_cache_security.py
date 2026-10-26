@@ -242,6 +242,28 @@ def test_cache_preserves_string_dtype(tmp_path):
     pd.testing.assert_frame_equal(frames['Y_df'], df)
 
 
+@pytest.mark.parametrize('method', ['to_parquet', 'read_parquet'])
+def test_cache_does_not_hide_warnings_raised_as_errors(tmp_path, monkeypatch, method):
+    # under the test suite's filterwarnings, a pandas deprecation in the cache code must fail, not disable caching
+    cache_dir = tmp_path / 'g'
+    df = pd.DataFrame({'y': [1]})
+    if method == 'read_parquet':
+        save_cache(cache_dir, {'Y_df': df}, root=tmp_path)
+
+    def deprecated(*args, **kwargs):
+        raise FutureWarning('deprecated')
+
+    if method == 'to_parquet':
+        monkeypatch.setattr(pd.DataFrame, 'to_parquet', deprecated)
+        with pytest.raises(FutureWarning):
+            save_cache(cache_dir, {'Y_df': df}, root=tmp_path)
+        assert list(tmp_path.iterdir()) == []  # no cache and no leftover temporary directory
+    else:
+        monkeypatch.setattr(pd, 'read_parquet', deprecated)
+        with pytest.raises(FutureWarning):
+            load_cache(cache_dir, ['Y_df'])
+
+
 def test_cache_failed_write_is_not_visible(tmp_path, monkeypatch, caplog):
     calls = []
     original = pd.DataFrame.to_parquet

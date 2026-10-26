@@ -289,7 +289,7 @@ class M5Evaluation:
             x = x[np.argmax(x!=0):]
             scale = ((x[1:] - x[:-1]) ** 2).mean()
             return scale
-        scales = sales.agg(scale, 1).rename('scale').reset_index()
+        scales = sales.agg(scale, axis=1).rename('scale').reset_index()
 
         # y_test
         y_test = M5Evaluation.aggregate_levels(y_test)
