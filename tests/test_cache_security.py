@@ -481,7 +481,7 @@ def test_cache_permission_error_falls_back(tmp_path, monkeypatch, caplog):
             raise PermissionError(13, 'Permission denied', str(self))
         return original(self)
 
-    # on Python 3.10-3.13 pathlib re-raises PermissionError from is_file
+    # on Python 3.11-3.13 pathlib re-raises PermissionError from is_file
     monkeypatch.setattr(Path, 'is_file', denied)
     with caplog.at_level(logging.WARNING):
         assert load_cache(cache_dir, ['Y_df']) is None
