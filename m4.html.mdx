@@ -14,7 +14,7 @@ Other(seasonality=1, horizon=8, freq='D', name='Other', n_ts=5000, included_grou
 ### `Hourly`
 
 ```python
-Hourly(seasonality=24, horizon=48, freq='H', name='Hourly', n_ts=414)
+Hourly(seasonality=24, horizon=48, freq='h', name='Hourly', n_ts=414)
 ```
 
 ### `Daily`
@@ -32,19 +32,19 @@ Weekly(seasonality=1, horizon=13, freq='W', name='Weekly', n_ts=359)
 ### `Monthly`
 
 ```python
-Monthly(seasonality=12, horizon=18, freq='M', name='Monthly', n_ts=48000)
+Monthly(seasonality=12, horizon=18, freq='ME', name='Monthly', n_ts=48000)
 ```
 
 ### `Quarterly`
 
 ```python
-Quarterly(seasonality=4, horizon=8, freq='Q', name='Quarterly', n_ts=24000)
+Quarterly(seasonality=4, horizon=8, freq='QE', name='Quarterly', n_ts=24000)
 ```
 
 ### `Yearly`
 
 ```python
-Yearly(seasonality=1, horizon=6, freq='Y', name='Yearly', n_ts=23000)
+Yearly(seasonality=1, horizon=6, freq='YE', name='Yearly', n_ts=23000)
 ```
 
 ## Download data class

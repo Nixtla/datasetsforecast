@@ -13,7 +13,7 @@ title: Long-Horizon Original Datasets
 ### `Weather`
 
 ```python
-Weather(freq='10M', name='weather', n_ts=21, test_size=10539, val_size=5270, horizons=(96, 192, 336, 720))
+Weather(freq='10min', name='weather', n_ts=21, test_size=10539, val_size=5270, horizons=(96, 192, 336, 720))
 ```
 
 This Weather dataset contains the 2020 year of 21 meteorological
@@ -29,7 +29,7 @@ Reference:
 ### `TrafficL`
 
 ```python
-TrafficL(freq='H', name='traffic', n_ts=862, test_size=3508, val_size=1756, horizons=(96, 192, 336, 720))
+TrafficL(freq='h', name='traffic', n_ts=862, test_size=3508, val_size=1756, horizons=(96, 192, 336, 720))
 ```
 
 This large Traffic dataset was collected by the California Department
@@ -47,7 +47,7 @@ Reference:
 ### `ECL`
 
 ```python
-ECL(freq='15T', name='ECL', n_ts=321, n_time=26304, test_size=5260, val_size=2632, horizons=(96, 192, 336, 720))
+ECL(freq='15min', name='ECL', n_ts=321, n_time=26304, test_size=5260, val_size=2632, horizons=(96, 192, 336, 720))
 ```
 
 The Electricity dataset reports the fifteen minute electricity
@@ -62,7 +62,7 @@ Reference:
 ### `ETTm2`
 
 ```python
-ETTm2(freq='15T', name='ETTm2', n_ts=7, n_time=57600, test_size=11520, val_size=11520, horizons=(96, 192, 336, 720))
+ETTm2(freq='15min', name='ETTm2', n_ts=7, n_time=57600, test_size=11520, val_size=11520, horizons=(96, 192, 336, 720))
 ```
 
 The ETTm2 dataset monitors an electricity transformer
@@ -78,7 +78,7 @@ Reference:
 ### `ETTm1`
 
 ```python
-ETTm1(freq='15T', name='ETTm1', n_ts=7, n_time=57600, test_size=11520, val_size=11520, horizons=(96, 192, 336, 720))
+ETTm1(freq='15min', name='ETTm1', n_ts=7, n_time=57600, test_size=11520, val_size=11520, horizons=(96, 192, 336, 720))
 ```
 
 The ETTm1 dataset monitors an electricity transformer
@@ -89,7 +89,7 @@ from July 2016 to July 2018 at a fifteen minute frequency.
 ### `ETTh2`
 
 ```python
-ETTh2(freq='H', name='ETTh2', n_ts=7, n_time=14400, test_size=2880, val_size=2880, horizons=(96, 192, 336, 720))
+ETTh2(freq='h', name='ETTh2', n_ts=7, n_time=14400, test_size=2880, val_size=2880, horizons=(96, 192, 336, 720))
 ```
 
 The ETTh2 dataset monitors an electricity transformer
@@ -100,7 +100,7 @@ from July 2016 to July 2018 at an hourly frequency.
 ### `ETTh1`
 
 ```python
-ETTh1(freq='H', name='ETTh1', n_ts=7, n_time=14400, test_size=2880, val_size=2880, horizons=(96, 192, 336, 720))
+ETTh1(freq='h', name='ETTh1', n_ts=7, n_time=14400, test_size=2880, val_size=2880, horizons=(96, 192, 336, 720))
 ```
 
 The ETTh1 dataset monitors an electricity transformer
