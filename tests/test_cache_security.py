@@ -193,14 +193,16 @@ def test_cache_version_mismatch_returns_none(tmp_path):
     assert load_cache(cache_dir, ['Y_df']) is None
 
 
-@pytest.mark.parametrize('key, value', [('pandas', -1), ('infer_string', None)])
-def test_cache_from_other_dtype_env_returns_none(tmp_path, key, value):
+@pytest.mark.parametrize('key, change', [
+    ('pandas', lambda major: major - 1),
+    ('infer_string', lambda infer: not infer),
+])
+def test_cache_from_other_dtype_env_returns_none(tmp_path, key, change):
     cache_dir = tmp_path / 'g'
     save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
     assert load_cache(cache_dir, ['Y_df']) is not None
     meta = json.loads((cache_dir / 'meta.json').read_text())
-    env = meta['dtype_env']
-    env[key] = env[key] + value if key == 'pandas' else not env[key]
+    meta['dtype_env'][key] = change(meta['dtype_env'][key])
     (cache_dir / 'meta.json').write_text(json.dumps(meta))
     assert load_cache(cache_dir, ['Y_df']) is None
 

@@ -132,7 +132,7 @@ class PHM2008:
         # drop non-informative features in training set
         drop_sensors = ['s_1', 's_5', 's_6', 's_10', 's_16', 's_18', 's_19']
         drop_labels = setting_names + drop_sensors
-        train.drop(labels=drop_labels, axis=1, inplace=True)
+        train = train.drop(labels=drop_labels, axis=1)
 
         # Add piece-wise target remaining useful life
         # in the paper the MAX RUL is mentioned as 125
@@ -143,7 +143,7 @@ class PHM2008:
                                            'RUL': 'y'})
 
         # drop non-informative features in testing set
-        test.drop(labels=drop_labels, axis=1, inplace=True)
+        test = test.drop(labels=drop_labels, axis=1)
 
         # Testing set
         Y_test_df = test.rename(columns={'unit_nr': 'unique_id', 'time_cycles': 'ds'})

@@ -455,7 +455,8 @@ def _dtype_env() -> dict:
     }
 
 
-# caches written before the dtype env was recorded all come from pandas 2 defaults (pandas was capped below 3)
+# caches written before the dtype env was recorded all come from pandas 2 (pandas was capped below 3);
+# assumes default options, so one written with `future.infer_string` enabled is treated as without it
 _LEGACY_DTYPE_ENV = {'pandas': 2, 'infer_string': False}
 
 

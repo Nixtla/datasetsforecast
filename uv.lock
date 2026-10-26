@@ -720,7 +720,7 @@ dev = [
 requires-dist = [
     { name = "aiohttp", specifier = ">=3.14.4" },
     { name = "numpy" },
-    { name = "pandas", extras = ["plot"], specifier = ">=2.2.2" },
+    { name = "pandas", extras = ["plot"], specifier = ">=2.2.2,<4.0.0" },
     { name = "pyarrow", specifier = ">=15.0.0" },
     { name = "requests" },
     { name = "scikit-learn" },

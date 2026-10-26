@@ -349,7 +349,7 @@ class FavoritaRawData:
                                   dtype=dtypes_dict,
                                   parse_dates=['date'])
             del train_df['id']
-            train_df.reset_index(drop=True, inplace=True)
+            train_df = train_df.reset_index(drop=True)
             train_df.to_feather(f'{directory}/train.feather')
             print("saved train.csv to train.feather for fast access")
 
@@ -596,16 +596,16 @@ class FavoritaData:
             #-------------------- with CodeTimer('Temporal Merge'): --------------------#
             # Two stage merge with balanced data
             item_store_df = item_store_df[['unique_id', 'item_nbr', 'store_nbr', 'is_original']]
-            item_store_df.set_index(['unique_id'], inplace=True)
-            balanced_df.set_index(['unique_id'], inplace=True)
+            item_store_df = item_store_df.set_index(['unique_id'])
+            balanced_df = balanced_df.set_index(['unique_id'])
             balanced_df = balanced_df.merge(item_store_df, how='left',
                                             left_on=['unique_id'],
                                             right_index=True).reset_index()
             #check_nans(balanced_df)
             item_store_df = item_store_df.reset_index()
 
-            temporal_df.set_index(['item_nbr', 'store_nbr', 'date'], inplace=True)
-            balanced_df.set_index(['item_nbr', 'store_nbr', 'date'], inplace=True)
+            temporal_df = temporal_df.set_index(['item_nbr', 'store_nbr', 'date'])
+            balanced_df = balanced_df.set_index(['item_nbr', 'store_nbr', 'date'])
             balanced_df = balanced_df.merge(temporal_df, how='left',
                                             left_on=['item_nbr', 'store_nbr', 'date'],
                                             right_index=True).reset_index()
@@ -630,7 +630,7 @@ class FavoritaData:
             #check_nans(balanced_df)
 
         # Rename variables for StatsForecast/NeuralForecast compatibility
-        balanced_df.rename(columns={"date": "ds", "unit_sales": "y"}, inplace=True)
+        balanced_df = balanced_df.rename(columns={"date": "ds", "unit_sales": "y"})
 
         return balanced_df
 
@@ -713,7 +713,7 @@ class FavoritaData:
 
             # Holiday variables
             hdays = holidays[holidays['transferred'].eq(False)].copy()
-            hdays.rename(columns={'type': 'holiday_type'}, inplace=True)
+            hdays = hdays.rename(columns={'type': 'holiday_type'})
 
             national_hdays = hdays[hdays['locale']=='National']
             national_hdays = national_hdays[national_hdays.holiday_type.isin(['Holiday', 'Transfer'])]
@@ -743,8 +743,8 @@ class FavoritaData:
 
             # 'Transactions Merge'
             # Merge with balanced data
-            transactions.set_index(['store_nbr', 'date'], inplace=True)
-            balanced_df.set_index(['store_nbr', 'date'], inplace=True)
+            transactions = transactions.set_index(['store_nbr', 'date'])
+            balanced_df = balanced_df.set_index(['store_nbr', 'date'])
             transactions = balanced_df.merge(transactions, how='left',
                                              left_on=['store_nbr', 'date'],
                                              right_index=True).reset_index()
@@ -792,10 +792,10 @@ class FavoritaData:
             #print("3. calendar_agg.dtypes \n", calendar_agg.dtypes, "\n")
             #print("4. transactions_agg.dtypes \n", transactions_agg.dtypes, "\n")
 
-            temporal_agg.set_index(['date'], inplace=True)
-            oil_agg.set_index(['date'], inplace=True)
-            calendar_agg.set_index(['date'], inplace=True)
-            transactions_agg.set_index(['date'], inplace=True)
+            temporal_agg = temporal_agg.set_index(['date'])
+            oil_agg = oil_agg.set_index(['date'])
+            calendar_agg = calendar_agg.set_index(['date'])
+            transactions_agg = transactions_agg.set_index(['date'])
 
             # Compile national aggregated data
             temporal_agg = temporal_agg.merge(oil_agg, how='left', left_on=['date'],
@@ -808,7 +808,7 @@ class FavoritaData:
             #check_nans(temporal_agg)
 
         # Rename variables for StatsForecast/NeuralForecast compatibility
-        temporal_agg.rename(columns={"date": "ds", "unit_sales": "y"}, inplace=True)
+        temporal_agg = temporal_agg.rename(columns={"date": "ds", "unit_sales": "y"})
 
         return temporal_agg
 

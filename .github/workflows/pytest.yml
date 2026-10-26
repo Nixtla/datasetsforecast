@@ -41,9 +41,18 @@ jobs:
       - name: Run pytest
         run: uv run pytest
 
-  # the lockfile resolves pandas 3, so check the oldest supported pandas separately
+  # the lockfile resolves pandas 3, so check pandas 2 separately: the oldest supported
+  # release, and the latest 2.x on a newer Python (2.2.2 has no wheels past 3.12)
   pandas-2:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python-version: "3.11"
+            pandas: "pandas[plot]==2.2.2"
+          - python-version: "3.14"
+            pandas: "pandas[plot]>=2.2.2,<3"
     steps:
       - name: Clone repo
         uses: actions/checkout@v7
@@ -52,7 +61,7 @@ jobs:
 
       - uses: actions/setup-python@v7
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -63,5 +72,8 @@ jobs:
       - name: Install dependencies
         run: uv sync --group dev
 
-      - name: Run pytest with pandas 2.2.2
-        run: uv run --with "pandas[plot]==2.2.2" pytest
+      - name: Check pandas 2 is used
+        run: uv run --with "${{ matrix.pandas }}" python -c "import pandas; print(pandas.__version__); assert pandas.__version__.startswith('2.'), pandas.__version__"
+
+      - name: Run pytest with pandas 2
+        run: uv run --with "${{ matrix.pandas }}" pytest
