@@ -20,12 +20,13 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
 ]
 dependencies = [
     "aiohttp>=3.14.4",
     "numpy",
     "scikit-learn",
-    "pandas[plot]<3.0.0",
+    "pandas[plot]>=2.2.2,<4.0.0",
     "pyarrow>=15.0.0",
     "requests",
     "tqdm",
@@ -59,6 +60,11 @@ addopts = [
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-fail-under=60", #TODO: revert to 80 once coverage is improved
+]
+# deprecations raised from our own code (e.g. pandas 4 removals) must be fixed, not ignored
+filterwarnings = [
+    "error::DeprecationWarning:datasetsforecast",
+    "error::FutureWarning:datasetsforecast",
 ]
 
 [tool.coverage.run]

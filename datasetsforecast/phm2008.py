@@ -112,7 +112,7 @@ class PHM2008:
         PHM2008.download(directory)
 
         path = f'{directory}/phm2008/CMAPSSData'
-        group = PHM2008Info.get_group(group)
+        class_group = PHM2008Info.get_group(group)
 
         # define column names for easy indexing
         index_names = ['unit_nr', 'time_cycles']
@@ -121,18 +121,18 @@ class PHM2008:
         col_names = index_names + setting_names + sensor_names
 
         # read data
-        train = pd.read_csv((f'{path}/{group.train_file}'),
-                            sep='\s+', header=None, names=col_names)
-        test = pd.read_csv((f'{path}/{group.test_file}'),
-                        sep='\s+', header=None, names=col_names)
-        y_test = pd.read_csv((f'{path}/{group.rul_file}'),
-                            sep='\s+', header=None, names=['RUL'])
+        train = pd.read_csv((f'{path}/{class_group.train_file}'),
+                            sep=r'\s+', header=None, names=col_names)
+        test = pd.read_csv((f'{path}/{class_group.test_file}'),
+                        sep=r'\s+', header=None, names=col_names)
+        y_test = pd.read_csv((f'{path}/{class_group.rul_file}'),
+                            sep=r'\s+', header=None, names=['RUL'])
 
 
         # drop non-informative features in training set
         drop_sensors = ['s_1', 's_5', 's_6', 's_10', 's_16', 's_18', 's_19']
         drop_labels = setting_names + drop_sensors
-        train.drop(labels=drop_labels, axis=1, inplace=True)
+        train = train.drop(labels=drop_labels, axis=1)
 
         # Add piece-wise target remaining useful life
         # in the paper the MAX RUL is mentioned as 125
@@ -143,7 +143,7 @@ class PHM2008:
                                            'RUL': 'y'})
 
         # drop non-informative features in testing set
-        test.drop(labels=drop_labels, axis=1, inplace=True)
+        test = test.drop(labels=drop_labels, axis=1)
 
         # Testing set
         Y_test_df = test.rename(columns={'unit_nr': 'unique_id', 'time_cycles': 'ds'})

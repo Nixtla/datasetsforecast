@@ -193,6 +193,77 @@ def test_cache_version_mismatch_returns_none(tmp_path):
     assert load_cache(cache_dir, ['Y_df']) is None
 
 
+@pytest.mark.parametrize('key, change', [
+    ('pandas', lambda major: major - 1),
+    ('infer_string', lambda infer: not infer),
+])
+def test_cache_from_other_dtype_env_returns_none(tmp_path, key, change):
+    cache_dir = tmp_path / 'g'
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
+    assert load_cache(cache_dir, ['Y_df']) is not None
+    meta = json.loads((cache_dir / 'meta.json').read_text())
+    meta['dtype_env'][key] = change(meta['dtype_env'][key])
+    (cache_dir / 'meta.json').write_text(json.dumps(meta))
+    assert load_cache(cache_dir, ['Y_df']) is None
+
+
+@pytest.mark.parametrize('current_env, reused', [
+    ({'pandas': 2, 'infer_string': False}, True),
+    ({'pandas': 2, 'infer_string': True}, False),
+    ({'pandas': 3, 'infer_string': True}, False),
+])
+def test_cache_without_dtype_env_is_from_pandas2(tmp_path, monkeypatch, current_env, reused):
+    # caches written before the dtype env was recorded
+    cache_dir = tmp_path / 'g'
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'y': [1]})}, root=tmp_path)
+    meta = json.loads((cache_dir / 'meta.json').read_text())
+    del meta['dtype_env']
+    (cache_dir / 'meta.json').write_text(json.dumps(meta))
+    monkeypatch.setattr(utils, '_dtype_env', lambda: current_env)
+    assert (load_cache(cache_dir, ['Y_df']) is not None) == reused
+
+
+@pytest.mark.filterwarnings('ignore::DeprecationWarning')
+@pytest.mark.filterwarnings('ignore::FutureWarning')
+def test_cache_rebuilt_when_string_inference_changes(tmp_path):
+    cache_dir = tmp_path / 'g'
+    infer = utils._dtype_env()['infer_string']
+    save_cache(cache_dir, {'Y_df': pd.DataFrame({'unique_id': ['a']})}, root=tmp_path)
+    with pd.option_context('future.infer_string', not infer):
+        assert load_cache(cache_dir, ['Y_df']) is None
+    assert load_cache(cache_dir, ['Y_df']) is not None
+
+
+def test_cache_preserves_string_dtype(tmp_path):
+    cache_dir = tmp_path / 'g'
+    df = pd.DataFrame({'unique_id': ['a', 'b'], 'y': [1.0, 2.0]})
+    save_cache(cache_dir, {'Y_df': df}, root=tmp_path)
+    frames, _ = load_cache(cache_dir, ['Y_df'])
+    pd.testing.assert_frame_equal(frames['Y_df'], df)
+
+
+@pytest.mark.parametrize('method', ['to_parquet', 'read_parquet'])
+def test_cache_does_not_hide_warnings_raised_as_errors(tmp_path, monkeypatch, method):
+    # under the test suite's filterwarnings, a pandas deprecation in the cache code must fail, not disable caching
+    cache_dir = tmp_path / 'g'
+    df = pd.DataFrame({'y': [1]})
+    if method == 'read_parquet':
+        save_cache(cache_dir, {'Y_df': df}, root=tmp_path)
+
+    def deprecated(*args, **kwargs):
+        raise FutureWarning('deprecated')
+
+    if method == 'to_parquet':
+        monkeypatch.setattr(pd.DataFrame, 'to_parquet', deprecated)
+        with pytest.raises(FutureWarning):
+            save_cache(cache_dir, {'Y_df': df}, root=tmp_path)
+        assert list(tmp_path.iterdir()) == []  # no cache and no leftover temporary directory
+    else:
+        monkeypatch.setattr(pd, 'read_parquet', deprecated)
+        with pytest.raises(FutureWarning):
+            load_cache(cache_dir, ['Y_df'])
+
+
 def test_cache_failed_write_is_not_visible(tmp_path, monkeypatch, caplog):
     calls = []
     original = pd.DataFrame.to_parquet

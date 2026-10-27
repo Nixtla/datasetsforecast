@@ -18,7 +18,7 @@ class ETTh1:
     and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at an hourly frequency.
     """
-    freq: str = 'H'
+    freq: str = 'h'
     name: str = 'ETTh1'
     n_ts: int = 1
     test_size: int = 11_520
@@ -33,7 +33,7 @@ class ETTh2:
     and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at an hourly frequency.
     """
-    freq: str = 'H'
+    freq: str = 'h'
     name: str = 'ETTh2'
     n_ts: int = 1
     test_size: int = 11_520
@@ -48,7 +48,7 @@ class ETTm1:
     and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at a fifteen minute frequency.
     """
-    freq: str = '15T'
+    freq: str = '15min'
     name: str = 'ETTm1'
     n_ts: int = 7
     test_size: int = 11_520
@@ -67,7 +67,7 @@ class ETTm2:
     - [Zhou, et al. Informer: Beyond Efficient Transformer for Long Sequence
     Time-Series Forecasting. AAAI 2021.](https://arxiv.org/abs/2012.07436)
     """
-    freq: str = '15T'
+    freq: str = '15min'
     name: str = 'ETTm2'
     n_ts: int = 7
     test_size: int = 11_520
@@ -86,7 +86,7 @@ class ECL:
     - [Li, S et al. Enhancing the locality and breaking the memory bottleneck of
     Transformer on time series forecasting. NeurIPS 2019.](http://arxiv.org/abs/1907.00235)
     """
-    freq: str = '15T'
+    freq: str = '15min'
     name: str = 'ECL'
     n_ts: int = 321
     test_size: int = 5_260
@@ -129,7 +129,7 @@ class TrafficL:
     with auto-correlation for long-term series forecasting.
     NeurIPS 2021.](https://arxiv.org/abs/2106.13008).
     """
-    freq: str = 'H'
+    freq: str = 'h'
     name: str = 'traffic'
     n_ts: int = 862
     test_size: int = 3_508
@@ -169,7 +169,7 @@ class Weather:
     - [Wu, H., Xu, J., Wang, J., and Long, M. Autoformer: Decomposition Transformers
     with auto-correlation for long-term series forecasting. NeurIPS 2021.](https://arxiv.org/abs/2106.13008).
     """
-    freq: str = '10M'
+    freq: str = '10min'
     name: str = 'weather'
     n_ts: int = 21
     test_size: int = 10_539

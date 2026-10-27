@@ -2,9 +2,16 @@ import os
 import tempfile
 from pathlib import Path
 
+import pandas as pd
 import pytest
 import requests
 
+from datasetsforecast.favorita import FavoritaInfo
+from datasetsforecast.hierarchical import HierarchicalInfo
+from datasetsforecast.long_horizon import LongHorizonInfo
+from datasetsforecast.long_horizon2 import LongHorizon2Info
+from datasetsforecast.m3 import M3Info
+from datasetsforecast.m4 import M4Info
 from datasetsforecast.utils import async_download_files
 
 
@@ -61,3 +68,11 @@ download_files('{tmp_path.as_posix()}', {github_urls!r})
         # Verify files were downloaded
         files = list(tmp_path.iterdir())
         assert len(files) == len(github_urls), f"Expected {len(github_urls)} files, got {len(files)}"
+
+
+@pytest.mark.parametrize('info', [
+    FavoritaInfo, HierarchicalInfo, LongHorizonInfo, LongHorizon2Info, M3Info, M4Info,
+])
+def test_info_freqs_are_valid_pandas_offsets(info):
+    for _, cls_group in info:
+        pd.tseries.frequencies.to_offset(cls_group.freq)

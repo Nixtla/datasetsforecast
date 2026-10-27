@@ -7,7 +7,7 @@ dependencies:
   - numba
   - numpy
   - scikit-learn  
-  - pandas
+  - pandas>=2.2.2,<4
   - pip
   - requests
   - tqdm

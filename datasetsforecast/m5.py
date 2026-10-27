@@ -118,7 +118,7 @@ class M5:
 
         # remove leading zeros from series
         long = long.sort_values(['id', 'date'])
-        without_leading_zeros = long['y'].gt(0).groupby(long['id']).transform('cummax')
+        without_leading_zeros = long['y'].gt(0).groupby(long['id'], observed=True).transform('cummax')
         long = long[without_leading_zeros]
 
         # prices
@@ -201,7 +201,7 @@ class M5Evaluation:
             benchmark['id'] = benchmark['id'].str.replace('_evaluation', '')
 
         benchmark = benchmark.sort_values('id', ignore_index=True)
-        benchmark.rename(columns={'id': 'unique_id'}, inplace=True)
+        benchmark = benchmark.rename(columns={'id': 'unique_id'})
         *_, s_df = M5.load(directory)
         benchmark = benchmark.merge(s_df, how='left',
                                     on=['unique_id'])
@@ -226,9 +226,9 @@ class M5Evaluation:
 
         level_dfs = []
         for level, agg in M5Evaluation.levels.items():
-            df = y_hat_cat.groupby(agg).sum(numeric_only=True).reset_index()
+            df = y_hat_cat.groupby(agg, observed=True).sum(numeric_only=True).reset_index()
             renamer = dict(zip(agg, ['Agg_Level_1', 'Agg_Level_2']))
-            df.rename(columns=renamer, inplace=True)
+            df = df.rename(columns=renamer)
             df.insert(0, 'Level_id', level)
             level_dfs.append(df)
         df_agg = pd.concat(level_dfs)
@@ -289,7 +289,7 @@ class M5Evaluation:
             x = x[np.argmax(x!=0):]
             scale = ((x[1:] - x[:-1]) ** 2).mean()
             return scale
-        scales = sales.agg(scale, 1).rename('scale').reset_index()
+        scales = sales.agg(scale, axis=1).rename('scale').reset_index()
 
         # y_test
         y_test = M5Evaluation.aggregate_levels(y_test)
@@ -298,7 +298,7 @@ class M5Evaluation:
         y_hat = M5Evaluation.aggregate_levels(y_hat)
 
         score = (y_test - y_hat) ** 2
-        score = score.mean(1)
+        score = score.mean(axis=1)
         score = score.rename('rmse').reset_index()
         score = score.merge(weights, how='left',
                             on=['Level_id', 'Agg_Level_1', 'Agg_Level_2'])

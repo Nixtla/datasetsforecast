@@ -3,9 +3,8 @@ __all__ = ['LongHorizon2Info', 'ETTh1', 'ETTh2', 'ETTm1', 'ETTm2', 'ECL', 'Traff
 
 import os
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Tuple
 
-import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
@@ -20,13 +19,13 @@ class ETTh1:
     and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at an hourly frequency.
     """
-    freq: str = 'H'
+    freq: str = 'h'
     name: str = 'ETTh1'
     n_ts: int = 7
     n_time: int = 14_400
     test_size: int = 2_880
     val_size: int = 2_880
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 @dataclass
 class ETTh2:
@@ -36,13 +35,13 @@ class ETTh2:
     and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at an hourly frequency.
     """
-    freq: str = 'H'
+    freq: str = 'h'
     name: str = 'ETTh2'
     n_ts: int = 7
     n_time: int = 14_400
     test_size: int = 2_880
     val_size: int = 2_880
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 @dataclass
 class ETTm1:
@@ -52,13 +51,13 @@ class ETTm1:
     and variants of load (such as high useful load and high useless load)
     from July 2016 to July 2018 at a fifteen minute frequency.
     """
-    freq: str = '15T'
+    freq: str = '15min'
     name: str = 'ETTm1'
     n_ts: int = 7
     n_time: int = 57_600
     test_size: int = 11_520
     val_size: int = 11_520
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 @dataclass
 class ETTm2:
@@ -72,13 +71,13 @@ class ETTm2:
     - [Zhou, et al. Informer: Beyond Efficient Transformer for Long Sequence
     Time-Series Forecasting. AAAI 2021.](https://arxiv.org/abs/2012.07436)
     """
-    freq: str = '15T'
+    freq: str = '15min'
     name: str = 'ETTm2'
     n_ts: int = 7
     n_time: int = 57_600
     test_size: int = 11_520
     val_size: int = 11_520
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 @dataclass
 class ECL:
@@ -91,13 +90,13 @@ class ECL:
     - [Li, S et al. Enhancing the locality and breaking the memory bottleneck of
     Transformer on time series forecasting. NeurIPS 2019.](https://arxiv.org/abs/1907.00235)
     """
-    freq: str = '15T'
+    freq: str = '15min'
     name: str = 'ECL'
     n_ts: int = 321
     n_time: int = 26_304
     test_size: int = 5_260
     val_size: int = 2_632
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 @dataclass
 class TrafficL:
@@ -113,13 +112,13 @@ class TrafficL:
     Decomposition Transformers with auto-correlation for long-term series forecasting.
     NeurIPS 2021.](https://arxiv.org/abs/2106.13008)
     """
-    freq: str = 'H'
+    freq: str = 'h'
     name: str = 'traffic'
     n_ts: int = 862
     n_time = 17_544
     test_size: int = 3_508
     val_size: int = 1_756
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 @dataclass
 class Weather:
@@ -133,13 +132,13 @@ class Weather:
     - [Wu, H., Xu, J., Wang, J., and Long, M. Autoformer: Decomposition Transformers
     with auto-correlation for long-term series forecasting. NeurIPS 2021.](https://arxiv.org/abs/2106.13008)
     """
-    freq: str = '10M'
+    freq: str = '10min'
     name: str = 'weather'
     n_ts: int = 21
     n_time = 52_695
     test_size: int = 10_539
     val_size: int = 5_270
-    horizons: Tuple[int] = (96, 192, 336, 720)
+    horizons: Tuple[int, ...] = (96, 192, 336, 720)
 
 
 LongHorizon2Info = Info((

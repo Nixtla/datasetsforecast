@@ -6,7 +6,6 @@ import os
 import timeit
 from dataclasses import dataclass
 from itertools import chain
-from pathlib import Path
 from typing import Tuple
 
 import matplotlib.pyplot as plt
@@ -129,8 +128,8 @@ def one_hot_encoding(df, index_col):
     columns.remove(index_col)
     one_hot_concat_df = pd.DataFrame(df[index_col].values, columns=[index_col])
     for col in columns:
-        dummy_columns = [f'{col}_[{x}]' for x in list(df[col].unique())]
-        dummy_values  = encoder.fit_transform(df[col].values.reshape(-1,1)).toarray()
+        dummy_values  = encoder.fit_transform(df[col].to_numpy().reshape(-1,1)).toarray()
+        dummy_columns = [f'{col}_[{x}]' for x in encoder.categories_[0]]
         one_hot_df    = pd.DataFrame(dummy_values, columns=dummy_columns)
         one_hot_concat_df = pd.concat([one_hot_concat_df, one_hot_df], axis=1)
     return one_hot_concat_df
@@ -173,8 +172,8 @@ def get_levels_from_S_df(S_df):
         levels (list): Hierarchical aggregation indexes, where each entry is a level.
     """
     cut_idxs, = np.where(S_df.sum(axis=1).cumsum() % S_df.shape[1] == 0.)
-    levels = [S_df.iloc[(cut_idxs[i] + 1):(cut_idxs[i+1] + 1)].index.values for i in range(cut_idxs.size-1)]
-    levels = [S_df.iloc[[0]].index.values] + levels
+    levels = [S_df.iloc[(cut_idxs[i] + 1):(cut_idxs[i+1] + 1)].index.to_numpy(dtype=object) for i in range(cut_idxs.size-1)]
+    levels = [S_df.iloc[[0]].index.to_numpy(dtype=object)] + levels
     assert sum([len(lv) for lv in levels]) == S_df.shape[0]
     return levels
 
@@ -234,7 +233,7 @@ class Favorita200:
     horizon: int = 34
     seasonality: int = 7
     test_size: int = 34
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Country',
         'Country/State',
         'Country/State/City',
@@ -247,7 +246,7 @@ class Favorita500:
     horizon: int = 34
     seasonality: int = 7
     test_size: int = 34
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Country',
         'Country/State',
         'Country/State/City',
@@ -259,7 +258,7 @@ class FavoritaComplete:
     horizon: int = 34
     seasonality: int = 7
     test_size: int = 34
-    tags_names: Tuple[str] = (
+    tags_names: Tuple[str, ...] = (
         'Country',
         'Country/State',
         'Country/State/City',
@@ -350,7 +349,7 @@ class FavoritaRawData:
                                   dtype=dtypes_dict,
                                   parse_dates=['date'])
             del train_df['id']
-            train_df.reset_index(drop=True, inplace=True)
+            train_df = train_df.reset_index(drop=True)
             train_df.to_feather(f'{directory}/train.feather')
             print("saved train.csv to train.feather for fast access")
 
@@ -597,16 +596,16 @@ class FavoritaData:
             #-------------------- with CodeTimer('Temporal Merge'): --------------------#
             # Two stage merge with balanced data
             item_store_df = item_store_df[['unique_id', 'item_nbr', 'store_nbr', 'is_original']]
-            item_store_df.set_index(['unique_id'], inplace=True)
-            balanced_df.set_index(['unique_id'], inplace=True)
+            item_store_df = item_store_df.set_index(['unique_id'])
+            balanced_df = balanced_df.set_index(['unique_id'])
             balanced_df = balanced_df.merge(item_store_df, how='left',
                                             left_on=['unique_id'],
                                             right_index=True).reset_index()
             #check_nans(balanced_df)
             item_store_df = item_store_df.reset_index()
 
-            temporal_df.set_index(['item_nbr', 'store_nbr', 'date'], inplace=True)
-            balanced_df.set_index(['item_nbr', 'store_nbr', 'date'], inplace=True)
+            temporal_df = temporal_df.set_index(['item_nbr', 'store_nbr', 'date'])
+            balanced_df = balanced_df.set_index(['item_nbr', 'store_nbr', 'date'])
             balanced_df = balanced_df.merge(temporal_df, how='left',
                                             left_on=['item_nbr', 'store_nbr', 'date'],
                                             right_index=True).reset_index()
@@ -631,7 +630,7 @@ class FavoritaData:
             #check_nans(balanced_df)
 
         # Rename variables for StatsForecast/NeuralForecast compatibility
-        balanced_df.rename(columns={"date": "ds", "unit_sales": "y"}, inplace=True)
+        balanced_df = balanced_df.rename(columns={"date": "ds", "unit_sales": "y"})
 
         return balanced_df
 
@@ -669,8 +668,8 @@ class FavoritaData:
             balanced_df = balanced_df.merge(oil, on='date', how='left')
             #check_nans(balanced_df)
 
-            balanced_df['dcoilwtico'] = balanced_df['dcoilwtico'].fillna(method='ffill')
-            balanced_df['dcoilwtico'] = balanced_df['dcoilwtico'].fillna(method='bfill')
+            balanced_df['dcoilwtico'] = balanced_df['dcoilwtico'].ffill()
+            balanced_df['dcoilwtico'] = balanced_df['dcoilwtico'].bfill()
 
             #check_nans(balanced_df)
             oil_agg = balanced_df
@@ -713,8 +712,8 @@ class FavoritaData:
                 plt.close()
 
             # Holiday variables
-            hdays = holidays[holidays['transferred']==False].copy()
-            hdays.rename(columns={'type': 'holiday_type'}, inplace=True)
+            hdays = holidays[holidays['transferred'].eq(False)].copy()
+            hdays = hdays.rename(columns={'type': 'holiday_type'})
 
             national_hdays = hdays[hdays['locale']=='National']
             national_hdays = national_hdays[national_hdays.holiday_type.isin(['Holiday', 'Transfer'])]
@@ -740,12 +739,12 @@ class FavoritaData:
             # Fast numpy balance
             balanced_prod = numpy_balance(filter_stores, filter_dates)
             balanced_df   = pd.DataFrame(balanced_prod, columns=['store_nbr', 'date'])
-            balanced_df['date'] = balanced_df['date'].astype('datetime64[ns]')
+            balanced_df['date'] = balanced_df['date'].astype(transactions['date'].dtype)
 
             # 'Transactions Merge'
             # Merge with balanced data
-            transactions.set_index(['store_nbr', 'date'], inplace=True)
-            balanced_df.set_index(['store_nbr', 'date'], inplace=True)
+            transactions = transactions.set_index(['store_nbr', 'date'])
+            balanced_df = balanced_df.set_index(['store_nbr', 'date'])
             transactions = balanced_df.merge(transactions, how='left',
                                              left_on=['store_nbr', 'date'],
                                              right_index=True).reset_index()
@@ -793,10 +792,10 @@ class FavoritaData:
             #print("3. calendar_agg.dtypes \n", calendar_agg.dtypes, "\n")
             #print("4. transactions_agg.dtypes \n", transactions_agg.dtypes, "\n")
 
-            temporal_agg.set_index(['date'], inplace=True)
-            oil_agg.set_index(['date'], inplace=True)
-            calendar_agg.set_index(['date'], inplace=True)
-            transactions_agg.set_index(['date'], inplace=True)
+            temporal_agg = temporal_agg.set_index(['date'])
+            oil_agg = oil_agg.set_index(['date'])
+            calendar_agg = calendar_agg.set_index(['date'])
+            transactions_agg = transactions_agg.set_index(['date'])
 
             # Compile national aggregated data
             temporal_agg = temporal_agg.merge(oil_agg, how='left', left_on=['date'],
@@ -809,13 +808,13 @@ class FavoritaData:
             #check_nans(temporal_agg)
 
         # Rename variables for StatsForecast/NeuralForecast compatibility
-        temporal_agg.rename(columns={"date": "ds", "unit_sales": "y"}, inplace=True)
+        temporal_agg = temporal_agg.rename(columns={"date": "ds", "unit_sales": "y"})
 
         return temporal_agg
 
     @staticmethod
     def load_preprocessed(directory: str, group: str, cache: bool=True, verbose: bool=False) -> \
-        Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Load Favorita group datasets.
 
         For the exploration of more complex models, we make available the entire information
@@ -830,15 +829,17 @@ class FavoritaData:
 
         Returns:
             tuple: A tuple containing:
-                - static_bottom (pd.DataFrame): Static variables of bottom level series.
                 - static_agg (pd.DataFrame): Static variables of aggregate level series.
-                - temporal_bottom (pd.DataFrame): Temporal variables of bottom level series.
+                - static_bottom (pd.DataFrame): Static variables of bottom level series.
                 - temporal_agg (pd.DataFrame): Temporal variables of aggregate level series.
+                - temporal_bottom (pd.DataFrame): Temporal variables of bottom level series.
+                - S_df (pd.DataFrame): Hierarchical constraints (summing matrix).
         """
         group_path = f'{directory}/{group}'
 
         if os.path.exists(group_path) and cache:
-            if verbose: print('Read preprocessed data to avoid unnecesary computation')
+            if verbose:
+                print('Read preprocessed data to avoid unnecesary computation')
             S_df = pd.read_csv(f'{group_path}/hier_constraints.csv', index_col=0)
             static_agg = pd.read_csv(f'{group_path}/static_agg.csv')
             static_bottom = pd.read_csv(f'{group_path}/static_bottom.feather')

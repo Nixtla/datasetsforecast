@@ -445,6 +445,21 @@ class Info:
 _CACHE_VERSION = 1
 
 
+def _dtype_env() -> dict:
+    """Settings that change the dtypes pandas infers, so a cache is only reused under the same ones."""
+    return {
+        'pandas': int(pd.__version__.split('.')[0]),
+        # True on pandas 3 by default and on pandas 2 with `future.infer_string`; checked by
+        # behavior because reading the option warns on pandas 3 and it is removed in pandas 4
+        'infer_string': bool(pd.Series(['']).dtype != object),
+    }
+
+
+# caches written before the dtype env was recorded all come from pandas 2 (pandas was capped below 3);
+# assumes default options, so one written with `future.infer_string` enabled is treated as without it
+_LEGACY_DTYPE_ENV = {'pandas': 2, 'infer_string': False}
+
+
 def _cache_dir(directory: Union[str, Path], dataset: str, group: str) -> Path:
     """Cache location, kept outside every directory archives are extracted into."""
     return Path(directory) / '.cache' / dataset / group
@@ -481,6 +496,7 @@ def save_cache(
                 frame.to_parquet(tmp / f'{name}.parquet')
         meta = {
             'version': _CACHE_VERSION,
+            'dtype_env': _dtype_env(),
             'none_frames': none_frames,
             'object_columns': object_columns,
             'extra': extra,
@@ -490,6 +506,11 @@ def save_cache(
         if cache_dir.exists():
             shutil.rmtree(cache_dir)
         os.replace(tmp, cache_dir)
+    except Warning:
+        # only raised when warnings are turned into errors (`-W error` or the test suite's filterwarnings),
+        # in which case the caller asked to see them, so don't hide them
+        shutil.rmtree(tmp, ignore_errors=True)
+        raise
     except Exception as e:
         logger.warning(f'Could not write cache to {cache_dir}: {e}')
         shutil.rmtree(tmp, ignore_errors=True)
@@ -511,6 +532,9 @@ def load_cache(
         meta = json.loads(meta_file.read_text())
         if meta.get('version') != _CACHE_VERSION:
             return None
+        # e.g. pandas 3 reads strings as `str`, while a cache from pandas 2 restores them as object
+        if meta.get('dtype_env', _LEGACY_DTYPE_ENV) != _dtype_env():
+            return None
         frames: Dict[str, Optional[pd.DataFrame]] = {}
         for name in names:
             if name in meta['none_frames']:
@@ -522,6 +546,10 @@ def load_cache(
                         frame[col] = frame[col].astype(object)
                 frames[name] = frame
         return frames, meta.get('extra')
+    except Warning:
+        # only raised when warnings are turned into errors (`-W error` or the test suite's filterwarnings),
+        # in which case the caller asked to see them, so don't hide them
+        raise
     except Exception as e:
         logger.warning(f'Ignoring unreadable cache at {cache_dir}: {e}')
         return None

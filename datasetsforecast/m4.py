@@ -16,7 +16,7 @@ from .utils import Info, _cache_dir, async_download_files, download_file, extrac
 class Yearly:
     seasonality: int = 1
     horizon: int = 6
-    freq: str = 'Y'
+    freq: str = 'YE'
     name: str = 'Yearly'
     n_ts: int = 23_000
 
@@ -24,7 +24,7 @@ class Yearly:
 class Quarterly:
     seasonality: int = 4
     horizon: int = 8
-    freq: str = 'Q'
+    freq: str = 'QE'
     name: str = 'Quarterly'
     n_ts: int = 24_000
 
@@ -32,7 +32,7 @@ class Quarterly:
 class Monthly:
     seasonality: int = 12
     horizon: int = 18
-    freq: str = 'M'
+    freq: str = 'ME'
     name: str = 'Monthly'
     n_ts: int = 48_000
 
@@ -56,7 +56,7 @@ class Daily:
 class Hourly:
     seasonality: int = 24
     horizon: int = 48
-    freq: str = 'H'
+    freq: str = 'h'
     name: str = 'Hourly'
     n_ts: int = 414
 
@@ -121,7 +121,7 @@ class M4:
             S_df = pd.read_csv(f'{directory}/m4/datasets/M4-info.csv',
                                usecols=['M4id','category'])
             S_df['category'] = S_df['category'].astype('category').cat.codes
-            S_df.rename({'M4id': 'unique_id'}, axis=1, inplace=True)
+            S_df = S_df.rename({'M4id': 'unique_id'}, axis=1)
             S_df = S_df[S_df['unique_id'].str.startswith(class_group.name[0])]
 
             def read_and_melt(file):
@@ -139,7 +139,7 @@ class M4:
             len_train.columns = ['unique_id', 'len_serie']
             df_test = df_test.merge(len_train, on=['unique_id'])
             df_test['ds'] = df_test['ds'] + df_test['len_serie']
-            df_test.drop('len_serie', axis=1, inplace=True)
+            df_test = df_test.drop('len_serie', axis=1)
 
             df = pd.concat([df_train, df_test])
             df = df.sort_values(['unique_id', 'ds']).reset_index(drop=True)

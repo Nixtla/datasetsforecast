@@ -1,7 +1,8 @@
+import pandas as pd
 import pytest
 from pandas._libs.tslibs.np_datetime import OutOfBoundsDatetime
 
-from datasetsforecast.favorita import FavoritaData
+from datasetsforecast.favorita import FavoritaData, one_hot_encoding
 
 
 @pytest.mark.skip(reason="This method fails in CI but runs locally")
@@ -38,3 +39,14 @@ def test_favorita_data():
     except Exception as e:
         pytest.skip(f"Favorita data loading failed: {e}")
 
+
+@pytest.mark.parametrize('values', [
+    pd.Categorical(['b', 'a', 'b']),
+    ['b', 'a', 'b'],  # `str` dtype on pandas 3
+])
+def test_one_hot_encoding_labels_match_values(values):
+    df = pd.DataFrame({'item': [1, 2, 3], 'family': values})
+    encoded = one_hot_encoding(df, 'item')
+    assert encoded['item'].tolist() == [1, 2, 3]
+    assert encoded['family_[a]'].tolist() == [0.0, 1.0, 0.0]
+    assert encoded['family_[b]'].tolist() == [1.0, 0.0, 1.0]
